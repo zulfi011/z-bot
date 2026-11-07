@@ -1,26 +1,579 @@
 {
- "generated_at": "2026-11-07T16:54:52.716678+00:00",
- "live_since": null,
- "days_live": 0,
+ "generated_at": "2026-11-07T17:12:10.989002+00:00",
+ "live_since": "2026-09-12T19:39:00+00:00",
+ "days_live": 55,
  "summary": {
-  "trades": 0,
-  "wins": 0,
-  "losses": 0,
-  "win_rate_pct": null,
-  "avg_win_pct": null,
-  "avg_loss_pct": null,
-  "profit_factor": null,
-  "total_return_pct": null,
-  "best_pct": null,
-  "worst_pct": null,
-  "avg_hold_hours": null,
-  "max_drawdown_pct": 0.0,
+  "trades": 33,
+  "wins": 22,
+  "losses": 11,
+  "win_rate_pct": 66.7,
+  "avg_win_pct": 0.8,
+  "avg_loss_pct": -3.06,
+  "profit_factor": 0.52,
+  "total_return_pct": -5.14,
+  "best_pct": 1.68,
+  "worst_pct": -4.67,
+  "avg_hold_hours": 22.3,
+  "max_drawdown_pct": -6.95,
   "open_lots": 0
  },
- "curve": [],
- "monthly": [],
- "coins": [],
+ "curve": [
+  {
+   "t": "2026-09-12T19:39:00+00:00",
+   "pct": 0.0
+  },
+  {
+   "t": "2026-09-13T09:25:04.302026+00:00",
+   "pct": -0.692
+  },
+  {
+   "t": "2026-09-13T19:34:01.96675+00:00",
+   "pct": -0.423
+  },
+  {
+   "t": "2026-09-14T02:39:02.567884+00:00",
+   "pct": -0.175
+  },
+  {
+   "t": "2026-09-14T09:56:01.918305+00:00",
+   "pct": 0.125
+  },
+  {
+   "t": "2026-09-14T17:19:04.192499+00:00",
+   "pct": 0.421
+  },
+  {
+   "t": "2026-09-15T14:52:01.191848+00:00",
+   "pct": -0.751
+  },
+  {
+   "t": "2026-09-17T17:18:02.693157+00:00",
+   "pct": -0.893
+  },
+  {
+   "t": "2026-09-18T01:53:05.912779+00:00",
+   "pct": -0.352
+  },
+  {
+   "t": "2026-09-18T08:10:03.821479+00:00",
+   "pct": -0.062
+  },
+  {
+   "t": "2026-09-25T12:19:01.83095+00:00",
+   "pct": -0.176
+  },
+  {
+   "t": "2026-09-27T13:02:02.087748+00:00",
+   "pct": 0.013
+  },
+  {
+   "t": "2026-09-29T07:09:02.91644+00:00",
+   "pct": -0.183
+  },
+  {
+   "t": "2026-09-29T15:06:02.078402+00:00",
+   "pct": -0.17
+  },
+  {
+   "t": "2026-09-30T13:41:01.693544+00:00",
+   "pct": -0.16
+  },
+  {
+   "t": "2026-09-30T14:24:01.723541+00:00",
+   "pct": -0.148
+  },
+  {
+   "t": "2026-10-01T07:23:01.965404+00:00",
+   "pct": 0.013
+  },
+  {
+   "t": "2026-10-01T07:23:03.22261+00:00",
+   "pct": 0.065
+  },
+  {
+   "t": "2026-10-05T04:00:05.0112+00:00",
+   "pct": 0.516
+  },
+  {
+   "t": "2026-10-05T04:00:06.280623+00:00",
+   "pct": 0.846
+  },
+  {
+   "t": "2026-10-11T16:01:02.366111+00:00",
+   "pct": 1.129
+  },
+  {
+   "t": "2026-10-12T05:40:05.094444+00:00",
+   "pct": 1.251
+  },
+  {
+   "t": "2026-10-12T23:51:02.077299+00:00",
+   "pct": -0.24
+  },
+  {
+   "t": "2026-10-14T21:04:01.0051+00:00",
+   "pct": -1.731
+  },
+  {
+   "t": "2026-10-15T02:23:01.013469+00:00",
+   "pct": -3.207
+  },
+  {
+   "t": "2026-10-20T15:40:00.787721+00:00",
+   "pct": -4.541
+  },
+  {
+   "t": "2026-10-21T12:31:02.856581+00:00",
+   "pct": -4.248
+  },
+  {
+   "t": "2026-10-21T15:29:02.03909+00:00",
+   "pct": -3.963
+  },
+  {
+   "t": "2026-10-21T16:00:06.358902+00:00",
+   "pct": -3.564
+  },
+  {
+   "t": "2026-10-21T16:23:01.762265+00:00",
+   "pct": -3.139
+  },
+  {
+   "t": "2026-10-22T02:31:00.923685+00:00",
+   "pct": -4.473
+  },
+  {
+   "t": "2026-10-22T03:24:02.662717+00:00",
+   "pct": -5.79
+  },
+  {
+   "t": "2026-10-28T08:38:02.266414+00:00",
+   "pct": -5.452
+  },
+  {
+   "t": "2026-11-04T08:17:02.620332+00:00",
+   "pct": -5.14
+  }
+ ],
+ "monthly": [
+  {
+   "month": "2026-09",
+   "trades": 15,
+   "win_rate_pct": 66.7,
+   "total_return_pct": -0.15
+  },
+  {
+   "month": "2026-10",
+   "trades": 17,
+   "win_rate_pct": 64.7,
+   "total_return_pct": -5.31
+  },
+  {
+   "month": "2026-11",
+   "trades": 1,
+   "win_rate_pct": 100.0,
+   "total_return_pct": 0.33
+  }
+ ],
+ "coins": [
+  {
+   "symbol": "BTCUSDT",
+   "trades": 2,
+   "win_rate_pct": 50.0,
+   "avg_return_pct": 0.24,
+   "return_contribution_pct": 0.16,
+   "open_lots": 0
+  },
+  {
+   "symbol": "SOLUSDT",
+   "trades": 3,
+   "win_rate_pct": 66.7,
+   "avg_return_pct": 0.15,
+   "return_contribution_pct": 0.14,
+   "open_lots": 0
+  },
+  {
+   "symbol": "ETHUSDT",
+   "trades": 22,
+   "win_rate_pct": 72.7,
+   "avg_return_pct": -0.37,
+   "return_contribution_pct": -2.53,
+   "open_lots": 0
+  },
+  {
+   "symbol": "AAVEUSDT",
+   "trades": 6,
+   "win_rate_pct": 50.0,
+   "avg_return_pct": -1.49,
+   "return_contribution_pct": -2.97,
+   "open_lots": 0
+  }
+ ],
  "open": [],
- "trades": [],
+ "trades": [
+  {
+   "symbol": "SOLUSDT",
+   "entry": "signal",
+   "exit": "protective_stop",
+   "exit_style": null,
+   "opened": "2026-09-13T01:04:03.21864+00:00",
+   "closed": "2026-09-13T09:25:04.302026+00:00",
+   "minutes": 501,
+   "return_pct": -2.153,
+   "account_pct": -0.6919
+  },
+  {
+   "symbol": "ETHUSDT",
+   "entry": "signal",
+   "exit": "trailing_stop",
+   "exit_style": null,
+   "opened": "2026-09-13T13:51:01.910293+00:00",
+   "closed": "2026-09-13T19:34:01.96675+00:00",
+   "minutes": 343,
+   "return_pct": 0.837,
+   "account_pct": 0.2711
+  },
+  {
+   "symbol": "ETHUSDT",
+   "entry": "signal",
+   "exit": "trailing_stop",
+   "exit_style": null,
+   "opened": "2026-09-13T23:06:02.081531+00:00",
+   "closed": "2026-09-14T02:39:02.567884+00:00",
+   "minutes": 213,
+   "return_pct": 0.769,
+   "account_pct": 0.2488
+  },
+  {
+   "symbol": "BTCUSDT",
+   "entry": "signal",
+   "exit": "trailing_stop",
+   "exit_style": null,
+   "opened": "2026-09-13T17:16:01.244396+00:00",
+   "closed": "2026-09-14T09:56:01.918305+00:00",
+   "minutes": 1000,
+   "return_pct": 0.932,
+   "account_pct": 0.3003
+  },
+  {
+   "symbol": "SOLUSDT",
+   "entry": "signal",
+   "exit": "trailing_stop",
+   "exit_style": null,
+   "opened": "2026-09-14T12:25:04.600507+00:00",
+   "closed": "2026-09-14T17:19:04.192499+00:00",
+   "minutes": 293,
+   "return_pct": 0.92,
+   "account_pct": 0.2955
+  },
+  {
+   "symbol": "ETHUSDT",
+   "entry": "signal",
+   "exit": "protective_stop",
+   "exit_style": null,
+   "opened": "2026-09-15T12:06:02.279709+00:00",
+   "closed": "2026-09-15T14:52:01.191848+00:00",
+   "minutes": 165,
+   "return_pct": -3.648,
+   "account_pct": -1.1672
+  },
+  {
+   "symbol": "BTCUSDT",
+   "entry": "signal",
+   "exit": "manual_close",
+   "exit_style": null,
+   "opened": "2026-09-15T12:56:01.048669+00:00",
+   "closed": "2026-09-17T17:18:02.693157+00:00",
+   "minutes": 3142,
+   "return_pct": -0.448,
+   "account_pct": -0.1427
+  },
+  {
+   "symbol": "SOLUSDT",
+   "entry": "signal",
+   "exit": "trailing_stop",
+   "exit_style": null,
+   "opened": "2026-09-17T12:19:05.796066+00:00",
+   "closed": "2026-09-18T01:53:05.912779+00:00",
+   "minutes": 814,
+   "return_pct": 1.682,
+   "account_pct": 0.5455
+  },
+  {
+   "symbol": "ETHUSDT",
+   "entry": "signal",
+   "exit": "trailing_stop",
+   "exit_style": null,
+   "opened": "2026-09-17T12:21:02.153779+00:00",
+   "closed": "2026-09-18T08:10:03.821479+00:00",
+   "minutes": 1189,
+   "return_pct": 0.898,
+   "account_pct": 0.291
+  },
+  {
+   "symbol": "ETHUSDT",
+   "entry": "pullback",
+   "exit": "trend_exit",
+   "exit_style": "trend",
+   "opened": "2026-09-24T05:07:01.311525+00:00",
+   "closed": "2026-09-25T12:19:01.83095+00:00",
+   "minutes": 1872,
+   "return_pct": -0.355,
+   "account_pct": -0.1141
+  },
+  {
+   "symbol": "ETHUSDT",
+   "entry": "signal",
+   "exit": "trend_exit",
+   "exit_style": "trend",
+   "opened": "2026-09-26T21:21:02.366206+00:00",
+   "closed": "2026-09-27T13:02:02.087748+00:00",
+   "minutes": 940,
+   "return_pct": 0.589,
+   "account_pct": 0.1901
+  },
+  {
+   "symbol": "ETHUSDT",
+   "entry": "pyramid",
+   "exit": "manual_close",
+   "exit_style": "trend",
+   "opened": "2026-09-25T12:08:01.487045+00:00",
+   "closed": "2026-09-29T07:09:02.91644+00:00",
+   "minutes": 5461,
+   "return_pct": -0.613,
+   "account_pct": -0.1961
+  },
+  {
+   "symbol": "ETHUSDT",
+   "entry": "signal",
+   "exit": "protective_stop",
+   "exit_style": "trend",
+   "opened": "2026-09-27T15:21:02.493167+00:00",
+   "closed": "2026-09-29T15:06:02.078402+00:00",
+   "minutes": 2864,
+   "return_pct": 0.039,
+   "account_pct": 0.0126
+  },
+  {
+   "symbol": "ETHUSDT",
+   "entry": "signal",
+   "exit": "protective_stop",
+   "exit_style": "trend",
+   "opened": "2026-09-29T18:21:01.949176+00:00",
+   "closed": "2026-09-30T13:41:01.693544+00:00",
+   "minutes": 1159,
+   "return_pct": 0.033,
+   "account_pct": 0.0107
+  },
+  {
+   "symbol": "ETHUSDT",
+   "entry": "signal",
+   "exit": "protective_stop",
+   "exit_style": "trend",
+   "opened": "2026-09-29T15:51:01.976066+00:00",
+   "closed": "2026-09-30T14:24:01.723541+00:00",
+   "minutes": 1352,
+   "return_pct": 0.034,
+   "account_pct": 0.0111
+  },
+  {
+   "symbol": "ETHUSDT",
+   "entry": "signal",
+   "exit": "trend_exit",
+   "exit_style": "trend",
+   "opened": "2026-09-30T20:16:01.208382+00:00",
+   "closed": "2026-10-01T07:23:01.965404+00:00",
+   "minutes": 667,
+   "return_pct": 0.503,
+   "account_pct": 0.1615
+  },
+  {
+   "symbol": "ETHUSDT",
+   "entry": "pullback",
+   "exit": "trend_exit",
+   "exit_style": "trend",
+   "opened": "2026-09-30T21:13:01.183645+00:00",
+   "closed": "2026-10-01T07:23:03.22261+00:00",
+   "minutes": 610,
+   "return_pct": 0.164,
+   "account_pct": 0.0525
+  },
+  {
+   "symbol": "ETHUSDT",
+   "entry": "signal",
+   "exit": "trend_exit",
+   "exit_style": "trend",
+   "opened": "2026-10-03T00:36:02.126577+00:00",
+   "closed": "2026-10-05T04:00:05.0112+00:00",
+   "minutes": 3084,
+   "return_pct": 1.407,
+   "account_pct": 0.4506
+  },
+  {
+   "symbol": "ETHUSDT",
+   "entry": "pullback",
+   "exit": "trend_exit",
+   "exit_style": "trend",
+   "opened": "2026-10-03T12:23:01.241691+00:00",
+   "closed": "2026-10-05T04:00:06.280623+00:00",
+   "minutes": 2377,
+   "return_pct": 1.023,
+   "account_pct": 0.3277
+  },
+  {
+   "symbol": "ETHUSDT",
+   "entry": "breakout",
+   "exit": "trailing_stop",
+   "exit_style": "giveback",
+   "opened": "2026-10-10T16:31:01.273843+00:00",
+   "closed": "2026-10-11T16:01:02.366111+00:00",
+   "minutes": 1410,
+   "return_pct": 0.885,
+   "account_pct": 0.2814
+  },
+  {
+   "symbol": "ETHUSDT",
+   "entry": "breakout",
+   "exit": "trailing_stop",
+   "exit_style": "giveback",
+   "opened": "2026-10-11T16:31:01.05239+00:00",
+   "closed": "2026-10-12T05:40:05.094444+00:00",
+   "minutes": 789,
+   "return_pct": 0.378,
+   "account_pct": 0.1199
+  },
+  {
+   "symbol": "ETHUSDT",
+   "entry": "signal",
+   "exit": "protective_stop",
+   "exit_style": "giveback",
+   "opened": "2026-10-12T02:21:02.84543+00:00",
+   "closed": "2026-10-12T23:51:02.077299+00:00",
+   "minutes": 1289,
+   "return_pct": -4.651,
+   "account_pct": -1.472
+  },
+  {
+   "symbol": "ETHUSDT",
+   "entry": "signal",
+   "exit": "protective_stop",
+   "exit_style": "giveback",
+   "opened": "2026-10-13T05:11:01.241555+00:00",
+   "closed": "2026-10-14T21:04:01.0051+00:00",
+   "minutes": 2392,
+   "return_pct": -4.648,
+   "account_pct": -1.4951
+  },
+  {
+   "symbol": "ETHUSDT",
+   "entry": "signal",
+   "exit": "protective_stop",
+   "exit_style": "giveback",
+   "opened": "2026-10-13T13:41:01.54131+00:00",
+   "closed": "2026-10-15T02:23:01.013469+00:00",
+   "minutes": 2201,
+   "return_pct": -4.666,
+   "account_pct": -1.5019
+  },
+  {
+   "symbol": "AAVEUSDT",
+   "entry": "signal",
+   "exit": "protective_stop",
+   "exit_style": "giveback",
+   "opened": "2026-10-20T14:58:01.585678+00:00",
+   "closed": "2026-10-20T15:40:00.787721+00:00",
+   "minutes": 41,
+   "return_pct": -4.149,
+   "account_pct": -1.3779
+  },
+  {
+   "symbol": "ETHUSDT",
+   "entry": "breakout",
+   "exit": "trailing_stop",
+   "exit_style": "giveback",
+   "opened": "2026-10-20T16:31:01.522596+00:00",
+   "closed": "2026-10-21T12:31:02.856581+00:00",
+   "minutes": 1200,
+   "return_pct": 0.913,
+   "account_pct": 0.3071
+  },
+  {
+   "symbol": "AAVEUSDT",
+   "entry": "signal",
+   "exit": "trailing_stop",
+   "exit_style": "giveback",
+   "opened": "2026-10-21T01:16:01.512362+00:00",
+   "closed": "2026-10-21T15:29:02.03909+00:00",
+   "minutes": 853,
+   "return_pct": 0.975,
+   "account_pct": 0.2978
+  },
+  {
+   "symbol": "AAVEUSDT",
+   "entry": "signal",
+   "exit": "trailing_stop",
+   "exit_style": "giveback",
+   "opened": "2026-10-21T00:43:01.474703+00:00",
+   "closed": "2026-10-21T16:00:06.358902+00:00",
+   "minutes": 917,
+   "return_pct": 1.236,
+   "account_pct": 0.415
+  },
+  {
+   "symbol": "AAVEUSDT",
+   "entry": "signal",
+   "exit": "trailing_stop",
+   "exit_style": "giveback",
+   "opened": "2026-10-21T13:07:01.866781+00:00",
+   "closed": "2026-10-21T16:23:01.762265+00:00",
+   "minutes": 195,
+   "return_pct": 1.316,
+   "account_pct": 0.4408
+  },
+  {
+   "symbol": "AAVEUSDT",
+   "entry": "signal",
+   "exit": "protective_stop",
+   "exit_style": "giveback",
+   "opened": "2026-10-21T22:34:01.998814+00:00",
+   "closed": "2026-10-22T02:31:00.923685+00:00",
+   "minutes": 236,
+   "return_pct": -4.151,
+   "account_pct": -1.3771
+  },
+  {
+   "symbol": "AAVEUSDT",
+   "entry": "signal",
+   "exit": "protective_stop",
+   "exit_style": "giveback",
+   "opened": "2026-10-21T22:10:02.028037+00:00",
+   "closed": "2026-10-22T03:24:02.662717+00:00",
+   "minutes": 314,
+   "return_pct": -4.162,
+   "account_pct": -1.3791
+  },
+  {
+   "symbol": "ETHUSDT",
+   "entry": "breakout",
+   "exit": "trailing_stop",
+   "exit_style": "giveback",
+   "opened": "2026-10-27T16:31:01.762452+00:00",
+   "closed": "2026-10-28T08:38:02.266414+00:00",
+   "minutes": 967,
+   "return_pct": 1.054,
+   "account_pct": 0.3593
+  },
+  {
+   "symbol": "ETHUSDT",
+   "entry": "breakout",
+   "exit": "trailing_stop",
+   "exit_style": "giveback",
+   "opened": "2026-11-02T02:31:01.60832+00:00",
+   "closed": "2026-11-04T08:17:02.620332+00:00",
+   "minutes": 3226,
+   "return_pct": 0.97,
+   "account_pct": 0.3299
+  }
+ ],
  "note": "Live Binance spot trades only, after fees. Percentages only. Not financial advice."
 }
