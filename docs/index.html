@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Z-Bot Live Results</title>
+<meta name="description" content="Live results of Z-Bot, an open-source crypto trading bot. Real Binance spot trades, after fees, in percentages. Updated daily.">
+<meta property="og:title" content="Z-Bot Live Results">
+<meta property="og:description" content="Open-source crypto trading bot. Real Binance spot trades, after fees, updated daily.">
+<meta property="og:image" content="social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<style>
+:root {
+  --bg: #050c17; --panel: #0c1622; --panel-2: #111e2d; --line: #1c2a3b; --text: #e6edf0; --muted: #8a99ad;
+  --cyan: #0bf6fa; --up: #2fd48a; --down: #ff6b7d; --grid: rgba(159, 180, 200, .08);
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f4f6fa; --panel: #ffffff; --panel-2: #f1f4f9; --line: #dfe5ee; --text: #0b1424; --muted: #5f6c7d;
+    --cyan: #0891b2; --up: #0f9d63; --down: #d6394f; --grid: rgba(11, 20, 36, .07);
+    color-scheme: light;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text);
+  font: 15px/1.5 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+a { color: var(--cyan); }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 28px 16px 48px; }
+header { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+.word { font-size: 34px; font-weight: 700; letter-spacing: -.6px; line-height: 1; white-space: nowrap; }
+.word img { height: 1.02em; width: auto; vertical-align: baseline; }
+.z-light { display: none; }
+@media (prefers-color-scheme: light) { .z-dark { display: none; } .z-light { display: inline; } }
+.tag { color: var(--muted); margin-top: 8px; }
+.updated { color: var(--muted); font-size: 13px; text-align: right; }
+.updated b { color: var(--text); font-weight: 600; }
+section { margin-top: 28px; }
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; margin: 0 0 10px; }
+.tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.tile { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px; min-width: 0; }
+.tile .k { color: var(--muted); font-size: 12px; }
+.tile .v { font-size: 24px; font-weight: 700; margin-top: 4px; font-variant-numeric: tabular-nums; }
+.tile .s { color: var(--muted); font-size: 12px; margin-top: 2px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+.chart { width: 100%; height: 260px; display: block; }
+.table-wrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 14px; }
+th, td { padding: 9px 12px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); }
+th { color: var(--muted); font-weight: 600; font-size: 12px; background: var(--panel-2); position: sticky; top: 0; }
+th:first-child, td:first-child { text-align: left; }
+tr:last-child td { border-bottom: 0; }
+td.l { text-align: left; }
+.up { color: var(--up); } .down { color: var(--down); } .muted { color: var(--muted); }
+.ids { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; color: var(--muted); }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.more { margin-top: 10px; background: var(--panel); color: var(--text); border: 1px solid var(--line);
+  border-radius: 10px; padding: 8px 14px; font: inherit; cursor: pointer; }
+.empty { color: var(--muted); padding: 18px; text-align: center; }
+footer { margin-top: 36px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); padding-top: 16px; }
+footer p { margin: 6px 0; }
+.error { background: var(--panel); border: 1px solid var(--down); border-radius: 14px; padding: 16px; margin-top: 24px; }
+@media (max-width: 760px) {
+  .tiles { grid-template-columns: repeat(2, 1fr); }
+  .two { grid-template-columns: 1fr; }
+  .updated { text-align: left; }
+  .word { font-size: 30px; }
+  .chart { height: 200px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="word" aria-label="Z-Bot"><img class="z-dark" src="zbot-z-dark.svg" alt=""><img class="z-light" src="zbot-z-light.svg" alt="">-Bot</div>
+      <div class="tag">Open-source crypto trading bot · live results</div>
+    </div>
+    <div class="updated" id="updated">Loading…</div>
+  </header>
+
+  <div id="error" class="error" hidden></div>
+
+  <section>
+    <h2>Since going live</h2>
+    <div class="tiles" id="tiles"></div>
+  </section>
+
+  <section>
+    <h2>Account return</h2>
+    <div class="panel"><svg class="chart" id="chart" role="img" aria-label="Account return over time"></svg></div>
+  </section>
+
+  <section class="two">
+    <div>
+      <h2>By month</h2>
+      <div class="table-wrap"><table id="months"></table></div>
+    </div>
+    <div>
+      <h2>By coin</h2>
+      <div class="table-wrap"><table id="coins"></table></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Open lots</h2>
+    <div class="table-wrap"><table id="open"></table></div>
+  </section>
+
+  <section>
+    <h2>Every trade</h2>
+    <div class="table-wrap"><table id="trades"></table></div>
+    <button class="more" id="more" hidden>Show all trades</button>
+  </section>
+
+  <footer>
+    <p>Real trades on a Binance spot account, after fees. Only live trades are counted; rehearsal (shadow) trades
+      are left out. Amounts are shown as percentages only. "Account return" is each closed trade's profit or loss
+      as a share of the account when the lot was bought, compounded.</p>
+    <p>This page is updated once a day by the bot's server. Every update is a public commit, so past numbers
+      cannot be changed quietly. Raw data: <a href="stats.json">stats.json</a>.</p>
+    <p>Not financial advice. Past results do not predict future results.</p>
+  </footer>
+</div>
+
+<script>
+const COINS = { SOLUSDT: "SOL", ETHUSDT: "ETH", BTCUSDT: "BTC", AAVEUSDT: "AAVE", TRXUSDT: "TRX" };
+const ENTRIES = { touch: "Dip", dip: "Dip", breakout: "Breakout", pullback: "Pullback", pyramid: "Pyramid add",
+  manual: "Buy now", buy_now: "Buy now" };
+const EXITS = { protective_stop: "Stop-loss", trailing_stop: "Trailing stop", break_even: "Break-even",
+  trend_exit: "Trend line", parent_exit: "With parent lot", manual_close: "Closed by hand" };
+const coin = s => COINS[s] || s.replace(/USDT$/, "");
+const label = (map, v) => map[v] || (v ? v.replace(/_/g, " ").replace(/^./, c => c.toUpperCase()) : "—");
+const pct = (v, d = 2, sign = true) => v == null ? "—" : `${sign && v > 0 ? "+" : ""}${v.toFixed(d)}%`;
+const cls = v => v == null || v === 0 ? "" : v > 0 ? "up" : "down";
+const date = s => new Date(s).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+const dateTime = s => new Date(s).toLocaleString(undefined, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+const hold = m => m == null ? "—" : m < 60 ? `${m} min` : m < 2880 ? `${(m / 60).toFixed(1)} h` : `${(m / 1440).toFixed(1)} d`;
+const month = s => new Date(`${s}-01T00:00:00Z`).toLocaleDateString(undefined, { month: "short", year: "numeric", timeZone: "UTC" });
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+function tiles(s, data) {
+  const items = [
+    ["Account return", pct(s.total_return_pct), cls(s.total_return_pct), `${data.days_live} days live`],
+    ["Win rate", s.win_rate_pct == null ? "—" : `${s.win_rate_pct.toFixed(1)}%`, "", `${s.wins} won · ${s.losses} lost`],
+    ["Trades", s.trades, "", `${s.open_lots} open now`],
+    ["Worst drop", pct(s.max_drawdown_pct), cls(s.max_drawdown_pct), "peak to low, closed trades"],
+    ["Average win", pct(s.avg_win_pct), "up", "per trade"],
+    ["Average loss", pct(s.avg_loss_pct), "down", "per trade"],
+    ["Profit factor", s.profit_factor == null ? "—" : s.profit_factor.toFixed(2), "", "won ÷ lost"],
+    ["Average hold", s.avg_hold_hours == null ? "—" : `${s.avg_hold_hours} h`, "", "per trade"],
+  ];
+  document.getElementById("tiles").innerHTML = items.map(([k, v, c, sub]) =>
+    `<div class="tile"><div class="k">${k}</div><div class="v ${c}">${v}</div><div class="s">${sub}</div></div>`).join("");
+}
+
+function chart(points) {
+  const svg = document.getElementById("chart");
+  const W = svg.clientWidth || 800, H = svg.clientHeight || 260, pad = { l: 46, r: 12, t: 12, b: 26 };
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  if (points.length < 2) { svg.innerHTML = `<text x="${W / 2}" y="${H / 2}" text-anchor="middle" fill="var(--muted)">No closed trades yet</text>`; return; }
+  const xs = points.map(p => new Date(p.t).getTime()), ys = points.map(p => p.pct);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs);
+  let y0 = Math.min(0, ...ys), y1 = Math.max(0, ...ys);
+  const span = (y1 - y0) || 1; y0 -= span * .08; y1 += span * .08;
+  const X = t => pad.l + (t - x0) / ((x1 - x0) || 1) * (W - pad.l - pad.r);
+  const Y = v => pad.t + (y1 - v) / (y1 - y0) * (H - pad.t - pad.b);
+  const ticks = 4, grid = [];
+  for (let i = 0; i <= ticks; i++) {
+    const v = y0 + (y1 - y0) * i / ticks;
+    grid.push(`<line x1="${pad.l}" x2="${W - pad.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--grid)"/>` +
+      `<text x="${pad.l - 6}" y="${Y(v) + 4}" text-anchor="end" font-size="11" fill="var(--muted)">${v.toFixed(1)}%</text>`);
+  }
+  const line = points.map((p, i) => `${i ? "L" : "M"}${X(xs[i]).toFixed(1)} ${Y(p.pct).toFixed(1)}`).join(" ");
+  const area = `${line} L${X(x1)} ${Y(0)} L${X(x0)} ${Y(0)} Z`;
+  const first = new Date(x0), last = new Date(x1);
+  svg.innerHTML = `
+    <defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="var(--cyan)" stop-opacity=".22"/><stop offset="1" stop-color="var(--cyan)" stop-opacity="0"/></linearGradient></defs>
+    ${grid.join("")}
+    <line x1="${pad.l}" x2="${W - pad.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--muted)" stroke-opacity=".5" stroke-dasharray="3 4"/>
+    <path d="${area}" fill="url(#fill)"/>
+    <path d="${line}" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linejoin="round"/>
+    <text x="${pad.l}" y="${H - 6}" font-size="11" fill="var(--muted)">${date(first)}</text>
+    <text x="${W - pad.r}" y="${H - 6}" text-anchor="end" font-size="11" fill="var(--muted)">${date(last)}</text>`;
+}
+
+function table(id, head, rows, empty) {
+  const el = document.getElementById(id);
+  if (!rows.length) { el.innerHTML = `<tr><td class="empty">${empty}</td></tr>`; return; }
+  el.innerHTML = `<thead><tr>${head.map(h => h.startsWith("<") ? `<th style="text-align:left">${h.slice(1)}</th>` : `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.join("")}</tbody>`;
+}
+
+function render(data) {
+  const s = data.summary;
+  document.getElementById("updated").innerHTML =
+    `Live since <b>${data.live_since ? date(data.live_since) : "—"}</b><br>Updated ${dateTime(data.generated_at)}`;
+  tiles(s, data);
+  chart(data.curve);
+  table("months", ["Month", "Trades", "Win rate", "Return"], [...data.monthly].reverse().map(m =>
+    `<tr><td>${month(m.month)}</td><td>${m.trades}</td><td>${m.win_rate_pct == null ? "—" : m.win_rate_pct.toFixed(0) + "%"}</td>` +
+    `<td class="${cls(m.total_return_pct)}">${pct(m.total_return_pct)}</td></tr>`), "No closed trades yet");
+  table("coins", ["Coin", "Trades", "Win rate", "Avg trade", "Return"], data.coins.map(c =>
+    `<tr><td>${coin(c.symbol)}</td><td>${c.trades}</td><td>${c.win_rate_pct == null ? "—" : c.win_rate_pct.toFixed(0) + "%"}</td>` +
+    `<td class="${cls(c.avg_return_pct)}">${pct(c.avg_return_pct)}</td><td class="${cls(c.return_contribution_pct)}">${pct(c.return_contribution_pct)}</td></tr>`), "No trades yet");
+  table("open", ["Coin", "Bought", "<Way in", "Now", "Binance order"], data.open.map(o =>
+    `<tr><td>${coin(o.symbol)}</td><td>${dateTime(o.opened)}</td><td class="l">${label(ENTRIES, o.entry)}</td>` +
+    `<td class="${cls(o.unrealized_pct)}">${pct(o.unrealized_pct)}</td><td class="ids">${esc(o.entry_order)}</td></tr>`), "No open lots right now");
+  const trades = [...data.trades].reverse();
+  const row = t => `<tr><td>${dateTime(t.closed)}</td><td class="l">${coin(t.symbol)}</td><td class="l">${label(ENTRIES, t.entry)}</td>` +
+    `<td class="l">${label(EXITS, t.exit)}</td><td>${hold(t.minutes)}</td><td class="${cls(t.return_pct)}">${pct(t.return_pct)}</td>` +
+    `<td class="ids">${esc(t.entry_order)} → ${esc(t.exit_order) || "—"}</td></tr>`;
+  const head = ["Closed", "<Coin", "<Way in", "<Way out", "Held", "Return", "Binance orders"];
+  const LIMIT = 50;
+  table("trades", head, trades.slice(0, LIMIT).map(row), "No closed trades yet");
+  const more = document.getElementById("more");
+  if (trades.length > LIMIT) {
+    more.hidden = false;
+    more.onclick = () => { table("trades", head, trades.map(row), ""); more.hidden = true; };
+  }
+  window.addEventListener("resize", () => chart(data.curve));
+}
+
+fetch("stats.json", { cache: "no-cache" })
+  .then(r => { if (!r.ok) throw new Error(`stats.json: ${r.status}`); return r.json(); })
+  .then(render)
+  .catch(e => {
+    const box = document.getElementById("error");
+    box.hidden = false;
+    box.textContent = `The latest numbers could not be loaded (${e.message}).`;
+    document.getElementById("updated").textContent = "";
+  });
+</script>
+</body>
+</html>
