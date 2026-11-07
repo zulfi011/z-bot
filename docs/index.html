@@ -89,6 +89,9 @@ header#results { margin-top: 56px; padding-top: 8px; }
 .small { font-size: 13px; }
 html { scroll-behavior: smooth; }
 [hidden] { display: none !important; }
+.scroll-5 { max-height: 242px; overflow-y: auto; }
+.scroll-10 { max-height: 442px; overflow-y: auto; }
+tr.blank td { color: transparent; }
 @media (max-width: 760px) {
   .tiles { grid-template-columns: repeat(2, 1fr); }
   .two { grid-template-columns: 1fr; }
@@ -109,7 +112,6 @@ html { scroll-behavior: smooth; }
   <nav>
     <div class="word small" aria-label="Z-Bot"><img class="z-dark" src="zbot-z-dark.svg" alt=""><img class="z-light" src="zbot-z-light.svg" alt="">-Bot</div>
     <div class="links">
-      <a href="#results">Results</a>
       <a href="https://github.com/zulfi011/z-bot">GitHub</a>
       <a href="https://x.com/z_bot_dev">X</a>
     </div>
@@ -120,8 +122,7 @@ html { scroll-behavior: smooth; }
     <p class="lead">100+ strategy ideas tested. The few that survived trade on a real Binance account, and every
       result is published here, every day — red months included.</p>
     <div class="cta">
-      <a class="btn primary" href="#results">See live results</a>
-      <a class="btn" href="#notify">Get notified at release</a>
+      <a class="btn primary" href="#notify">Get notified at release</a>
     </div>
   </section>
 
@@ -157,11 +158,11 @@ html { scroll-behavior: smooth; }
   <section class="two">
     <div>
       <h2>By month</h2>
-      <div class="table-wrap"><table id="months"></table></div>
+      <div class="table-wrap scroll-5"><table id="months"></table></div>
     </div>
     <div>
       <h2>By coin</h2>
-      <div class="table-wrap"><table id="coins"></table></div>
+      <div class="table-wrap scroll-5"><table id="coins"></table></div>
     </div>
   </section>
 
@@ -172,7 +173,7 @@ html { scroll-behavior: smooth; }
 
   <section>
     <h2>Every trade</h2>
-    <div class="table-wrap"><table id="trades"></table></div>
+    <div class="table-wrap scroll-10" id="trades-wrap"><table id="trades"></table></div>
     <button class="more" id="more" hidden>Show all trades</button>
   </section>
 
@@ -190,12 +191,8 @@ html { scroll-behavior: smooth; }
   </section>
 
   <footer>
-    <p>Real trades on a Binance spot account, after fees. Only live trades are counted; rehearsal (shadow) trades
-      are left out. Amounts are shown as percentages only. "Account return" is each closed trade's profit or loss
-      as a share of the account when the lot was bought, compounded.</p>
-    <p>This page is updated once a day by the bot's server. Every update is a public commit, so past numbers
-      cannot be changed quietly. Raw data: <a href="stats.json">stats.json</a>.</p>
-    <p>Not financial advice. Past results do not predict future results.</p>
+    <p>Live trades only, after fees, updated daily. Raw data: <a href="stats.json">stats.json</a></p>
+    <p>Not financial advice.</p>
   </footer>
 </div>
 
@@ -283,10 +280,18 @@ function render(data) {
     `Live since <b>${data.live_since ? date(data.live_since) : "—"}</b><br>Updated ${dateTime(data.generated_at)}`;
   tiles(s, data);
   chart(data.curve);
-  table("months", ["Month", "Trades", "Win rate", "Return"], [...data.monthly].reverse().map(m =>
+  // Always at least five month rows; the box scrolls once there are more.
+  const monthRows = [...data.monthly].reverse().map(m =>
     `<tr><td>${month(m.month)}</td><td>${m.trades}</td><td>${m.win_rate_pct == null ? "—" : m.win_rate_pct.toFixed(0) + "%"}</td>` +
-    `<td class="${cls(m.total_return_pct)}">${pct(m.total_return_pct)}</td></tr>`), "No closed trades yet");
-  table("coins", ["Coin", "Trades", "Win rate", "Avg trade", "Return"], data.coins.map(c =>
+    `<td class="${cls(m.total_return_pct)}">${pct(m.total_return_pct)}</td></tr>`);
+  while (monthRows.length < 5) monthRows.push(`<tr class="blank"><td>—</td><td>—</td><td>—</td><td>—</td></tr>`);
+  table("months", ["Month", "Trades", "Win rate", "Return"], monthRows, "");
+  // Every traded coin is listed, including one that has not traded yet.
+  const coinRows = [...data.coins];
+  for (const symbol of Object.keys(COINS)) {
+    if (!coinRows.some(c => c.symbol === symbol)) coinRows.push({ symbol, trades: 0 });
+  }
+  table("coins", ["Coin", "Trades", "Win rate", "Avg trade", "Return"], coinRows.map(c =>
     `<tr><td>${coin(c.symbol)}</td><td>${c.trades}</td><td>${c.win_rate_pct == null ? "—" : c.win_rate_pct.toFixed(0) + "%"}</td>` +
     `<td class="${cls(c.avg_return_pct)}">${pct(c.avg_return_pct)}</td><td class="${cls(c.return_contribution_pct)}">${pct(c.return_contribution_pct)}</td></tr>`), "No trades yet");
   table("open", ["Coin", "Bought", "<Way in", "Now", "Binance order"], data.open.map(o =>
@@ -297,11 +302,12 @@ function render(data) {
     `<td class="l">${label(EXITS, t.exit)}</td><td>${hold(t.minutes)}</td><td class="${cls(t.return_pct)}">${pct(t.return_pct)}</td>` +
     `<td class="ids">${esc(t.entry_order)} → ${esc(t.exit_order) || "—"}</td></tr>`;
   const head = ["Closed", "<Coin", "<Way in", "<Way out", "Held", "Return", "Binance orders"];
-  const LIMIT = 50;
+  const LIMIT = 20;
   table("trades", head, trades.slice(0, LIMIT).map(row), "No closed trades yet");
   const more = document.getElementById("more");
   if (trades.length > LIMIT) {
     more.hidden = false;
+    more.textContent = `Show all ${trades.length} trades`;
     more.onclick = () => { table("trades", head, trades.map(row), ""); more.hidden = true; };
   }
   window.addEventListener("resize", () => chart(data.curve));
