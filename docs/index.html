@@ -90,7 +90,7 @@ header#results { margin-top: 56px; padding-top: 8px; }
 html { scroll-behavior: smooth; }
 [hidden] { display: none !important; }
 .scroll-5 { max-height: 242px; overflow-y: auto; }
-.scroll-10 { max-height: 442px; overflow-y: auto; }
+.scroll-20 { max-height: 842px; overflow-y: auto; }
 tr.blank td { color: transparent; }
 @media (max-width: 760px) {
   .tiles { grid-template-columns: repeat(2, 1fr); }
@@ -119,8 +119,8 @@ tr.blank td { color: transparent; }
 
   <section class="hero">
     <h1>Open-source crypto trading bot</h1>
-    <p class="lead">100+ strategy ideas tested. The few that survived trade on a real Binance account, and every
-      result is published here, every day — red months included.</p>
+    <p class="lead">100+ strategy ideas tested. The survivors trade on a real Binance account, with every result
+      published daily, red months included.</p>
     <div class="cta">
       <a class="btn primary" href="#notify">Get notified at release</a>
     </div>
@@ -173,8 +173,7 @@ tr.blank td { color: transparent; }
 
   <section>
     <h2>Every trade</h2>
-    <div class="table-wrap scroll-10" id="trades-wrap"><table id="trades"></table></div>
-    <button class="more" id="more" hidden>Show all trades</button>
+    <div class="table-wrap scroll-20" id="trades-wrap"><table id="trades"></table></div>
   </section>
 
   <section class="notify" id="notify">
@@ -192,7 +191,8 @@ tr.blank td { color: transparent; }
 
   <footer>
     <p>Live trades only, after fees, updated daily. Raw data: <a href="stats.json">stats.json</a></p>
-    <p>Not financial advice.</p>
+    <p>Not financial advice. These are past results from one account; they don't predict future returns, and
+      crypto trading can lose money.</p>
   </footer>
 </div>
 
@@ -302,14 +302,8 @@ function render(data) {
     `<td class="l">${label(EXITS, t.exit)}</td><td>${hold(t.minutes)}</td><td class="${cls(t.return_pct)}">${pct(t.return_pct)}</td>` +
     `<td class="ids">${esc(t.entry_order)} → ${esc(t.exit_order) || "—"}</td></tr>`;
   const head = ["Closed", "<Coin", "<Way in", "<Way out", "Held", "Return", "Binance orders"];
-  const LIMIT = 20;
-  table("trades", head, trades.slice(0, LIMIT).map(row), "No closed trades yet");
-  const more = document.getElementById("more");
-  if (trades.length > LIMIT) {
-    more.hidden = false;
-    more.textContent = `Show all ${trades.length} trades`;
-    more.onclick = () => { table("trades", head, trades.map(row), ""); more.hidden = true; };
-  }
+  // All trades, newest first; the box shows 20 and scrolls for the rest.
+  table("trades", head, trades.map(row), "No closed trades yet");
   window.addEventListener("resize", () => chart(data.curve));
 }
 
