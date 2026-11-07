@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Z-Bot Live Results</title>
+<title>Z-Bot · Open-source crypto trading bot</title>
 <meta name="description" content="Live results of Z-Bot, an open-source crypto trading bot. Real Binance spot trades, after fees, in percentages. Updated daily.">
-<meta property="og:title" content="Z-Bot Live Results">
+<meta property="og:title" content="Z-Bot · Open-source crypto trading bot">
 <meta property="og:description" content="Open-source crypto trading bot. Real Binance spot trades, after fees, updated daily.">
 <meta property="og:image" content="social-preview.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -63,21 +63,81 @@ td.l { text-align: left; }
 footer { margin-top: 36px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); padding-top: 16px; }
 footer p { margin: 6px 0; }
 .error { background: var(--panel); border: 1px solid var(--down); border-radius: 14px; padding: 16px; margin-top: 24px; }
+nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.word.small { font-size: 24px; }
+.links { display: flex; gap: 18px; font-size: 14px; }
+.links a { color: var(--muted); text-decoration: none; }
+.links a:hover { color: var(--text); }
+.hero { margin-top: 56px; max-width: 720px; }
+.hero h1 { font-size: 48px; line-height: 1.08; letter-spacing: -1.2px; margin: 0; }
+.lead { font-size: 18px; color: var(--muted); margin: 16px 0 0; }
+.cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+.btn { display: inline-block; padding: 11px 18px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel);
+  color: var(--text); text-decoration: none; font: inherit; font-weight: 600; cursor: pointer; }
+.btn.primary { background: var(--cyan); border-color: var(--cyan); color: #04121a; }
+.points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 44px; }
+.point { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+.point b { display: block; margin-bottom: 6px; }
+.point span { color: var(--muted); font-size: 14px; }
+header#results { margin-top: 56px; padding-top: 8px; }
+.section-title { font-size: 26px; text-transform: none; letter-spacing: -.4px; color: var(--text); font-weight: 700; margin: 0; }
+.notify { margin-top: 48px; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 22px; }
+.notify p { margin: 8px 0 0; }
+.waitlist { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+.waitlist input { flex: 1 1 240px; min-width: 0; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--line);
+  background: var(--bg); color: var(--text); font: inherit; }
+.small { font-size: 13px; }
+html { scroll-behavior: smooth; }
+[hidden] { display: none !important; }
 @media (max-width: 760px) {
   .tiles { grid-template-columns: repeat(2, 1fr); }
   .two { grid-template-columns: 1fr; }
   .updated { text-align: left; }
   .word { font-size: 30px; }
+  .word.small { font-size: 22px; }
   .chart { height: 200px; }
+  .hero { margin-top: 36px; }
+  .hero h1 { font-size: 34px; }
+  .lead { font-size: 16px; }
+  .points { grid-template-columns: 1fr; margin-top: 32px; }
+  .section-title { font-size: 22px; }
 }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
+  <nav>
+    <div class="word small" aria-label="Z-Bot"><img class="z-dark" src="zbot-z-dark.svg" alt=""><img class="z-light" src="zbot-z-light.svg" alt="">-Bot</div>
+    <div class="links">
+      <a href="#results">Results</a>
+      <a href="https://github.com/zulfi011/z-bot">GitHub</a>
+      <a href="https://x.com/z_bot_dev">X</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <h1>Open-source crypto trading bot</h1>
+    <p class="lead">100+ strategy ideas tested. The few that survived trade on a real Binance account, and every
+      result is published here, every day — red months included.</p>
+    <div class="cta">
+      <a class="btn primary" href="#results">See live results</a>
+      <a class="btn" href="#notify">Get notified at release</a>
+    </div>
+  </section>
+
+  <section class="points">
+    <div class="point"><b>Tested before it trades</b><span>Each idea must hold up on data it was never tuned on.
+      Most don't — the rejected ones are part of the release.</span></div>
+    <div class="point"><b>Protected on the exchange</b><span>Every open position has its stop-loss parked on Binance
+      itself, so a server crash or restart doesn't leave it unguarded.</span></div>
+    <div class="point"><b>Open source</b><span>The bot, the dashboard and the research are being prepared for public
+      release on GitHub.</span></div>
+  </section>
+
+  <header id="results">
     <div>
-      <div class="word" aria-label="Z-Bot"><img class="z-dark" src="zbot-z-dark.svg" alt=""><img class="z-light" src="zbot-z-light.svg" alt="">-Bot</div>
-      <div class="tag">Open-source crypto trading bot · live results</div>
+      <h2 class="section-title">Live results</h2>
+      <div class="tag">Real trades, after fees, in percentages</div>
     </div>
     <div class="updated" id="updated">Loading…</div>
   </header>
@@ -116,6 +176,19 @@ footer p { margin: 6px 0; }
     <button class="more" id="more" hidden>Show all trades</button>
   </section>
 
+  <section class="notify" id="notify">
+    <h2 class="section-title">Get notified at release</h2>
+    <p class="muted">One email when the code and research go public on GitHub, then only major updates.
+      Unsubscribe any time.</p>
+    <form id="waitlist" class="waitlist" method="post" target="popupwindow" hidden>
+      <input type="email" name="email" required placeholder="you@example.com" aria-label="Email address">
+      <button class="btn primary" type="submit">Notify me</button>
+    </form>
+    <p class="muted small" id="waitlist-off">Sign-up opens soon. Meanwhile, follow
+      <a href="https://x.com/z_bot_dev">@z_bot_dev</a> or watch the repo on
+      <a href="https://github.com/zulfi011/z-bot">GitHub</a>.</p>
+  </section>
+
   <footer>
     <p>Real trades on a Binance spot account, after fees. Only live trades are counted; rehearsal (shadow) trades
       are left out. Amounts are shown as percentages only. "Account return" is each closed trade's profit or loss
@@ -127,8 +200,18 @@ footer p { margin: 6px 0; }
 </div>
 
 <script>
+// Waitlist: set this to the Buttondown username and the sign-up form appears. Emails go to Buttondown only.
+const BUTTONDOWN_USER = "";
+if (BUTTONDOWN_USER) {
+  const form = document.getElementById("waitlist");
+  form.action = `https://buttondown.com/api/emails/embed-subscribe/${BUTTONDOWN_USER}`;
+  form.onsubmit = () => window.open(`https://buttondown.com/${BUTTONDOWN_USER}`, "popupwindow");
+  form.hidden = false;
+  document.getElementById("waitlist-off").hidden = true;
+}
+
 const COINS = { SOLUSDT: "SOL", ETHUSDT: "ETH", BTCUSDT: "BTC", AAVEUSDT: "AAVE", TRXUSDT: "TRX" };
-const ENTRIES = { touch: "Dip", dip: "Dip", breakout: "Breakout", pullback: "Pullback", pyramid: "Pyramid add",
+const ENTRIES = { signal: "Dip", touch: "Dip", dip: "Dip", breakout: "Breakout", pullback: "Pullback", pyramid: "Pyramid add",
   manual: "Buy now", buy_now: "Buy now" };
 const EXITS = { protective_stop: "Stop-loss", trailing_stop: "Trailing stop", break_even: "Break-even",
   trend_exit: "Trend line", parent_exit: "With parent lot", manual_close: "Closed by hand" };
