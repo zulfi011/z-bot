@@ -1,4 +1,4 @@
-name: sol-paper-trading
+name: z-bot
 
 x-backend: &backend
   build:
@@ -102,5 +102,3 @@ services:
 
 volumes:
   postgres_data:
-    # Pin the existing volume independently of the directory used to launch Compose.
-    name: sol-paper-trading_postgres_data
