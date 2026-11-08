@@ -502,3 +502,43 @@ button.link { border: 0; background: none; color: var(--accent); padding: 4px; f
 .money-card .coin-row.off .coin-id, .money-card .coin-row.off .coin-now { opacity: .55; }
 /* On a coin page, lots held by other coins in the shared pot are shown faded. */
 .slot.filled.other { opacity: .5; }
+
+/* Attach Binance: yellow top-bar button, attached chip, and the popup's steps and form */
+.binance-attach, .binance-submit { background: var(--bnb); color: #1e2026; border: 1px solid transparent; font-weight: 700; }
+.binance-attach { display: inline-flex; align-items: center; gap: 7px; height: 38px; padding: 0 13px; border-radius: 12px; font-size: 13.5px; white-space: nowrap; }
+.binance-attach:hover, .binance-submit:hover:not(:disabled) { filter: brightness(1.06); }
+.binance-attach:focus-visible, .binance-submit:focus-visible, .binance-chip:focus-visible { outline: 2px solid var(--bnb); outline-offset: 2px; }
+.binance-attach .short { display: none; }
+@media (max-width: 560px) { .binance-attach .long { display: none; } .binance-attach .short { display: inline; } }
+@media (max-width: 400px) { .binance-attach { padding: 0 10px; } .binance-attach svg { display: none; } }
+.binance-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 999px;
+  background: var(--panel); border: 1px solid color-mix(in srgb, var(--bnb) 55%, var(--line)); }
+.binance-chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--bnb); }
+.binance-submit { border-radius: 12px; padding: 10px 14px; min-height: 42px; }
+
+.segmented { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; margin: 12px 0 4px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; }
+.segmented button { border: 0; background: none; border-radius: 9px; padding: 8px 10px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.segmented button.active { background: var(--panel); color: var(--text); box-shadow: 0 1px 3px rgba(0, 0, 0, .18); }
+
+.steps { list-style: none; padding: 0; margin: 14px 0 6px; display: grid; gap: 12px; }
+.step { display: grid; grid-template-columns: 26px 1fr; gap: 10px; font-size: 13.5px; }
+.step b { font-size: 14px; }
+.step-n { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 12.5px; font-weight: 700;
+  background: color-mix(in srgb, var(--bnb) 20%, transparent); color: var(--bnb); }
+:root[data-theme="light"] .step-n { color: #8a6500; }
+.step-body { color: var(--muted); margin-top: 2px; }
+.step-body a { color: var(--accent); font-weight: 600; }
+.step-body b { font-size: inherit; color: var(--text); font-weight: 600; }
+.bullets { margin: 4px 0 0; padding-left: 18px; display: grid; gap: 4px; }
+.ip-copy { display: inline-flex; align-items: baseline; gap: 6px; font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--text);
+  background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; }
+.ip-copy small { font-family: Inter, system-ui, sans-serif; color: var(--accent); font-size: 11px; }
+
+.reach { display: flex; gap: 8px; align-items: baseline; font-size: 13px; margin: 10px 0 0; }
+.reach i { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); transform: translateY(-1px); }
+.reach.ok i { background: var(--up); } .reach.bad { color: var(--down); } .reach.bad i { background: var(--down); }
+.secret-input { display: flex; gap: 6px; }
+.secret-input input { flex: 1; min-width: 0; }
+.small-button { min-height: 0 !important; padding: 0 12px !important; }
+.attached-line { display: flex; align-items: center; gap: 8px; font-weight: 600; margin: 12px 0 4px; }
+.attached-line i { width: 9px; height: 9px; border-radius: 50%; background: var(--up); }

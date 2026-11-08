@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { control, LockedError, lockDevice, sessionStatus, unlockDevice, type CoinView, type Dashboard, type DeviceSession, type Position } from "./api";
+import { control, credentialsStatus, LockedError, lockDevice, sessionStatus, unlockDevice, type BinanceCredentials, type CoinView, type Dashboard, type DeviceSession, type Position } from "./api";
+import { BinanceSheet } from "./binance";
 import { amount, n, pct, price, signedUsd, time, tone, usd } from "./format";
 import { Info, Sheet } from "./ui";
 
@@ -12,7 +13,8 @@ type SheetState =
   | { kind: "trading-mode"; mode: "off" | "shadow" | "live" }
   | { kind: "cancel"; requestId: string; what: string }
   | { kind: "unlock" }
-  | { kind: "device" };
+  | { kind: "device" }
+  | { kind: "binance" };
 
 type Controls = {
   open: (sheet: SheetState) => void;
@@ -21,10 +23,12 @@ type Controls = {
   session: DeviceSession | null;
   /** The server said this device is locked: show the unlock step, then come back to what was being done. */
   locked: () => void;
+  /** Whether a Binance key is attached (null until known). */
+  binance: BinanceCredentials | null;
 };
 
 const ControlsContext = createContext<Controls>({
-  open: () => undefined, flash: null, dismissFlash: () => undefined, session: null, locked: () => undefined,
+  open: () => undefined, flash: null, dismissFlash: () => undefined, session: null, locked: () => undefined, binance: null,
 });
 export const useControls = () => useContext(ControlsContext);
 
@@ -265,7 +269,7 @@ export function DeviceLockButton() {
     {session.unlocked ? UNLOCKED_ICON : LOCKED_ICON}</button>;
 }
 
-const NEEDS_UNLOCK = new Set<SheetState["kind"]>(["pot", "entry-module", "buy-now", "close", "trading", "trading-mode", "cancel"]);
+const NEEDS_UNLOCK = new Set<SheetState["kind"]>(["pot", "entry-module", "buy-now", "close", "trading", "trading-mode", "cancel", "binance"]);
 
 export function ControlsProvider({ data, refresh, children }: { data: Dashboard | null; refresh: () => void; children: ReactNode }) {
   const [sheet, setSheet] = useState<SheetState | null>(null);
@@ -274,7 +278,10 @@ export function ControlsProvider({ data, refresh, children }: { data: Dashboard 
   // What the user was trying to do when the unlock step appeared; it opens again right after unlocking.
   const [pending, setPending] = useState<SheetState | null>(null);
 
+  const [binance, setBinance] = useState<BinanceCredentials | null>(null);
+
   useEffect(() => { sessionStatus().then(setSession).catch(() => setSession(null)); }, []);
+  useEffect(() => { credentialsStatus().then(setBinance).catch(() => setBinance(null)); }, []);
 
   const showFlash = useCallback((message: string) => {
     setFlash(message);
@@ -284,18 +291,20 @@ export function ControlsProvider({ data, refresh, children }: { data: Dashboard 
   const done = useCallback((message: string) => { setSheet(null); showFlash(message); refresh(); }, [refresh, showFlash]);
   const dismissFlash = useCallback(() => setFlash(null), []);
   const open = useCallback((next: SheetState) => {
+    // Going live needs a Binance account: show how to attach one instead.
+    if (next.kind === "trading-mode" && next.mode === "live" && binance && !binance.attached) next = { kind: "binance" };
     if (NEEDS_UNLOCK.has(next.kind) && session && session.controls_enabled && !session.unlocked) {
       setPending(next); setSheet({ kind: "unlock" });
       return;
     }
     setSheet(next);
-  }, [session]);
+  }, [session, binance]);
   const locked = useCallback(() => {
     setSession(current => current ? { ...current, unlocked: false, expires_at: null } : current);
     setPending(sheet && NEEDS_UNLOCK.has(sheet.kind) ? sheet : null);
     setSheet({ kind: "unlock" });
   }, [sheet]);
-  const value = useMemo(() => ({ open, flash, dismissFlash, session, locked }), [open, flash, dismissFlash, session, locked]);
+  const value = useMemo(() => ({ open, flash, dismissFlash, session, locked, binance }), [open, flash, dismissFlash, session, locked, binance]);
 
   let title = "";
   let body: ReactNode = null;
@@ -319,6 +328,10 @@ export function ControlsProvider({ data, refresh, children }: { data: Dashboard 
         return "This device is locked. Viewing still works; buttons will ask to unlock.";
       }}
       onDone={done} />;
+  } else if (sheet?.kind === "binance") {
+    title = binance?.attached ? "Your Binance account" : "Attach your Binance account";
+    body = <BinanceSheet credentials={binance} live={data?.trading.mode === "live"} onCancel={close}
+      onChanged={(next, message) => { setBinance(next); done(message); }} />;
   } else if (sheet?.kind === "entry-module") {
     title = `${MODULE_TEXT[sheet.module].title} · ${sheet.coin.label}`;
     body = <EntryModuleSheet coin={sheet.coin} module={sheet.module} data={data} onDone={done} />;

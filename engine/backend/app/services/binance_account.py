@@ -144,6 +144,13 @@ def build(client: BinanceClient, symbols: list[str], prices: dict[str, Decimal],
     }
 
 
+def forget() -> None:
+    """Drop the cached view (after a key is attached or removed)."""
+    global _cached
+    with _lock:
+        _cached = None
+
+
 def snapshot(client: BinanceClient, symbols: list[str], prices: dict[str, Decimal], names: dict[str, str],
              force: bool = False) -> dict:
     """Cached account view; failures are returned (never raised) so the dashboard can explain them."""
@@ -153,8 +160,8 @@ def snapshot(client: BinanceClient, symbols: list[str], prices: dict[str, Decima
             return _cached[1]
     if not client.configured:
         result = {"connected": False, "state": "not_configured",
-                  "message": "No Binance API key on this server yet. Add BINANCE_API_KEY and BINANCE_API_SECRET to "
-                             "/opt/z-bot/.env and restart the app.",
+                  "message": "No Binance account attached yet. Use the yellow \"Attach Binance account\" button at "
+                             "the top of the dashboard.",
                   "checked_at": datetime.now(timezone.utc).isoformat()}
     else:
         try:

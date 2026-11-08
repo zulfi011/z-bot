@@ -11,7 +11,7 @@ import hashlib
 import hmac
 import json
 import time
-from typing import Any
+from typing import Any, Callable
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request
@@ -49,14 +49,29 @@ class BinanceError(RuntimeError):
 
 
 class BinanceClient:
-    def __init__(self, api_key: str, api_secret: str, base_url: str = "https://api.binance.com",
-                 recv_window_ms: int = 5000) -> None:
-        self._key = api_key.strip()
-        self._secret = api_secret.strip().encode()
+    def __init__(self, api_key: str = "", api_secret: str = "", base_url: str = "https://api.binance.com",
+                 recv_window_ms: int = 5000,
+                 credentials: Callable[[], tuple[str, str] | None] | None = None) -> None:
+        # `credentials` is asked on every request (a key attached from the dashboard); the fixed key is the fallback.
+        self._fixed = (api_key.strip(), api_secret.strip())
+        self._provider = credentials
         self.base_url = base_url.rstrip("/")
         self.recv_window_ms = recv_window_ms
         self._time_offset_ms = 0
         self._offset_checked_at = 0.0
+
+    @property
+    def _credentials(self) -> tuple[str, str]:
+        found = self._provider() if self._provider else None
+        return found or self._fixed
+
+    @property
+    def _key(self) -> str:
+        return self._credentials[0]
+
+    @property
+    def _secret(self) -> bytes:
+        return self._credentials[1].encode()
 
     @property
     def configured(self) -> bool:

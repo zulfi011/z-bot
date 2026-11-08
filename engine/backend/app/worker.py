@@ -4,6 +4,7 @@ import time
 from datetime import datetime, timedelta, timezone
 from threading import Event
 
+from app.core import credentials
 from app.core.settings import get_settings
 from app.core.strategy import load_strategies
 from app.db.session import get_engine
@@ -124,7 +125,7 @@ def main() -> None:
                  ((symbol, PullbackService(engine, strategy)) for symbol, strategy in strategies.items())
                  if service.enabled}
     client = BinanceClient(settings.binance_api_key, settings.binance_api_secret, settings.binance_api_url,
-                           settings.binance_recv_window_ms)
+                           settings.binance_recv_window_ms, credentials=credentials.from_file)
     with engine.begin() as connection:
         mode = str(read_settings(connection).get("trading_mode", "shadow"))
     exchange = BinanceExchange(client, live=mode == "live")

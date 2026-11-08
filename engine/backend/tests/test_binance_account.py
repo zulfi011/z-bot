@@ -95,4 +95,4 @@ def test_a_rejected_key_is_reported_not_raised(monkeypatch):
 
 def test_without_a_key_the_dashboard_is_told_what_to_do():
     result = binance_account.snapshot(BinanceClient("", ""), ["ETHUSDT"], {}, {}, force=True)
-    assert result["state"] == "not_configured" and "BINANCE_API_KEY" in result["message"]
+    assert result["state"] == "not_configured" and "Attach Binance account" in result["message"]

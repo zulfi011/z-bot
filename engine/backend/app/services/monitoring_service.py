@@ -9,6 +9,7 @@ from decimal import Decimal
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
+from app.core import credentials
 from app.services.live_execution_service import STATE_KEY, coin_label, read_pot, read_settings
 
 # How far back a health check looks for candles. Long enough to spot a real gap, short enough to stay an
@@ -130,7 +131,9 @@ class MonitoringService:
                 conditions["not_live"] = {
                     "severity": "warning" if mode == "shadow" else "critical",
                     "title": "Trading is not live" if mode == "shadow" else "All trading is stopped",
-                    "message": ("The bot is in shadow mode: it works out every order but sends nothing to Binance."
+                    "message": (("The bot is in shadow mode: it works out every order but sends nothing to Binance. "
+                                 + ("Switch to Live when you are ready." if credentials.attached()
+                                    else "Attach your Binance account to trade for real."))
                                 if mode == "shadow" else "Nothing will be bought or sold until you switch trading on."),
                     "details": {"trading_mode": mode}}
             loss_limit = Decimal(str(settings.get("daily_loss_limit_usd") or "0"))

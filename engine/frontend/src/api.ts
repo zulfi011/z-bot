@@ -290,7 +290,16 @@ export async function control(path: string, method = "POST", body?: unknown): Pr
   if (response.status === 403) throw new LockedError("This device is locked.");
   if (!response.ok) {
     const detail = (result as { detail?: unknown }).detail;
-    throw new Error(typeof detail === "string" ? detail : Array.isArray(detail) ? "Check the amount and try again" : `Request failed (${response.status})`);
+    throw new Error(typeof detail === "string" ? detail : Array.isArray(detail) ? "Check what you entered and try again" : `Request failed (${response.status})`);
   }
   return result as Record<string, unknown>;
 }
+
+/** Whether a Binance key is attached. The secret never comes back; the key only as a short hint. */
+export type BinanceCredentials = { attached: boolean; source: "dashboard" | "environment" | null; key_hint: string | null };
+
+export const credentialsStatus = () => getJson<BinanceCredentials>("/api/v1/binance/credentials");
+export const reachability = () => getJson<Reachability>("/api/v1/binance/reachability");
+export const attachBinance = (api_key: string, api_secret: string) =>
+  control("/api/v1/binance/credentials", "POST", { api_key, api_secret }) as Promise<BinanceCredentials>;
+export const detachBinance = () => control("/api/v1/binance/credentials", "DELETE") as Promise<BinanceCredentials>;

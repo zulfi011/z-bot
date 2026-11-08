@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { COIN_ORDER, coinLabel, getJson, type Dashboard, type Interval } from "./api";
 import { ControlsProvider, useControls, DeviceLockButton } from "./controls";
+import { AttachBinanceButton } from "./binance";
 import { ago, pct, tone } from "./format";
 import { MainPage } from "./MainPage";
 import { CoinPage } from "./CoinPage";
@@ -21,6 +22,11 @@ const stored = <T extends string>(key: string, fallback: T, allowed: T[]): T => 
   catch { return fallback; }
 };
 const store = (key: string, value: string) => { try { localStorage.setItem(key, value); } catch { /* ignore */ } };
+
+function BinanceButton() {
+  const { binance, open } = useControls();
+  return <AttachBinanceButton credentials={binance} onOpen={() => open({ kind: "binance" })} />;
+}
 
 function Flash() {
   const { flash, dismissFlash } = useControls();
@@ -107,6 +113,7 @@ export default function App() {
           <strong className="wordmark" aria-label="Z-Bot"><img className="logo-z on-dark" src="/zbot-z-dark.svg" alt="" /><img className="logo-z on-light" src="/zbot-z-light.svg" alt="" />-Bot</strong>
           <small>{coins.length} coins</small></div></div>
         <div className="top-actions">
+          <BinanceButton />
           <span className={`live ${live ? "on" : "off"}`} title={data ? `Updated ${ago(data.generated_at)}` : "Connecting"}>
             <i />{live ? "Live" : error ? "Offline" : "Waiting"}</span>
           <DeviceLockButton />

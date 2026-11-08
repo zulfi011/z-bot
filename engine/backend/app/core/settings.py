@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     binance_api_url: str = "https://api.binance.com"
     binance_api_key: str = ""
     binance_api_secret: str = ""
+    # A key attached from the dashboard is kept here (see app/core/credentials.py).
+    binance_credentials_path: Path = Path("/app/secrets/binance.json")
     binance_recv_window_ms: int = 5000
     binance_websocket_url: str = "wss://data-stream.binance.vision:443/ws"
     market_data_backfill_days: int = 32

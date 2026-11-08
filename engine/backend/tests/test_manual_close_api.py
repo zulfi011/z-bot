@@ -27,11 +27,10 @@ def test_controls_reject_a_wrong_key_before_touching_the_database(controls):
     controls.begin.assert_not_called()
 
 
-def test_controls_are_disabled_without_a_server_key(monkeypatch):
+def test_controls_are_open_without_a_server_key(monkeypatch):
+    """No control key = the app only listens on this computer, so no lock."""
     monkeypatch.setattr(routes, "get_settings", lambda: SimpleNamespace(strategy_edit_token=""))
-    with pytest.raises(HTTPException) as error:
-        routes.close_position("p", "anything")
-    assert error.value.status_code == 503
+    routes._authorize(None, None)  # does not raise
 
 
 @pytest.mark.parametrize("position,expected", [(None, 404), ({"status": "closed"}, "closed")])

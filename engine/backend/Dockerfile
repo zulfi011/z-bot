@@ -20,7 +20,7 @@ COPY btc_strategy.json ./config/btc_strategy.json
 COPY aave_strategy.json ./config/aave_strategy.json
 COPY trx_strategy.json ./config/trx_strategy.json
 
-RUN chown -R paperbot:paperbot /app
+RUN mkdir -p /app/secrets && chown -R paperbot:paperbot /app
 
 EXPOSE 8000
 

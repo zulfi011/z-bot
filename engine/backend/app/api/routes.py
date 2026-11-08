@@ -5,6 +5,7 @@ from __future__ import annotations
 import csv
 import io
 import json
+import re
 import uuid
 from functools import lru_cache
 from datetime import datetime, timedelta, timezone
@@ -17,6 +18,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
+from app.core import credentials
 from app.core import control_session
 from app.domain import trend
 from app.domain.consolidation import ConsolidationConfig, build_bars, current_zone, zone_before
@@ -30,7 +32,7 @@ from app.domain.paper_execution import (
     Position, fill_exit,
 )
 from app.services import binance_account, binance_reachability
-from app.services.binance_client import BinanceClient
+from app.services.binance_client import BinanceClient, BinanceError
 from app.services.monitoring_service import bnb_round_trip_usd
 from app.services.live_execution_service import (
     SETTINGS_KEY, affordable_lot, coin_label, open_lot_total, read_allocation, read_pot, read_settings,
@@ -90,10 +92,14 @@ LOCKED = "This device is locked. Unlock it with your control key."
 
 
 def _authorize(key: str | None, session: str | None = None) -> None:
-    """An unlocked device (session cookie) or, for scripts, the key in the X-Control-Key header."""
+    """Open when no control key is set: the app only listens on this computer (127.0.0.1) by default.
+
+    On a server reachable by others, set STRATEGY_EDIT_TOKEN: the dashboard then shows a lock, and every control
+    needs an unlocked device (session cookie) or, for scripts, the key in the X-Control-Key header.
+    """
     configured = get_settings().strategy_edit_token
     if not configured:
-        raise HTTPException(status_code=503, detail="Controls are disabled until STRATEGY_EDIT_TOKEN is set on the server")
+        return
     # Called directly (tests, scripts) the FastAPI parameter defaults are markers, not values.
     key = key if isinstance(key, str) else None
     session = session if isinstance(session, str) else None
@@ -373,6 +379,8 @@ def set_trading_mode(body: TradingModeRequest, key: str | None = Header(default=
             session: str | None = Cookie(default=None, alias=control_session.COOKIE)) -> dict:
     """off = nothing opens or is bought, shadow = decisions are recorded but no orders are sent, live = real orders."""
     _authorize(key, session)
+    if body.mode == "live" and not credentials.attached():
+        raise HTTPException(status_code=409, detail="Attach your Binance account before switching to Live.")
     changes = {"trading_mode": body.mode}
     if body.daily_loss_limit_usd is not None:
         changes["daily_loss_limit_usd"] = str(body.daily_loss_limit_usd)
@@ -456,7 +464,70 @@ def readiness() -> dict:
 def _binance_client() -> BinanceClient:
     settings = get_settings()
     return BinanceClient(settings.binance_api_key, settings.binance_api_secret, settings.binance_api_url,
-                         settings.binance_recv_window_ms)
+                         settings.binance_recv_window_ms, credentials=credentials.from_file)
+
+
+class CredentialsRequest(BaseModel):
+    # Checked in the handler, not here: a validation error would echo the submitted secret back.
+    model_config = ConfigDict(extra="forbid")
+    api_key: str
+    api_secret: str
+
+
+KEY_FORMAT = re.compile(r"[A-Za-z0-9]{16,128}")
+
+
+def _credentials_view() -> dict:
+    found = credentials.current()
+    return {"attached": found is not None, "source": credentials.source(),
+            "key_hint": credentials.hint(found[0]) if found else None}
+
+
+@router.get("/binance/credentials")
+def credentials_status() -> dict:
+    """Whether a Binance key is attached, and where from. The secret is never returned; the key only as a hint."""
+    return _credentials_view()
+
+
+@router.post("/binance/credentials")
+def attach_credentials(body: CredentialsRequest, key: str | None = Header(default=None, alias="X-Control-Key"),
+            session: str | None = Cookie(default=None, alias=control_session.COOKIE)) -> dict:
+    """Check the key with Binance, refuse one that can withdraw, then keep it on this machine."""
+    _authorize(key, session)
+    if not (KEY_FORMAT.fullmatch(body.api_key.strip()) and KEY_FORMAT.fullmatch(body.api_secret.strip())):
+        raise HTTPException(status_code=400, detail="A Binance API key and secret are 16 to 128 letters and numbers. "
+                                                    "Copy them again from Binance.")
+    settings = get_settings()
+    candidate = BinanceClient(body.api_key, body.api_secret, settings.binance_api_url, settings.binance_recv_window_ms)
+    try:
+        account = candidate.signed_get("/api/v3/account", {"omitZeroBalances": "true"})
+    except BinanceError as error:
+        raise HTTPException(status_code=400, detail=f"Binance refused this key: {error.explanation}") from error
+    try:
+        restrictions = candidate.signed_get("/sapi/v1/account/apiRestrictions") or {}
+    except BinanceError:
+        restrictions = {}
+    if restrictions.get("enableWithdrawals"):
+        raise HTTPException(status_code=400, detail="This key can withdraw money. Z-Bot never needs that: edit the key on "
+                                                    "Binance, untick \"Enable Withdrawals\" and attach it again.")
+    if account.get("canTrade") is False or restrictions.get("enableSpotAndMarginTrading") is False:
+        raise HTTPException(status_code=400, detail="This key cannot trade. Edit it on Binance and tick "
+                                                    "\"Enable Spot & Margin Trading\".")
+    credentials.save(body.api_key, body.api_secret)
+    binance_account.forget()
+    return _credentials_view()
+
+
+@router.delete("/binance/credentials")
+def detach_credentials(key: str | None = Header(default=None, alias="X-Control-Key"),
+            session: str | None = Cookie(default=None, alias=control_session.COOKIE)) -> dict:
+    _authorize(key, session)
+    with get_engine().begin() as connection:
+        if str(read_settings(connection).get("trading_mode", "shadow")) == "live":
+            raise HTTPException(status_code=409, detail="Switch to Shadow before removing the key.")
+    credentials.remove()
+    binance_account.forget()
+    return _credentials_view()
 
 
 @router.get("/binance/account")
