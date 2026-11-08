@@ -5,7 +5,7 @@ import { ago, amount, duration, label, n, pct, price, signedUsd, time, tone, unt
 import { useControls } from "./controls";
 import { BnbCard, LotsCard, PositionCard, TradeList } from "./panels";
 import { SOURCE, sourceOf } from "./sources";
-import { Card, CoinToken, Empty, Info, ScrollList, Stat, Tabs } from "./ui";
+import { Card, CoinToken, Empty, Info, ScrollList, Stat, Tabs, Tip } from "./ui";
 
 const INTERVALS: { value: Interval; label: string }[] = [
   { value: "3m", label: "3m" }, { value: "15m", label: "15m" }, { value: "1h", label: "1h" },
@@ -370,7 +370,11 @@ export function CoinPage({ data, coin, interval, onInterval, chartMode, onChartM
   const { open, binance } = useControls();
   return <div className="page">
     <section className={`hero ${name.toLowerCase()}`}>
-      <span className="eyebrow"><CoinToken symbol={coin.symbol} />{name} / USDT · {ago(coin.market.open_time && new Date(new Date(coin.market.open_time).getTime() + 60_000).toISOString())}</span>
+      <div className="hero-top">
+        <span className="eyebrow"><CoinToken symbol={coin.symbol} />{name} / USDT · {ago(coin.market.open_time && new Date(new Date(coin.market.open_time).getTime() + 60_000).toISOString())}</span>
+        {!coin.trading_enabled && <Tip text={`${name} is switched off. No new ${name} lots open until you switch it on${coin.positions.length ? "; open lots still close by their stop or trailing stop" : ""}.`}>
+          <button className="primary small" onClick={() => open({ kind: "trading", coin, enable: true })}>Switch on</button></Tip>}
+      </div>
       <strong className="hero-value">{price(coin.market.price)}</strong>
       <div className="hero-sub"><span className={`pill ${tone(coin.market.change_24h_pct)}`}>{pct(coin.market.change_24h_pct)} 24h</span>
         <span className={`pill ${tone(n(coin.money.realized_pnl_usd) + n(coin.money.unrealized_pnl_usd))}`}>{signedUsd(n(coin.money.realized_pnl_usd) + n(coin.money.unrealized_pnl_usd))} {name} P&amp;L</span></div>
@@ -380,8 +384,6 @@ export function CoinPage({ data, coin, interval, onInterval, chartMode, onChartM
       </div>
     </section>
 
-    {!coin.trading_enabled && <div className="banner warning paused-banner"><p><b>{name} is switched off.</b> No new {name} lots open until you switch it on{coin.positions.length ? "; open lots still close by their stop or trailing stop" : ""}.</p>
-      <button className="secondary small" onClick={() => open({ kind: "trading", coin, enable: true })}>Switch on</button></div>}
     <RightNow coin={coin} />
 
     <Card title={`${name} price chart`} action={<Tabs label="Chart style" value={chartMode} onChange={onChartMode}
