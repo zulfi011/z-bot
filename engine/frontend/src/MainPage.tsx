@@ -4,7 +4,7 @@ import { LeaderboardCard } from "./Leaderboard";
 import { EquityChart } from "./charts";
 import { useControls } from "./controls";
 import { ago, n, pct, signedUsd, tone, usd } from "./format";
-import { BnbCard, MoneyCard, PositionCard, RequestList, TradeList, TradingModeCard } from "./panels";
+import { BnbCard, LotCard, MoneyCard, RequestList, TradeList, TradingModeCard } from "./panels";
 import { Card, Empty, Info, ScrollList, Stat, Tabs } from "./ui";
 
 const PERIODS: { value: Period; label: string }[] = [
@@ -100,9 +100,10 @@ export function MainPage({ data, onOpenCoin }: { data: Dashboard; onOpenCoin: (s
     <MoneyCard data={data} />
     <LeaderboardCard data={data} onOpenCoin={onOpenCoin} />
 
-    <Card title="Open lots" info="Every lot the bot holds right now, with its stop and trailing levels. Close sells it on Binance and shows the result first.">
+    <Card className="open-lots" title={<>Open lots{data.positions.length ? <span className="count">{data.positions.length}</span> : null}</>}
+      info="Every lot the bot holds right now. Close sells it and shows the result first. Open a coin's page for the full detail.">
       {data.positions.length
-        ? <div className="positions">{data.positions.map(position => <PositionCard key={position.position_id} position={position} data={data} expanded={false} showCoin />)}</div>
+        ? <div className="lot-strip">{data.positions.map(position => <LotCard key={position.position_id} position={position} data={data} />)}</div>
         : <Empty title="No open lots">Each coin waits for its price to touch its average from below.</Empty>}
     </Card>
 

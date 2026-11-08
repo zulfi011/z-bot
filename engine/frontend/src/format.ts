@@ -21,21 +21,24 @@ export const amount = (value: Num | null | undefined) => {
                                             minimumFractionDigits: size >= 100 ? 1 : size >= 1 ? 4 : 6 });
 };
 
+/** A value that shows as 0.00 is neither a gain nor a loss: no minus sign, no red or green. */
+const roundsToZero = (value: Num, digits = 2) => Math.abs(n(value)) < 0.5 / 10 ** digits;
+
 export const signedUsd = (value: Num | null | undefined, digits = 2) => {
   if (value == null) return "—";
-  const amount = n(value);
+  const amount = roundsToZero(value, digits) ? 0 : n(value);
   return `${amount >= 0 ? "+" : "−"}$${Math.abs(amount).toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits })}`;
 };
 
 export const pct = (value: Num | null | undefined, digits = 2, signed = true) => {
   if (value == null) return "—";
-  const amount = n(value);
+  const amount = roundsToZero(value, digits) ? 0 : n(value);
   return `${signed && amount > 0 ? "+" : amount < 0 ? "−" : ""}${Math.abs(amount).toFixed(digits)}%`;
 };
 
 export const bnbAmount = (value: Num | null | undefined) => (value == null ? "—" : `${n(value).toFixed(5)} BNB`);
 
-export const tone = (value: Num | null | undefined) => (value == null ? "" : n(value) > 0 ? "up" : n(value) < 0 ? "down" : "");
+export const tone = (value: Num | null | undefined) => (value == null || roundsToZero(value) ? "" : n(value) > 0 ? "up" : "down");
 
 export const time = (value: string | null | undefined, withDate = false) => {
   if (!value) return "—";

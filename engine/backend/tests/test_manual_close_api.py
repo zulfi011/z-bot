@@ -78,7 +78,7 @@ def test_the_pot_is_saved_as_one_setting_for_every_coin(controls):
     assert result["status"] == "applied" and result["lots"] == 5 and result["open_lots"] == 2
     saved = [call.args[1] for call in connection.execute.call_args_list
              if len(call.args) > 1 and "engine_state" in str(call.args[0])]
-    assert json.loads(saved[0]["value"]) == {"pot_lots": 5, "pot_lot_size_usd": "120"}
+    assert json.loads(saved[0]["value"]) == {"pot_lots": 5, "pot_lot_size_usd": "120", "pot_set_by_user": True}
 
 
 def test_a_pot_lot_below_the_minimum_is_refused(controls):

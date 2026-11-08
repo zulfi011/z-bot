@@ -177,6 +177,10 @@ export type Dashboard = {
   money: {
     usdt_free: Num; budget_usd: Num; left_to_allocate_usd: Num; allocated_usd: Num; in_trades_usd: Num;
     pot: Pot;
+    /** The growth plan for the money there is (any amount); null below 3 minimum lots. */
+    suggested_pot: { lots: number; lot_size_usd: Num } | null;
+    /** True once the pot was set by hand; until then it follows the plan for the starting amount. */
+    pot_set_by_user: boolean;
     limits: { minimum_lot_usd: Num; maximum_lot_usd: Num; maximum_lots: number };
     coins: CoinMoney[];
   };

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { coinLabel, type CoinMoney, type CoinView, type ControlRequest, type Dashboard, type LotSlot, type Num, type Position, type Trade } from "./api";
-import { EXPLAIN, suggestedPot, useControls } from "./controls";
+import { EXPLAIN, useControls } from "./controls";
 import { ago, amount, bnbAmount, duration, label, n, pct, price, signedUsd, time, tone, usd } from "./format";
 import { sourceOf } from "./sources";
 import { Card, CoinToken, Empty, Info, ScrollList, Stat, Tip, Toggle } from "./ui";
@@ -41,13 +41,16 @@ export function MoneyCard({ data }: { data: Dashboard }) {
   const view = (symbol: string) => data.coins[symbol];
   const lotLabel = usd(pot.lot_size_usd, n(pot.lot_size_usd) % 1 ? 2 : 0);
   const short = pot.next_lot_usd != null && n(pot.next_lot_usd) < n(pot.lot_size_usd);
-  const suggestion = suggestedPot(n(money.budget_usd));
-  const differs = suggestion.lots !== pot.lots || suggestion.lot !== n(pot.lot_size_usd);
+  const plan = money.suggested_pot;
+  const differs = !!plan && (plan.lots !== pot.lots || n(plan.lot_size_usd) !== n(pot.lot_size_usd));
+  // Nothing to size the pot from yet: no starting amount and no Binance account, and never set by hand.
+  const unsized = !money.pot_set_by_user && n(money.budget_usd) <= 0;
   return <Card className="money-card" title="Shared pot"
     info="Every coin you switch on shares one set of lots. Whichever coin signals first takes the next free lot, so money never sits idle waiting for one coin. Everything stays in your Binance spot wallet."
-    action={<Tip text={EXPLAIN.pot}><button className="primary small" onClick={() => open({ kind: "pot" })}>Edit pot</button></Tip>}>
+    action={<button className="primary small" onClick={() => open({ kind: "pot" })}>Edit pot</button>}>
     <div className="stat-grid four">
-      <Stat label="Pot" value={`${pot.lots} × ${lotLabel}`} sub={`= ${usd(pot.total_usd)} · ${pot.coins_on} of ${money.coins.length} coins on`}
+      <Stat label="Pot" value={unsized ? "Not set yet" : `${pot.lots} × ${lotLabel}`}
+        sub={unsized ? "set a starting amount first" : `= ${usd(pot.total_usd)} · ${pot.coins_on} of ${money.coins.length} coins on`}
         info="Number of lots × money per lot. Change it with Edit pot." />
       <Stat label="Lots in use" value={`${pot.open_lots} / ${pot.lots}`} valueClass={pot.free_lots === 0 ? "warn" : undefined}
         sub={pot.free_lots ? `${pot.free_lots} free` : "all lots open"}
@@ -58,8 +61,8 @@ export function MoneyCard({ data }: { data: Dashboard }) {
       <Stat label="Your money" value={usd(money.budget_usd)} sub={data.shadow ? "shadow wallet" : data.binance.connected ? `${usd(money.usdt_free)} free + ${usd(money.in_trades_usd)} in lots` : "no Binance account attached"}
         info="Free USDT on Binance plus what the open lots cost." />
     </div>
-    {differs && n(money.budget_usd) > 0 && <p className="card-note">Growth plan for {usd(money.budget_usd, 0)}: <b>{suggestion.lots} × {usd(suggestion.lot, 0)}</b>.
-      {" "}<button className="link" onClick={() => open({ kind: "pot" })}>Change</button><Info text={EXPLAIN.growth} /></p>}
+    {differs && plan && <p className="card-note">Growth plan suggested for {usd(money.budget_usd, 0)}: <b>{plan.lots} × {usd(plan.lot_size_usd, 0)}</b>.
+      {" "}<button className="link" onClick={() => open({ kind: "pot" })}>Change</button></p>}
     <ScrollList visible={5}><div className="coin-rows">{money.coins.map(coin => <div key={coin.symbol} className={`coin-row ${coin.trading_enabled ? "" : "off"}`}>
       <div className="coin-id"><CoinToken symbol={coin.symbol} /><div><b>{coin.name}</b>
         <small>{coin.trading_enabled ? `on · shares the pot${entriesOn(coin) ? ` · ${entriesOn(coin)}` : ""}` : "off · no new trades"}</small></div></div>
@@ -171,6 +174,43 @@ export function LotsCard({ data, coin }: { data: Dashboard; coin: CoinView }) {
         onClick={() => open({ kind: "trading", coin, enable: !coin.trading_enabled })}>{coin.trading_enabled ? `Switch ${name} off` : `Switch ${name} on`}</button></Tip>
     </div>
   </Card>;
+}
+
+/** A small card for one open lot on the Main page; the full explanation lives on the coin's page. */
+export function LotCard({ position, data }: { position: Position; data: Dashboard }) {
+  const { open } = useControls();
+  const closing = data.requests.some(request => request.kind === "close_position" && request.position_id === position.position_id && request.status === "pending");
+  const riding = position.trailing_active && position.exit_mode === "trend";
+  const state = position.trend_exit_pending ? { text: "Selling next minute", cls: "warn" }
+    : riding ? { text: "Riding the trend", cls: "up" }
+      : position.trailing_active ? { text: "Trailing", cls: "up" } : { text: "Waiting to trail", cls: "muted" };
+  const source = sourceOf(position.entry_source);
+  return <article className="lot-card">
+    <header>
+      <span className="coin-badge"><CoinToken symbol={position.symbol} />{position.coin}</span>
+      <span className="lot-badge">Lot {position.lot_number}</span>
+      <span className={`tag source ${source.cls}`} title={`Bought by ${source.long}`}>{position.entry_source === "manual" ? "by you" : source.name}</span>
+    </header>
+    <div className="lot-pnl">
+      <b className={tone(position.unrealized_pnl_usd)}>{signedUsd(position.unrealized_pnl_usd)}</b>
+      <small className={tone(position.unrealized_pct)}>{pct(position.unrealized_pct)}</small>
+    </div>
+    <dl className="lot-prices">
+      <div><dt>Bought</dt><dd>{price(position.entry_fill_price)}</dd></div>
+      <div><dt>Now</dt><dd>{price(position.current_price)}</dd></div>
+      <div><dt>{riding ? "Floor" : "Stop"}</dt><dd className="down">{price(position.stop_price)}</dd></div>
+      <div><dt>{position.trailing_active ? (riding ? "Exit" : "Trail") : "Trail starts"}</dt>
+        <dd className="up">{riding ? "trend line" : price(position.trailing_active ? position.trail_price : position.activation_price)}</dd></div>
+    </dl>
+    {!position.trailing_active && <div className="progress thin" title="Progress to the trailing start">
+      <i style={{ width: `${Math.min(100, n(position.activation_progress_pct))}%` }} /></div>}
+    <footer>
+      <div><span className={`lot-state ${state.cls}`}>{state.text}</span>
+        <small>{usd(position.allocation_usd)} · {duration(position.bars_held)}</small></div>
+      {closing ? <span className="tag pending">Closing</span>
+        : <button className="danger small" onClick={() => open({ kind: "close", position })}>Close</button>}
+    </footer>
+  </article>;
 }
 
 export function PositionCard({ position, data, expanded = true, showCoin = false }:

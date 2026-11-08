@@ -30,3 +30,19 @@ def test_wallet_is_start_plus_closed_results_plus_open_lots_at_market(monkeypatc
 
 def test_shadow_buys_stop_when_the_pretend_money_runs_out():
     assert service.affordable_lot(Decimal("100"), Decimal("0")) is None
+
+
+def test_growth_plan_works_for_any_amount():
+    plan = lambda value: (lambda p: (p.lots, p.lot_size_usd) if p else None)(service.suggested_pot(Decimal(value)))
+    assert plan("20") is None                      # 3 lots would be under the $10 minimum
+    assert plan("30") == (3, Decimal("10"))
+    assert plan("250") == (3, Decimal("83"))       # below $300: 3 equal whole-dollar lots
+    assert plan("300") == (3, Decimal("100"))      # the tested plan from here
+    assert plan("499") == (4, Decimal("100"))
+    assert plan("500") == (5, Decimal("100"))
+    assert plan("1000") == (5, Decimal("200"))
+    assert plan("1099") == (5, Decimal("200"))
+    assert plan("10000") == (5, Decimal("2000"))
+    for value in ("30", "250", "300", "777", "1000", "123456"):
+        lots, lot = plan(value)
+        assert lots * lot <= Decimal(value)        # never suggests more than the money there is

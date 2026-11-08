@@ -64,6 +64,23 @@ def read_pot(connection: Connection) -> SharedPot:
     return SharedPot(int(settings.get("pot_lots") or 0), Decimal(str(settings.get("pot_lot_size_usd") or "0")))
 
 
+def suggested_pot(value: Decimal, minimum_lot: Decimal = Decimal("10")) -> SharedPot | None:
+    """The growth plan for this much money, for any amount.
+
+    From $300 it is the tested plan: 3 x $100, one more lot per extra $100 up to 5 lots, then +$20 on every lot
+    per extra $100 (so $1,000 -> 5 x $200). Below $300: 3 equal lots in whole dollars. None when 3 lots would be
+    under the minimum lot size.
+    """
+    if value < 3 * minimum_lot:
+        return None
+    if value < 300:
+        return SharedPot(3, (value / 3).quantize(Decimal("1"), rounding="ROUND_DOWN"))
+    steps = int((value - 300) // 100)
+    if steps <= 2:
+        return SharedPot(3 + steps, Decimal("100"))
+    return SharedPot(5, Decimal(100 + 20 * (steps - 2)))
+
+
 def open_lot_total(connection: Connection) -> int:
     """Open lots across every coin: they all come out of the one shared pot."""
     return int(connection.execute(text("SELECT count(*) FROM paper_positions WHERE status='open'")).scalar_one())

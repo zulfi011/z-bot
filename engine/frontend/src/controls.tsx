@@ -35,7 +35,7 @@ export const useControls = () => useContext(ControlsContext);
 
 export const EXPLAIN = {
   money: "All money stays in your Binance spot wallet. This app only decides when to buy and sell. Add or withdraw funds in Binance itself.",
-  growth: "Tested growth plan (backtest, all five coins, Oct 2024 – Sep 2026): start at 3 × $100. Each time the wallet grows by another $100, add one lot until there are 5. After that, add $20 to every lot for each further $100 (5 × $120, 5 × $140 …). You change it here by hand; the bot never changes it on its own.",
+  growth: "Growth plan: 3 × $100 at $300. Each further $100 adds a lot until there are 5, then $20 more on every lot ($1,000 → 5 × $200). Below $300 it is 3 equal lots. The pot follows it for your starting amount until you set the pot yourself; after that only you change it.",
   buyNow: "Buys one full lot at the market price right now, without waiting for a strategy signal, and parks the same stop on Binance. Use sparingly — it is outside the strategy.",
   entryModule: "Switches an extra way in off, lets it share the coin's lots, or gives it lots of its own. Its own lots are extra money from your pot that only this way in may spend — the core (the dip and Mode C) can never take them, and it can never take the core's.",
   pot: "One set of lots shared by every coin you switch on. Whichever coin signals first takes the next free lot; no coin has money of its own, so nothing sits idle. If losses leave less than a full lot, the last buy uses what is left. Nothing moves in Binance. Open lots keep their size; new lots use the new size.",
@@ -122,12 +122,6 @@ function TradingSheet({ coin, enable, data, onDone, onCancel }:
     onDone={onDone} />;
 }
 
-/** What the tested growth plan suggests for a pot of this size: 3 lots, one more per $100 up to 5, then +$20 a lot. */
-export function suggestedPot(value: number): { lots: number; lot: number } {
-  const steps = Math.max(0, Math.floor((value - 300) / 100));
-  return steps <= 2 ? { lots: 3 + steps, lot: 100 } : { lots: 5, lot: 100 + 20 * (steps - 2) };
-}
-
 function PotSheet({ data, onDone }: { data: Dashboard | null; onDone: (message: string) => void }) {
   const limits = data?.money.limits;
   const pot = data?.money.pot;
@@ -142,7 +136,8 @@ function PotSheet({ data, onDone }: { data: Dashboard | null; onDone: (message: 
   const shape = `${count} × ${usd(size, size % 1 ? 2 : 0)}`;
   const total = size * count;
   const unchanged = size === n(pot?.lot_size_usd) && count === pot?.lots;
-  const suggestion = suggestedPot(budget);
+  const plan = data?.money.suggested_pot;
+  const suggestion = plan ? { lots: plan.lots, lot: n(plan.lot_size_usd) } : null;
   const openNow = pot?.open_lots ?? 0;
   return <>
     <p className="sheet-text">{EXPLAIN.pot}</p>
@@ -159,9 +154,9 @@ function PotSheet({ data, onDone }: { data: Dashboard | null; onDone: (message: 
         <div className="preview-row"><span>Shared pot</span><b>{shape} = {usd(total)}</b></div>
         <div className="preview-row"><span>Your money (free USDT + open lots)</span><b>{usd(budget)}</b></div>
         <div className="preview-row"><span>Open lots now</span><b>{openNow}</b></div>
-        <div className="preview-row"><span>Growth plan suggests for {usd(budget, 0)}</span>
+        {suggestion && <div className="preview-row"><span>Growth plan suggested for {usd(budget, 0)}</span>
           <b><button type="button" className="link" onClick={() => { setLots(String(suggestion.lots)); setLotSize(String(suggestion.lot)); }}>
-            {suggestion.lots} × {usd(suggestion.lot, 0)}</button></b></div>
+            {suggestion.lots} × {usd(suggestion.lot, 0)}</button></b></div>}
         {total > budget + 0.01 && <p className="form-warning">The pot is {usd(total - budget)} more than you have. That is allowed: the last lot simply buys with whatever USDT is left, or waits.</p>}
         {count < openNow && <p className="form-warning">{openNow} lots are open now. They keep running; no new lot opens until fewer than {count} are open.</p>}
       </>}

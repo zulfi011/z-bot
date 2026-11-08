@@ -557,3 +557,21 @@ a.icon-button { color: inherit; text-decoration: none; }
 .hero-start { margin: 0 0 8px; color: var(--muted); font-size: 13px; display: flex; align-items: baseline; gap: 4px; }
 .hero-start b { color: var(--text); }
 button.link.inline { padding: 0; font-size: inherit; }
+
+/* Open lots on the Main page: full width, one row of small lot cards that scrolls sideways */
+@media (min-width: 980px) { .page > .open-lots { grid-column: 1 / -1; } }
+.card-head h2 .count { margin-left: 8px; font-size: 12px; font-weight: 700; padding: 1px 8px; border-radius: 999px; background: var(--panel-2); color: var(--muted); }
+.lot-strip { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x proximity; padding: 2px 2px 8px; margin: 0 -2px;
+  scrollbar-width: thin; overscroll-behavior-x: contain; }
+.lot-card { flex: 0 0 248px; scroll-snap-align: start; background: var(--panel-2); border: 1px solid var(--line); border-radius: 14px;
+  padding: 12px; display: grid; gap: 10px; align-content: start; }
+.lot-card header { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.lot-card header .tag { margin-left: auto; }
+.lot-pnl { display: flex; align-items: baseline; gap: 8px; }
+.lot-pnl b { font-size: 22px; letter-spacing: -.3px; } .lot-pnl small { font-size: 13px; font-weight: 600; }
+.lot-prices { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; margin: 0; }
+.lot-prices div { min-width: 0; } .lot-prices dt { font-size: 11px; color: var(--muted); } .lot-prices dd { margin: 0; font-size: 13.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.progress.thin { height: 4px; }
+.lot-card footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.lot-card footer > div { display: grid; min-width: 0; }
+.lot-state { font-size: 12.5px; font-weight: 700; } .lot-card footer small { font-size: 11.5px; color: var(--muted); }

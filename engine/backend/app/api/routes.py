@@ -36,7 +36,7 @@ from app.services.binance_client import BinanceClient, BinanceError
 from app.services.monitoring_service import bnb_round_trip_usd
 from app.services.live_execution_service import (
     SETTINGS_KEY, affordable_lot, coin_label, open_lot_total, read_allocation, read_pot, read_settings,
-    read_trading_enabled, shadow_account,
+    read_trading_enabled, shadow_account, suggested_pot,
 )
 
 
@@ -266,9 +266,16 @@ def buy_now(symbol: str, key: str | None = Header(default=None, alias="X-Control
         pot = read_pot(connection)
         if open_lot_total(connection) >= pot.lots:
             raise HTTPException(status_code=409, detail=f"All {pot.lots} shared lots are open.")
-        usdt = free_usdt(force=True)
+        settings = read_settings(connection)
+        if settings.get("trading_mode") == "live":
+            usdt, where = free_usdt(force=True), "Binance"
+        else:
+            # Shadow buys spend the shadow wallet (or are not limited by money until a starting amount is set),
+            # exactly as the engine decides them.
+            shadow = shadow_account(connection, settings)
+            usdt, where = (shadow["free"], "The shadow wallet") if shadow else (pot.lot_size_usd, "")
         if affordable_lot(pot.lot_size_usd, usdt) is None:
-            raise HTTPException(status_code=409, detail=f"Binance has ${usdt:.2f} free USDT, nothing left to buy with.")
+            raise HTTPException(status_code=409, detail=f"{where} has ${usdt:.2f} free USDT, nothing left to buy with.")
         return _insert_request(connection, "manual_buy", symbol=symbol)
 
 
@@ -281,7 +288,8 @@ def set_pot(body: PotRequest, key: str | None = Header(default=None, alias="X-Co
     minimum, maximum = Decimal(str(first["minimum_lot_size_usd"])), Decimal(str(first["maximum_lot_size_usd"]))
     if not minimum <= body.lot_size_usd <= maximum:
         raise HTTPException(status_code=422, detail=f"A lot must be between ${minimum:.0f} and ${maximum:.0f}.")
-    changes = {"pot_lots": body.lots, "pot_lot_size_usd": str(body.lot_size_usd)}
+    # Set by hand: from now on the pot no longer follows the growth plan when the starting amount changes.
+    changes = {"pot_lots": body.lots, "pot_lot_size_usd": str(body.lot_size_usd), "pot_set_by_user": True}
     with get_engine().begin() as connection:
         connection.execute(
             text("""INSERT INTO engine_state (key, value, updated_at) VALUES (:key, CAST(:value AS jsonb), now())
@@ -412,10 +420,16 @@ def set_trading_mode(body: TradingModeRequest, key: str | None = Header(default=
 def set_money_settings(body: MoneySettingsRequest, key: str | None = Header(default=None, alias="X-Control-Key"),
             session: str | None = Cookie(default=None, alias=control_session.COOKIE)) -> dict:
     _authorize(key, session)
-    changes = {name: str(value) for name, value in body.model_dump(exclude_none=True).items()}
+    changes: dict = {name: str(value) for name, value in body.model_dump(exclude_none=True).items()}
     if not changes:
         raise HTTPException(status_code=400, detail="Nothing to change.")
     with get_engine().begin() as connection:
+        # Until the user sets the pot by hand, it follows the growth plan for the shadow starting amount.
+        if body.shadow_start_usd and not read_settings(connection).get("pot_set_by_user"):
+            minimum = Decimal(str(next(iter(load_strategies().values()))["portfolio"]["minimum_lot_size_usd"]))
+            plan = suggested_pot(body.shadow_start_usd, minimum)
+            if plan:
+                changes.update(pot_lots=plan.lots, pot_lot_size_usd=str(plan.lot_size_usd))
         connection.execute(
             text("""INSERT INTO engine_state (key, value, updated_at) VALUES (:key, CAST(:value AS jsonb), now())
                     ON CONFLICT (key) DO UPDATE SET value = engine_state.value || EXCLUDED.value, updated_at=now()"""),
@@ -1229,6 +1243,10 @@ def dashboard(interval: str = Query(default="15m"), chart: str | None = Query(de
         ).mappings().all()]
         stats = _trade_stats(connection, None)
         budget = _budget(connection, usdt_free)
+        if shadow:
+            # Shadow mode: the money is the shadow wallet (free + what its open lots cost).
+            budget["budget_usd"] = shadow["free"] + shadow["open_cost"]
+            budget["left_usd"] = budget["budget_usd"] - budget["allocated_usd"]
         pot = read_pot(connection)
         bnb_usage = dict(connection.execute(
             text(
@@ -1291,6 +1309,9 @@ def dashboard(interval: str = Query(default="15m"), chart: str | None = Query(de
                                      if len(open_rows) < pot.lots and pot.lot_size_usd > ZERO else None),
                     "coins_on": sum(1 for coin in coins.values() if coin["trading_enabled"])},
             "in_trades_usd": sum((Decimal(str(coin["money"]["open_cost_usd"])) for coin in coins.values()), ZERO),
+            "suggested_pot": (lambda plan: {"lots": plan.lots, "lot_size_usd": plan.lot_size_usd} if plan else None)(
+                suggested_pot(budget["budget_usd"], Decimal(str(first["portfolio"]["minimum_lot_size_usd"])))),
+            "pot_set_by_user": bool(settings.get("pot_set_by_user")),
             "limits": {"minimum_lot_usd": first["portfolio"]["minimum_lot_size_usd"],
                        "maximum_lot_usd": first["portfolio"]["maximum_lot_size_usd"],
                        "maximum_lots": first["portfolio"]["maximum_lots_per_coin"]},
