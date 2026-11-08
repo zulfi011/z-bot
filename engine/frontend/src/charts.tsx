@@ -215,7 +215,9 @@ export function EquityChart({ points, view, start, end, height = 200 }:
   const series = useMemo(() => points.map(point => view === "value" ? n(point.wallet_value_usd) : n(point.strategy_pnl_usd)), [points, view]);
   // "Trading only" is profit since the bot started, so its baseline is zero.
   const initial = view === "value" ? n(points.at(-1)?.wallet_value_usd) : 0;
-  if (points.length < 2) return <div className="chart-empty">The account chart fills in as minutes pass.</div>;
+  if (points.length < 2) return <div className="chart-empty equity-empty">
+    <svg viewBox="0 0 120 40" aria-hidden="true"><path d="M4 32 C 24 32, 30 18, 48 20 S 76 30, 92 14 S 112 8, 116 8" /></svg>
+    <b>No history yet</b><span>The chart starts when the bot does. Every minute adds a point.</span></div>;
   const first = Math.max(Math.floor(window.from), 0), last = Math.min(Math.ceil(window.to), points.length - 1);
   const shown = series.slice(first, last + 1);
   // Points sit at their real time across the range picked, so 7D and 1M look different even with little history.
@@ -243,15 +245,31 @@ export function EquityChart({ points, view, start, end, height = 200 }:
   const tick = (at: number) => width <= 2 * 86400000
     ? new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", hour: "2-digit", minute: "2-digit", hour12: false }).format(at)
     : new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", day: "numeric", month: "short" }).format(at);
-  return <div className="chart">
+  const tone = rising ? "up" : "down";
+  const lastIndex = points.length - 1;
+  // Dots are drawn in HTML over the stretched SVG so they stay round; positions are in % of the width.
+  const dot = (index: number) => ({ left: `${x(index) / W * 100}%`, top: `${y(series[index])}px` });
+  const showLast = lastIndex >= first && lastIndex <= last;
+  return <div className="chart equity-chart">
     <div className="chart-stage" style={{ height }}>
-      <svg ref={ref} viewBox={`0 0 ${W} ${height}`} preserveAspectRatio="none" style={{ height }} {...handlers}
+      {/* A new key on view or range change replays the draw-in animation; the minute refresh does not. */}
+      <svg key={`${view}-${start ?? ""}`} ref={ref} viewBox={`0 0 ${W} ${height}`} preserveAspectRatio="none" style={{ height }} {...handlers}
         aria-label="Account value history. Pinch or scroll to zoom, drag to move.">
+        <defs>
+          <linearGradient id={`equity-fill-${tone}`} x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" className={`equity-stop-top ${tone}`} />
+            <stop offset="100%" className={`equity-stop-bottom ${tone}`} />
+          </linearGradient>
+        </defs>
+        {[0.25, 0.5, 0.75].map(at => <line key={at} className="equity-grid" x1={0} x2={W} y1={height * at} y2={height * at} />)}
         {view === "performance" && <line className="baseline" x1={0} x2={W} y1={y(0)} y2={y(0)} />}
-        <polygon points={`${edgeLeft},${height} ${line} ${edgeRight},${height}`} className={`equity-area ${rising ? "up" : "down"}`} />
-        <polyline points={line} className={`equity-line ${rising ? "up" : "down"}`} />
+        <polygon points={`${edgeLeft},${height} ${line} ${edgeRight},${height}`} className="equity-area"
+          fill={`url(#equity-fill-${tone})`} />
+        <polyline points={line} pathLength={1} className={`equity-line ${tone}`} />
         {hover != null && <line className="crosshair" x1={x(hover)} x2={x(hover)} y1={0} y2={height} />}
       </svg>
+      {showLast && hover == null && <span className={`equity-dot live ${tone}`} style={dot(lastIndex)} aria-hidden="true" />}
+      {hover != null && <span className={`equity-dot ${tone}`} style={dot(hover)} aria-hidden="true" />}
       <ChartZoom zoomed={zoomed} onZoom={zoomAt} onReset={reset} />
     </div>
     <div className="chart-axis" aria-hidden="true">
@@ -262,8 +280,7 @@ export function EquityChart({ points, view, start, end, height = 200 }:
         <span>{time(active.timestamp, true)}</span>
         <b>{usd(view === "value" ? active.wallet_value_usd : active.strategy_pnl_usd)}</b>
         <span>Trading P&amp;L {signedUsd(active.strategy_pnl_usd)}</span><span>Coins {usd(active.positions_usd)}</span>
-      </> : <><span>History since {time(points[first].timestamp, true)}</span><b>{usd(series.at(-1))}</b>
-        <span className="muted">{zoomed ? "Double-tap to see it all" : "Touch or hover to inspect · pinch or scroll to zoom"}</span></>}
+      </> : <span className="muted">{zoomed ? "Double-tap to zoom out" : "Hover or touch the chart to see any moment"}</span>}
     </div>
   </div>;
 }

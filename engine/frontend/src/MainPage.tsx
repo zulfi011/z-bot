@@ -23,13 +23,12 @@ function EquityCard() {
   useEffect(() => { load(); const timer = window.setInterval(() => document.visibilityState === "visible" && load(), 60_000); return () => window.clearInterval(timer); }, [load]);
   useEffect(() => { try { localStorage.setItem("sol-desk-period", period); } catch { /* ignore */ } }, [period]);
   return <Card title="Wallet over time"
-    info="'Wallet value' is your whole Binance spot wallet, so money you add or take out moves it. 'Trading only' shows the bot's profit and loss on its own, starting from zero."
     action={<Tabs label="Chart view" value={view} onChange={setView}
       options={[{ value: "value", label: "Wallet value" }, { value: "performance", label: "Trading only" }]} />}>
     <Tabs label="Time range" value={period} onChange={setPeriod} options={PERIODS} />
     {error ? <p className="form-error">{error}</p>
       : <EquityChart points={history?.points ?? []} view={view} start={history?.start} end={history?.end} />}
-    {history?.summary && <div className="mini-stats">
+    {history?.summary && history.points.length >= 2 && <div className="mini-stats">
       <span>Trading P&amp;L in range <b className={tone(history.summary.strategy_pnl_change_usd)}>{signedUsd(history.summary.strategy_pnl_change_usd)}</b></span>
       <span>Highest <b>{usd(history.summary.high_value_usd)}</b></span><span>Lowest <b>{usd(history.summary.low_value_usd)}</b></span>
     </div>}
@@ -88,7 +87,7 @@ export function MainPage({ data, onOpenCoin }: { data: Dashboard; onOpenCoin: (s
       </div>
       <div className="hero-foot">
         <span>Today <b className={tone(stats.today_pnl_usd)}>{signedUsd(stats.today_pnl_usd)}</b></span>
-        <span>Free USDT <b>{usd(data.money.usdt_free)}</b></span>
+        {!(shadow && !pretend) && <span>Free USDT <b>{usd(data.money.usdt_free)}</b></span>}
         <span>Open lots <b>{data.positions.length}</b></span>
         <span>Win rate <b>{stats.win_rate_pct == null ? "—" : pct(stats.win_rate_pct, 0, false)}</b></span>
         <span>Won <b className="up">{stats.wins}</b> · Lost <b className="down">{stats.losses}</b></span>

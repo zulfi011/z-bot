@@ -52,11 +52,11 @@ export function MoneyCard({ data }: { data: Dashboard }) {
       <Stat label="Pot" value={unsized ? "Not set yet" : `${pot.lots} × ${lotLabel}`}
         sub={unsized ? "set a starting amount first" : `= ${usd(pot.total_usd)} · ${pot.coins_on} of ${money.coins.length} coins on`}
         info="Number of lots × money per lot. Change it with Edit pot." />
-      <Stat label="Lots in use" value={`${pot.open_lots} / ${pot.lots}`} valueClass={pot.free_lots === 0 ? "warn" : undefined}
-        sub={pot.free_lots ? `${pot.free_lots} free` : "all lots open"}
+      <Stat label="Lots in use" value={unsized ? "—" : `${pot.open_lots} / ${pot.lots}`} valueClass={!unsized && pot.free_lots === 0 ? "warn" : undefined}
+        sub={unsized ? "no lots yet" : pot.free_lots ? `${pot.free_lots} free` : "all lots open"}
         info="Open lots across every coin. When all are open, new signals are skipped until one closes." />
       <Stat label="Next buy" value={pot.next_lot_usd == null ? "—" : usd(pot.next_lot_usd, short ? 2 : 0)} valueClass={short ? "warn" : undefined}
-        sub={pot.next_lot_usd == null ? (pot.free_lots ? "no free USDT" : "waiting for a free lot") : short ? `of ${lotLabel} · pot is short` : "any coin's next signal"}
+        sub={unsized ? "after you set a starting amount" : pot.next_lot_usd == null ? (pot.free_lots ? "no free USDT" : "waiting for a free lot") : short ? `of ${lotLabel} · pot is short` : "any coin's next signal"}
         info="What the next signal from any coin that is on would spend. After losses the last lot uses whatever USDT is left." />
       <Stat label="Your money" value={usd(money.budget_usd)} sub={data.shadow ? "shadow wallet" : data.binance.connected ? `${usd(money.usdt_free)} free + ${usd(money.in_trades_usd)} in lots` : "no Binance account attached"}
         info="Free USDT on Binance plus what the open lots cost." />
