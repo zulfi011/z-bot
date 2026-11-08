@@ -57,6 +57,10 @@ export function MainPage({ data, onOpenCoin }: { data: Dashboard; onOpenCoin: (s
   const coins = data.coin_order.map(symbol => data.coins[symbol]).filter(Boolean);
   const walletValue = account?.wallet_value_usd ?? data.binance.wallet_value_usdt ?? 0;
   const mode = data.trading.mode;
+  // Outside live mode the bot trades pretend money: a starting amount the user sets, never a Binance balance.
+  const shadow = mode !== "live";
+  const pretend = data.shadow;
+  const profit = shadow ? pretend?.pnl ?? 0 : account?.strategy_pnl_usd ?? 0;
   const { session, open } = useControls();
   const locked = !!session?.controls_enabled && !session.unlocked;
   return <div className="page">
@@ -65,10 +69,19 @@ export function MainPage({ data, onOpenCoin }: { data: Dashboard; onOpenCoin: (s
       <button className="primary small" onClick={() => open({ kind: "unlock" })}>Unlock this device</button>
     </div>}
     <section className="hero">
-      <span className="eyebrow">Binance wallet<Info text="Free USDT + the coins the bot holds + your BNB, priced now. This is your real Binance spot wallet." /></span>
-      <strong className="hero-value">{usd(walletValue)}</strong>
+      {shadow
+        ? <span className="eyebrow">Shadow wallet<Info text="Pretend money for shadow mode: the starting amount you set, plus what the shadow trades made. Nothing is spent on Binance." /></span>
+        : <span className="eyebrow">Binance wallet<Info text="Free USDT + the coins the bot holds + your BNB, priced now. This is your real Binance spot wallet." /></span>}
+      {shadow && !pretend
+        ? <div className="hero-empty">
+          <p>Shadow mode trades pretend money. Choose how much it starts with to see its results in dollars.</p>
+          <button className="primary" onClick={() => open({ kind: "amount", field: "shadow_start_usd" })}>Set starting amount</button>
+        </div>
+        : <strong className="hero-value">{usd(shadow ? pretend?.wallet : walletValue)}</strong>}
+      {shadow && pretend && <p className="hero-start">Started with <b>{usd(pretend.start)}</b>
+        <button className="link" onClick={() => open({ kind: "amount", field: "shadow_start_usd" })}>Change</button></p>}
       <div className="hero-sub">
-        <span className={`pill ${tone(account?.strategy_pnl_usd)}`}>{signedUsd(account?.strategy_pnl_usd ?? 0)}</span>
+        <span className={`pill ${tone(profit)}`}>{signedUsd(profit)}</span>
         <span className="muted">trading profit<Info text="Profit from closed trades plus what open lots have made so far, after every Binance fee." /></span>
         <span className={`pill ${mode === "live" ? "up" : mode === "off" ? "down" : "warn"}`}>{mode === "live" ? "LIVE" : mode === "off" ? "STOPPED" : "SHADOW"}</span>
       </div>
@@ -78,7 +91,7 @@ export function MainPage({ data, onOpenCoin }: { data: Dashboard; onOpenCoin: (s
         <span>Open lots <b>{data.positions.length}</b></span>
         <span>Win rate <b>{stats.win_rate_pct == null ? "—" : pct(stats.win_rate_pct, 0, false)}</b></span>
         <span>Won <b className="up">{stats.wins}</b> · Lost <b className="down">{stats.losses}</b></span>
-        <span>Updated {ago(account?.timestamp)}</span>
+        {!shadow && <span>Updated {ago(account?.timestamp)}</span>}
       </div>
     </section>
 

@@ -36,7 +36,7 @@ from app.services.binance_client import BinanceClient, BinanceError
 from app.services.monitoring_service import bnb_round_trip_usd
 from app.services.live_execution_service import (
     SETTINGS_KEY, affordable_lot, coin_label, open_lot_total, read_allocation, read_pot, read_settings,
-    read_trading_enabled,
+    read_trading_enabled, shadow_account,
 )
 
 
@@ -67,6 +67,14 @@ class TradingModeRequest(BaseModel):
     mode: Literal["off", "shadow", "live"]
     daily_loss_limit_usd: Decimal | None = Field(default=None, ge=0, le=MAX_AMOUNT)
     maximum_open_value_usd: Decimal | None = Field(default=None, ge=0, le=MAX_AMOUNT)
+
+
+class MoneySettingsRequest(BaseModel):
+    """Limits and the shadow wallet's starting amount. 0 switches a limit off; any field left out is kept."""
+    model_config = ConfigDict(extra="forbid")
+    daily_loss_limit_usd: Decimal | None = Field(default=None, ge=0, le=MAX_AMOUNT, decimal_places=2)
+    maximum_open_value_usd: Decimal | None = Field(default=None, ge=0, le=MAX_AMOUNT, decimal_places=2)
+    shadow_start_usd: Decimal | None = Field(default=None, ge=0, le=MAX_AMOUNT, decimal_places=2)
 
 
 class TradingSwitchRequest(BaseModel):
@@ -395,6 +403,27 @@ def set_trading_mode(body: TradingModeRequest, key: str | None = Header(default=
         connection.execute(
             text("""INSERT INTO system_events (level, component, event_type, details)
                     VALUES ('WARNING','settings','trading_mode_changed', CAST(:d AS jsonb))"""),
+            {"d": json.dumps(changes)},
+        )
+        return read_settings(connection)
+
+
+@router.put("/settings/money")
+def set_money_settings(body: MoneySettingsRequest, key: str | None = Header(default=None, alias="X-Control-Key"),
+            session: str | None = Cookie(default=None, alias=control_session.COOKIE)) -> dict:
+    _authorize(key, session)
+    changes = {name: str(value) for name, value in body.model_dump(exclude_none=True).items()}
+    if not changes:
+        raise HTTPException(status_code=400, detail="Nothing to change.")
+    with get_engine().begin() as connection:
+        connection.execute(
+            text("""INSERT INTO engine_state (key, value, updated_at) VALUES (:key, CAST(:value AS jsonb), now())
+                    ON CONFLICT (key) DO UPDATE SET value = engine_state.value || EXCLUDED.value, updated_at=now()"""),
+            {"key": SETTINGS_KEY, "value": json.dumps(changes)},
+        )
+        connection.execute(
+            text("""INSERT INTO system_events (level, component, event_type, details)
+                    VALUES ('INFO','settings','money_settings_changed', CAST(:d AS jsonb))"""),
             {"d": json.dumps(changes)},
         )
         return read_settings(connection)
@@ -1171,6 +1200,9 @@ def dashboard(interval: str = Query(default="15m"), chart: str | None = Query(de
     with get_engine().begin() as connection:
         account = _latest_snapshot(connection)
         settings = read_settings(connection)
+        shadow = shadow_account(connection, settings) if settings.get("trading_mode") != "live" else None
+        if shadow:
+            usdt_free = shadow["free"]  # shadow buys spend the pretend wallet
         open_rows = [dict(row) for row in connection.execute(
             text("SELECT * FROM paper_positions WHERE status='open' ORDER BY entry_time")
         ).mappings().all()]
@@ -1245,7 +1277,9 @@ def dashboard(interval: str = Query(default="15m"), chart: str | None = Query(de
                     "checks": binance.get("checks", [])},
         "trading": {"mode": settings.get("trading_mode", "shadow"),
                     "daily_loss_limit_usd": settings.get("daily_loss_limit_usd"),
-                    "maximum_open_value_usd": settings.get("maximum_open_value_usd")},
+                    "maximum_open_value_usd": settings.get("maximum_open_value_usd"),
+                    "shadow_start_usd": settings.get("shadow_start_usd")},
+        "shadow": ({key: str(value) for key, value in shadow.items()} if shadow else None),
         "money": {
             "usdt_free": usdt_free,
             "budget_usd": budget["budget_usd"],

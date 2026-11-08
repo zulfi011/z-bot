@@ -550,3 +550,10 @@ a.icon-button { color: inherit; text-decoration: none; }
   .top-actions .live { padding: 9px; } .top-actions .live-text { display: none; }
   .refresh-button { display: none !important; }
 }
+
+/* Shadow wallet: empty state and starting amount */
+.hero-empty { display: grid; gap: 10px; justify-items: start; margin: 8px 0 12px; }
+.hero-empty p { margin: 0; color: var(--muted); max-width: 46ch; }
+.hero-start { margin: 0 0 8px; color: var(--muted); font-size: 13px; display: flex; align-items: baseline; gap: 4px; }
+.hero-start b { color: var(--text); }
+button.link.inline { padding: 0; font-size: inherit; }

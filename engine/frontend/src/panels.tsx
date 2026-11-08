@@ -85,9 +85,11 @@ export function TradingModeCard({ data }: { data: Dashboard }) {
       <Stat label="Mode now" value={labels[mode]} valueClass={mode === "live" ? "up" : mode === "off" ? "down" : "warn"}
         sub={data.binance.connected ? "Binance connected" : "Binance not connected"} />
       <Stat label="Daily loss limit" value={n(data.trading.daily_loss_limit_usd) ? usd(data.trading.daily_loss_limit_usd) : "off"}
-        sub="new lots pause for the day" info="When today's closed trades add up to this loss, no new lot opens until tomorrow (UTC)." />
+        sub={<>new lots pause for the day · <button className="link inline" onClick={() => open({ kind: "amount", field: "daily_loss_limit_usd" })}>Edit</button></>}
+        info="When today's closed trades add up to this loss, no new lot opens until tomorrow (UTC)." />
       <Stat label="Most in trades" value={n(data.trading.maximum_open_value_usd) ? usd(data.trading.maximum_open_value_usd) : "no limit"}
-        sub="across all coins" info="A ceiling on the money the bot may have in open lots at once." />
+        sub={<>across all coins · <button className="link inline" onClick={() => open({ kind: "amount", field: "maximum_open_value_usd" })}>Edit</button></>}
+        info="A ceiling on the money the bot may have in open lots at once." />
     </div>
     <div className="button-row">
       {mode !== "live" && <Tip text={EXPLAIN.modeLive}><button className="primary" onClick={() => open({ kind: "trading-mode", mode: "live" })}>Go live</button></Tip>}

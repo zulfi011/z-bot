@@ -171,7 +171,9 @@ export type Dashboard = {
   health: { status: string; market_age_seconds: number | null; coins_updated: Record<string, string | null> };
   account: Account | null;
   binance: { connected: boolean; message?: string; usdt_free: Num; wallet_value_usdt?: Num; checks: BinanceCheck[] };
-  trading: { mode: "off" | "shadow" | "live"; daily_loss_limit_usd: Num | null; maximum_open_value_usd: Num | null };
+  trading: { mode: "off" | "shadow" | "live"; daily_loss_limit_usd: Num | null; maximum_open_value_usd: Num | null; shadow_start_usd: Num | null };
+  /** The pretend wallet shadow mode trades with; null until a starting amount is set (or in live mode). */
+  shadow: { start: Num; free: Num; wallet: Num; pnl: Num; open_value: Num } | null;
   money: {
     usdt_free: Num; budget_usd: Num; left_to_allocate_usd: Num; allocated_usd: Num; in_trades_usd: Num;
     pot: Pot;

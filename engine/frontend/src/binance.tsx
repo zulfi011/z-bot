@@ -7,7 +7,7 @@ const CHART_ICON = <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="
 
 /** Top-bar link to the public page with Z-Bot's own live track record. */
 export function LiveResultsLink() {
-  return <Tip text="Live results: see how Z-Bot trades on a real Binance account. Every trade, after fees, updated daily. Opens in a new tab.">
+  return <Tip text="Live results: see how Z-Bot trades on a real Binance account. Every trade, after fees, updated daily.">
     <a className="icon-button" href={LIVE_RESULTS} target="_blank" rel="noreferrer" aria-label="Live results (opens in a new tab)">{CHART_ICON}</a>
   </Tip>;
 }

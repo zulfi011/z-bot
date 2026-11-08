@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { control, credentialsStatus, LockedError, lockDevice, sessionStatus, unlockDevice, type BinanceCredentials, type CoinView, type Dashboard, type DeviceSession, type Position } from "./api";
+import { control, credentialsStatus, LockedError, lockDevice, sessionStatus, unlockDevice, type BinanceCredentials, type CoinView, type Dashboard, type DeviceSession, type Num, type Position } from "./api";
 import { BinanceSheet } from "./binance";
 import { amount, n, pct, price, signedUsd, time, tone, usd } from "./format";
 import { Info, Sheet } from "./ui";
@@ -14,7 +14,8 @@ type SheetState =
   | { kind: "cancel"; requestId: string; what: string }
   | { kind: "unlock" }
   | { kind: "device" }
-  | { kind: "binance" };
+  | { kind: "binance" }
+  | { kind: "amount"; field: AmountField };
 
 type Controls = {
   open: (sheet: SheetState) => void;
@@ -232,6 +233,59 @@ function EntryModuleSheet({ coin, module, data, onDone }:
   </>;
 }
 
+export type AmountField = "shadow_start_usd" | "daily_loss_limit_usd" | "maximum_open_value_usd";
+
+const AMOUNT_TEXT: Record<AmountField, { title: string; text: string; label: string; zero: string; done: string }> = {
+  shadow_start_usd: {
+    title: "Shadow starting amount",
+    text: "How much pretend money shadow mode starts with. The bot trades it like a real wallet, so you can see results in dollars before risking anything. Nothing is sent to Binance.",
+    label: "Starting amount (USDT)", zero: "0 clears it.", done: "Shadow starting amount saved.",
+  },
+  daily_loss_limit_usd: {
+    title: "Daily loss limit",
+    text: "When today's closed trades have lost this much, no new lot opens until tomorrow (UTC). Open lots are still looked after.",
+    label: "Most to lose in a day (USDT)", zero: "0 turns the limit off.", done: "Daily loss limit saved.",
+  },
+  maximum_open_value_usd: {
+    title: "Most in trades",
+    text: "The most money the bot may have in open lots at the same time, across all coins.",
+    label: "Most in open lots (USDT)", zero: "0 means no limit.", done: "Limit saved.",
+  },
+};
+
+function AmountSheet({ field, current, onDone, onCancel }:
+  { field: AmountField; current: Num | null | undefined; onDone: (message: string) => void; onCancel: () => void }) {
+  const copy = AMOUNT_TEXT[field];
+  const { locked } = useControls();
+  const [value, setValue] = useState(n(current) ? String(n(current)) : "");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const parsed = Number(value);
+  const valid = value.trim() !== "" && Number.isFinite(parsed) && parsed >= 0 && parsed <= 10_000_000;
+  return <form onSubmit={async event => {
+    event.preventDefault();
+    if (!valid || busy) return;
+    setBusy(true); setError(null);
+    try { await control("/api/v1/settings/money", "PUT", { [field]: parsed.toFixed(2) }); onDone(copy.done); }
+    catch (reason) {
+      if (reason instanceof LockedError) { locked(); return; }
+      setError(reason instanceof Error ? reason.message : "Could not save");
+    } finally { setBusy(false); }
+  }}>
+    <p className="sheet-text">{copy.text}</p>
+    <label className="field"><span>{copy.label}</span>
+      <input type="number" inputMode="decimal" min="0" step="0.01" autoFocus value={value} placeholder="0"
+        onFocus={event => event.target.select()}
+        onChange={event => setValue(event.target.value)} /></label>
+    <p className="small muted">{copy.zero}</p>
+    {error && <p className="form-error" role="alert">{error}</p>}
+    <div className="sheet-actions">
+      <button type="button" className="ghost" onClick={onCancel} disabled={busy}>Cancel</button>
+      <button type="submit" className="primary" disabled={!valid || busy}>{busy ? "Saving…" : "Save"}</button>
+    </div>
+  </form>;
+}
+
 function UnlockSheet({ onUnlocked, onCancel }: { onUnlocked: (session: DeviceSession) => void; onCancel: () => void }) {
   const [key, setKey] = useState("");
   const [busy, setBusy] = useState(false);
@@ -269,7 +323,7 @@ export function DeviceLockButton() {
     {session.unlocked ? UNLOCKED_ICON : LOCKED_ICON}</button>;
 }
 
-const NEEDS_UNLOCK = new Set<SheetState["kind"]>(["pot", "entry-module", "buy-now", "close", "trading", "trading-mode", "cancel", "binance"]);
+const NEEDS_UNLOCK = new Set<SheetState["kind"]>(["pot", "entry-module", "buy-now", "close", "trading", "trading-mode", "cancel", "binance", "amount"]);
 
 export function ControlsProvider({ data, refresh, children }: { data: Dashboard | null; refresh: () => void; children: ReactNode }) {
   const [sheet, setSheet] = useState<SheetState | null>(null);
@@ -328,6 +382,9 @@ export function ControlsProvider({ data, refresh, children }: { data: Dashboard 
         return "This device is locked. Viewing still works; buttons will ask to unlock.";
       }}
       onDone={done} />;
+  } else if (sheet?.kind === "amount") {
+    title = AMOUNT_TEXT[sheet.field].title;
+    body = <AmountSheet field={sheet.field} current={data?.trading[sheet.field]} onDone={done} onCancel={close} />;
   } else if (sheet?.kind === "binance") {
     title = binance?.attached ? "Your Binance account" : "Attach your Binance account";
     body = <BinanceSheet credentials={binance} live={data?.trading.mode === "live"} onCancel={close}

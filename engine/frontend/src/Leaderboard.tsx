@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { getJson, type CoinView, type Dashboard, type LeaderCoin, type LeaderPeriod, type Leaderboard as Board } from "./api";
-import { n, pct, price, signedUsd, tone, usd } from "./format";
+import { n, pct, signedUsd, tone, usd } from "./format";
 import { Card, CoinToken, ScrollList, Tabs } from "./ui";
 
 const PERIODS: { value: LeaderPeriod; label: string }[] = [
@@ -86,7 +86,7 @@ export function LeaderboardCard({ data, onOpenCoin }: { data: Dashboard; onOpenC
   const periodLabel = PERIODS.find(item => item.value === period)?.label;
 
   return <Card className="leaderboard" title="Coin leaderboard"
-    info="Coins ranked by trading results over the chosen period, best first. Return is profit ÷ the whole shared pot (lots × lot size), since every coin trades from the same money. It includes open lots at the current price and updates with every dashboard refresh; rows slide when the order changes. Tap a coin to open its page."
+    info="Which coins have made the bot the most money, best first. Tap a coin to see its details."
     action={<Tabs label="Rank by" value={metric} onChange={setMetric} options={[{ value: "return", label: "Return %" }, { value: "profit", label: "Profit $" }]} />}>
     <Tabs label="Period" value={period} onChange={setPeriod} options={PERIODS} />
     {error && <p className="form-error">{error}</p>}
@@ -100,8 +100,7 @@ export function LeaderboardCard({ data, onOpenCoin }: { data: Dashboard; onOpenC
         <button className="leader-hit" onClick={() => onOpenCoin(entry.symbol)} aria-label={`Rank ${index + 1}: ${coin.name}. Open its page`}>
           <span className={`leader-rank ${MEDALS[index] ?? ""}`}>{index + 1}</span>
           <span className="leader-coin"><CoinToken symbol={entry.symbol} />
-            <span><b>{entry.label}{!entry.trading_enabled && <span className="tag paused">off</span>}</b>
-              <small>{price(coin.market.price)} <span className={tone(coin.market.change_24h_pct)}>{pct(coin.market.change_24h_pct, 1)}</span></small></span></span>
+            <span><b>{entry.label}{!entry.trading_enabled && <span className="tag paused">off</span>}</b></span></span>
           <span className="leader-result">
             <b className={tone(amount)}>{metric === "return" ? pct(entry.return_pct) : signedUsd(entry.pnl_usd)}</b>
             <small>{metric === "return" ? signedUsd(entry.pnl_usd) : pct(entry.return_pct)} · {periodLabel}</small>

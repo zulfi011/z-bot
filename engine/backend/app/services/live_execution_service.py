@@ -41,7 +41,7 @@ TICKER_CACHE_SECONDS = 120
 BALANCE_CACHE_SECONDS = 10
 # Binance rejects an order whose value is below its minimum; a lot must also cover its own fees comfortably.
 DEFAULT_SETTINGS = {"trading_mode": "shadow", "daily_loss_limit_usd": "25", "maximum_open_value_usd": "0",
-                    "pot_lots": 3, "pot_lot_size_usd": "100"}
+                    "pot_lots": 3, "pot_lot_size_usd": "100", "shadow_start_usd": "0"}
 
 
 @dataclass(frozen=True)
@@ -126,6 +126,29 @@ def read_trading_enabled(connection: Connection, symbol: str) -> bool:
         text("SELECT trading_enabled FROM coin_allocations WHERE symbol=:symbol"), {"symbol": symbol}
     ).scalar_one_or_none()
     return value is True
+
+
+def shadow_account(connection: Connection, settings: dict) -> dict | None:
+    """The pretend wallet shadow mode trades with: the starting amount the user set, plus shadow trades' results.
+
+    Only shadow lots count (no Binance order id). None when no starting amount is set: shadow buys are then not
+    limited by money, and the dashboard asks for an amount.
+    """
+    start = Decimal(str(settings.get("shadow_start_usd") or "0"))
+    if start <= ZERO:
+        return None
+    realized = connection.execute(
+        text("""SELECT COALESCE(sum(t.net_pnl_usd), 0) FROM paper_trades t
+                JOIN paper_positions p ON p.position_id = t.position_id WHERE p.entry_order_id IS NULL""")
+    ).scalar_one()
+    rows = connection.execute(
+        text("SELECT symbol, quantity, allocation_usd FROM paper_positions WHERE status='open' AND entry_order_id IS NULL")
+    ).mappings().all()
+    open_cost = sum((row["allocation_usd"] for row in rows), ZERO)
+    open_value = sum((row["quantity"] * (latest_price(connection, row["symbol"]) or ZERO) for row in rows), ZERO)
+    free = start + realized - open_cost
+    return {"start": start, "free": free, "open_value": open_value, "open_cost": open_cost, "realized": realized,
+            "wallet": free + open_value, "pnl": realized + open_value - open_cost}
 
 
 def latest_price(connection: Connection, symbol: str, at: datetime | None = None) -> Decimal | None:
@@ -741,10 +764,12 @@ class LiveExecutionService:
         limit = Decimal(str(settings.get("daily_loss_limit_usd") or "0"))
         if limit > ZERO and self._today_pnl(connection) <= -limit:
             return False, f"Today's loss limit of ${limit:.0f} has been reached; trading pauses until tomorrow.", lot
-        free = self.free_usdt() if self.exchange.live else lot
+        shadow = None if self.exchange.live else shadow_account(connection, settings)
+        free = self.free_usdt() if self.exchange.live else shadow["free"] if shadow else lot
         spend = affordable_lot(lot, free)
         if spend is None:
-            return False, f"Binance has ${free:.2f} free USDT, nothing left to buy with.", lot
+            where = "The shadow wallet" if shadow else "Binance"
+            return False, f"{where} has ${free:.2f} free USDT, nothing left to buy with.", lot
         return True, None, spend
 
     # ------------------------------------------------------------------ helpers
@@ -943,11 +968,18 @@ class LiveExecutionService:
 
     # ------------------------------------------------------------------ snapshot
     def _write_snapshot(self) -> None:
-        free, locked = self._load_balances(refresh=False)
-        if self._balances_unknown:
-            # Binance did not answer and nothing is cached: an empty read is not an empty wallet. Skip this minute
-            # rather than record a $0 wallet that shows as a crash on the chart.
-            return
+        with self.engine.begin() as connection:
+            settings = read_settings(connection)
+            # Shadow mode with a starting amount records the pretend wallet, so the chart follows it.
+            shadow = shadow_account(connection, settings) if settings.get("trading_mode") != "live" else None
+        if shadow:
+            free, locked = {"USDT": shadow["free"]}, {}
+        else:
+            free, locked = self._load_balances(refresh=False)
+            if self._balances_unknown:
+                # Binance did not answer and nothing is cached: an empty read is not an empty wallet. Skip this
+                # minute rather than record a $0 wallet that shows as a crash on the chart.
+                return
         held = {asset: free.get(asset, ZERO) + locked.get(asset, ZERO) for asset in set(free) | set(locked)}
         with self.engine.begin() as connection:
             settings = read_settings(connection)
@@ -975,6 +1007,8 @@ class LiveExecutionService:
                 amount = held.get(coin_label(symbol), ZERO)
                 if amount > ZERO:
                     coins_value += amount * (latest_price(connection, symbol) or ZERO)
+            if shadow:
+                coins_value = shadow["open_value"]
             wallet = usdt_free + usdt_locked + coins_value + bnb * bnb_price
             values = {
                 "timestamp": datetime.now(timezone.utc).replace(second=0, microsecond=0),

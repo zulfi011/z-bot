@@ -396,5 +396,8 @@ def test_a_failed_balance_read_does_not_record_a_zero_wallet():
     engine.exchange.client = MagicMock()
     engine.exchange.client.account.side_effect = BinanceError(None, "Could not reach Binance")
     engine.engine = MagicMock()
+    connection = engine.engine.begin.return_value.__enter__.return_value
+    connection.execute.return_value.scalar_one_or_none.return_value = {"trading_mode": "live"}
     engine._write_snapshot()
-    engine.engine.begin.assert_not_called()        # no snapshot written for this minute
+    written = [str(call.args[0]) for call in connection.execute.call_args_list if call.args]
+    assert not any("account_snapshots" in sql for sql in written)   # no snapshot written for this minute
