@@ -1,0 +1,16 @@
+{
+  "implementation": {
+    "src/research/stage15/__init__.py": "9b2abae341c526a53f01c3f18076d7add9319b9ebb665807400bbd8e2ab89753",
+    "src/research/stage15/episodes.py": "6f3b3ea5ffb68891880be862031046920cb0a9557daa540278ecc4f15ee945bb",
+    "src/research/stage15/metrics.py": "67c08342d1a923f3919b5401f512eecf02710a942aa463a77155be6d1c0299ab",
+    "src/research/stage15/run_step1.py": "ecf590a2ab2fbe19a7a68a735af7cfb3cf342ab7971af4e6f0d1ad4181765440",
+    "src/research/stage15/validation.py": "4520920bd9bbadd2155561c2962f12ea1fce027f037c69ed3a808b6a07cb2175",
+    "config/experiments/v1_stage15_step1.yaml": "777bc449fb8878336b157b5b524a35db9ab91c555e08fd295ffeb9f8a7e7a019",
+    "tests/test_stage15_deduplication.py": "d964aa5d928f41cf06b2c290fb5d0a8ea4019b5bd3132e365f68ec13e714ea8a"
+  },
+  "synthetic_tests": {
+    "command": ".env/bin/python -B -m pytest -q -p no:cacheprovider tests/test_stage15_deduplication.py",
+    "passed": 14
+  },
+  "outcome_policy": "Exact retained Stage 1 enriched rows; no outcome recalculation or timing changes"
+}

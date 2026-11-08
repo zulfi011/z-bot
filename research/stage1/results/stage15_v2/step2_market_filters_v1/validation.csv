@@ -1,0 +1,4 @@
+dataset,source_rows,direct_slope_values_checked,pass
+SOLUSDT_1m,12172,200,True
+SOLUSDT_3m,7338,200,True
+SOLUSDT_5m,5765,200,True

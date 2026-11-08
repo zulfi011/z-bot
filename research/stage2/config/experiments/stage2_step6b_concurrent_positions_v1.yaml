@@ -1,0 +1,26 @@
+experiment:
+  id: stage2_step6b_concurrent_positions_v1
+  initial_equity_usd: 100.0
+  maximum_positions: [1, 2, 3, 4, 5]
+  trading_mode: long_only_spot_lots
+  leverage_allowed: false
+
+sizing_variants:
+  fixed_capital_usd: [10.0, 20.0, 25.0, 33.33, 50.0, 100.0]
+  equity_fraction_pct: [10.0, 20.0, 25.0, 33.33, 50.0, 100.0]
+  account_risk_pct: [0.5, 1.0, 2.0]
+
+cash_handling:
+  allocation_includes_entry_fee: true
+  requested_size_exceeds_cash: partial_fill_remaining_cash
+  zero_cash: skip_signal
+  exits_at_boundary_processed_before_new_entries: true
+
+risk_sizing:
+  planned_net_stop_loss_pct: 4.2109698301698195
+  note: gaps_can_exceed_planned_risk
+
+limitations:
+  lots_are_same_asset_and_direction: true
+  open_lot_equity_held_at_cost_until_step7_mark_to_market: true
+

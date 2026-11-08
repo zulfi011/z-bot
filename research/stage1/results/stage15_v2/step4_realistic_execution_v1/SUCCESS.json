@@ -1,0 +1,10 @@
+{
+  "step": "stage15_v2_step4",
+  "scope": "realistic_spot_execution",
+  "comparisons": 270,
+  "realistic_execution_passes": 2,
+  "realistic_robust_passes": 0,
+  "audit_rows": 995,
+  "protected_files_unchanged": 537,
+  "validation": "PASS"
+}

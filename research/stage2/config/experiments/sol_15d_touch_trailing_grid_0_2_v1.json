@@ -1,0 +1,47 @@
+{
+  "experiment_id": "sol_15d_touch_trailing_grid_0_2_v1",
+  "status": "historical_grid_not_deployed",
+  "entry": {
+    "signal_timeframe": "3m",
+    "average": "15d completed-daily-close SMA",
+    "touch_zone_pct": 0.2,
+    "approach": "from_below",
+    "confirmation": "bullish candle within 30 minutes",
+    "market_filter": "reject 7d < 15d < 30d"
+  },
+  "grid": {
+    "activation_pct_from_entry_fill": [
+      1.0,
+      1.5,
+      2.0,
+      2.5,
+      3.0,
+      3.5,
+      4.0,
+      4.5,
+      5.0
+    ],
+    "giveback_pct_of_open_profit": [
+      10.0,
+      15.0,
+      20.0,
+      25.0,
+      30.0
+    ],
+    "combinations": 45
+  },
+  "exit": {
+    "protective_stop_pct": 4.0,
+    "maximum_hold_minutes": 1440
+  },
+  "portfolio": {
+    "initial_equity_usd": 100.0,
+    "positions": 1,
+    "allocation_pct": 100
+  },
+  "costs": {
+    "fee_bps_per_side": 10.0,
+    "slippage_bps_per_side": 2.0
+  },
+  "selection": "highest ending equity on the complete in-sample history"
+}

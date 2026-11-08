@@ -1,0 +1,101 @@
+{
+  "schema_version": 2,
+  "strategy_id": "trx_12d_above30max10_breakout_v2",
+  "name": "TRX dip + consolidation",
+  "status": "paper_trading",
+  "market": {
+    "symbol": "TRXUSDT",
+    "fee_symbol": "BNBUSDT",
+    "trading_mode": "spot",
+    "direction": "long_only",
+    "timezone": "UTC",
+    "execution_timeframe": "1m",
+    "signal_timeframe": "1m"
+  },
+  "averages": {
+    "type": "simple_moving_average",
+    "source": "completed_daily_closes_only",
+    "signal_average_days": 12,
+    "regime_periods_days": [
+      7,
+      15,
+      30
+    ]
+  },
+  "entry": {
+    "touch_zone_pct": 0.1,
+    "approach": "from_below",
+    "touch_condition": "high >= average_12d * 0.999 AND low <= average_12d * 1.001",
+    "prior_candle_condition": "prior_high < prior_average_12d * 0.999",
+    "deduplication": "first_candle_of_each_maximal_consecutive_touch_run",
+    "confirmation": {
+      "type": "bullish_candle",
+      "condition": "close > open",
+      "maximum_wait_minutes": 30
+    },
+    "market_filter": {
+      "type": "avoid_strong_bearish",
+      "reject_when": "average_7d < average_15d < average_30d"
+    },
+    "trend_filter": {
+      "type": "confirmation_close_above_average_30d",
+      "maximum_above_average_pct": 10,
+      "condition": "average_30d < confirmation_close <= average_30d * 1.10 (completed daily closes, effective that UTC day)"
+    },
+    "fill_timing": "raw_1m_open_at_confirmation_1m_candle_close_boundary",
+    "consolidation_breakout": {
+      "description": "A second way in, for when TRX never comes back down to its average: buy the break out of a quiet band.",
+      "chart_minutes": 60,
+      "zone_bars": 40,
+      "maximum_zone_pct": 2.0,
+      "confirmation_wait_minutes": 3,
+      "condition": "The 40 bars before the current one sit inside a band no wider than 2% (highest high / lowest low - 1). The first bar to close above that band's top is the break; 3 minutes later the 1-minute close must still be above the top, and the buy lands on the next minute's open. Only the first break of each quiet stretch counts.",
+      "market_filter": "TRX has no blocked hours and Mode C does not use the dip rule's 30-day trend filter, so a break is taken whenever one happens. Requiring an uptrend first screens out exactly the breaks that start one.",
+      "exit": {
+        "protective_stop_pct_from_entry_fill": 3.0,
+        "activation_pct_from_entry_fill": 1.283,
+        "giveback_of_open_profit_pct": 22.0,
+        "note": "A break comes out of a quiet band rather than a dip, so it carries its own tighter stop and its own trail."
+      }
+    }
+  },
+  "exit": {
+    "protective_stop_pct_from_entry_fill": 4.0,
+    "maximum_hold_minutes": null,
+    "trailing_stop": {
+      "activation_pct_from_entry_fill": 1.245,
+      "giveback_of_open_profit_pct": 10.0,
+      "activation_candle_can_trigger_trail": false,
+      "formula": "entry_fill + 0.90 * (prior_peak - entry_fill)"
+    },
+    "same_candle_activation_and_stop": "stop_wins",
+    "gap_fill": "min(level, candle_open)"
+  },
+  "portfolio": {
+    "reference_capital_usd": 300.0,
+    "default_lot_size_usd": 100.0,
+    "default_lots": 3,
+    "minimum_lot_size_usd": 10.0,
+    "maximum_lot_size_usd": 100000.0,
+    "maximum_lots_per_coin": 20,
+    "sizing_rule": "Each coin gets lot size x lots from the free USDT in the Binance wallet. A trade buys exactly one full lot when the coin has a free slot and Binance has at least one lot of free USDT; smaller amounts are never traded.",
+    "leverage_allowed": false,
+    "short_selling_allowed": false
+  },
+  "execution_model": {
+    "usdt_fee_bps_per_side": 10.0,
+    "bnb_fee_bps_per_side": 7.5,
+    "slippage_bps_per_side": 2.0,
+    "bnb_fee_fallback": "pay_usdt_fee_when_bnb_balance_is_insufficient"
+  },
+  "evaluation": {
+    "minimum_calendar_days": 180,
+    "minimum_completed_trades": 50,
+    "maximum_drawdown_review_pct": 15.0
+  },
+  "provenance": {
+    "research": "stage2_backtesting/results/trx_consolidation_full, trx_three_modes.py and trx_selection_test.py",
+    "backtest_bnb_fees": "Oct 2024 - Sep 2026 on $300 as 3 x $100 lots: +$222.78 over 239 trades (138 dip, 101 breakout) at a 94.6% win rate, max drawdown -2.99%, six of six walk-forward windows. The deployed rule made +$154.88 at -3.07%.",
+    "caveats": "The best-supported change of any coin: nothing had to be chosen. Mode C improved all six out-of-sample windows at the deployed exit (+$64.31), and keeping the deployed exit and simply adding Mode C earned $191.37 against blind selection's $192.05 - within a dollar, so no setting had to be guessed. A trend exit was tested and rejected: every EMA length made TRX worse, and on the 369 lots that would have switched, the trend line beat the giveback on 25% of them and lost on 70%. An exit retune (arm 3%, giveback 50%) looked better in-sample but its honest contribution was $0.70 and it cost ten points of win rate."
+  }
+}

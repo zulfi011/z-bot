@@ -1,0 +1,18 @@
+{
+  "data/research/stage15/step5_exits_v1/ETHUSDT/ETHUSDT_1m_exit_candidates.parquet": {
+    "size": 25110644,
+    "sha256": "451a7341119f0cba12d47063ae6c7ec080d1ea541ee8b4cfa75c5dd96c0c7052"
+  },
+  "data/research/stage15/step5_exits_v1/ETHUSDT/ETHUSDT_3m_exit_candidates.parquet": {
+    "size": 14547724,
+    "sha256": "ad09666ce07b94da244dd53adc8bf2bf5e5175bb47b42e6e9d930fc2498802df"
+  },
+  "data/research/stage15/step5_exits_v1/ETHUSDT/ETHUSDT_5m_exit_candidates.parquet": {
+    "size": 11270651,
+    "sha256": "5bf743e728e22618bb86f7350bcefbf76f71bd78d2cd8a91d36941af0c90d77e"
+  },
+  "data/processed/ETHUSDT/ETHUSDT_1m_with_averages.parquet": {
+    "size": 60539389,
+    "sha256": "c46083282733e673c027041a52e54527fbb0d3fd87c246ad551fe20eb9425b9d"
+  }
+}

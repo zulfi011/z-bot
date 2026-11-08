@@ -1,0 +1,10 @@
+{
+  "step": "stage15_v2_step5",
+  "scope": "strict_robustness",
+  "candidate_count": 3,
+  "provisional_passes": 1,
+  "strict_robust_passes": 0,
+  "event_rows": 255,
+  "protected_files_unchanged": 556,
+  "validation": "PASS"
+}

@@ -1,0 +1,76 @@
+{
+  "experiment": {
+    "name": "stage15_v2_step4_realistic_execution_v1",
+    "scope": "long_only_spot_execution_costs_and_conflicts"
+  },
+  "source_candidates": "data/research/stage15/step5_exits_v1/SOLUSDT",
+  "universe": {
+    "asset": "SOLUSDT",
+    "configurations": 27,
+    "entry_policy": "bullish_candle_30m",
+    "approach": "from_below",
+    "market_variants": [
+      "all_market_conditions",
+      "avoid_strong_bearish"
+    ]
+  },
+  "strategy": {
+    "target_pct_from_actual_entry_fill": 4.0,
+    "stop_pct_from_actual_entry_fill": 4.0,
+    "maximum_hold_minutes": 1440
+  },
+  "execution_scenarios": {
+    "gross": {
+      "fee_bps_per_side": 0.0,
+      "slippage_bps_per_side": 0.0
+    },
+    "fee_only": {
+      "fee_bps_per_side": 10.0,
+      "slippage_bps_per_side": 0.0
+    },
+    "realistic": {
+      "fee_bps_per_side": 10.0,
+      "slippage_bps_per_side": 2.0
+    },
+    "stressed": {
+      "fee_bps_per_side": 10.0,
+      "slippage_bps_per_side": 5.0
+    },
+    "severe": {
+      "fee_bps_per_side": 10.0,
+      "slippage_bps_per_side": 10.0
+    }
+  },
+  "spot_constraints": {
+    "direction": "long_only",
+    "leverage": "none",
+    "short_selling": false,
+    "funding_and_liquidation": "not_applicable",
+    "fee_application": "entry_and_exit",
+    "slippage_application": "adverse_on_entry_and_exit",
+    "note": "fee_rates_are_research_assumptions_not_a_live_exchange_quote"
+  },
+  "conflict_rules": {
+    "target_and_stop_same_raw_1m_candle": "stop_wins",
+    "stop_gap": "worse_of_stop_price_or_candle_open",
+    "target_gap": "better_of_target_price_or_candle_open_before_exit_slippage"
+  },
+  "portfolio": {
+    "maximum_open_positions": 1,
+    "selection": "earliest_available_signal_per_configuration_and_scenario"
+  },
+  "robustness": {
+    "periods": [
+      "earlier",
+      "later"
+    ],
+    "split_utc": "2025-09-01",
+    "minimum_entries_per_period": 100,
+    "minimum_nonoverlap_trades_per_period": 40,
+    "minimum_positive_quarters_pct": 60,
+    "bootstrap_block_days": 7,
+    "bootstrap_repetitions": 2000,
+    "bootstrap_seed": 1524,
+    "require_positive_block_ci_both_periods": true
+  }
+}

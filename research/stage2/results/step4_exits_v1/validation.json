@@ -1,0 +1,17 @@
+{
+  "step": "stage2_step4_exits",
+  "status": "PASS",
+  "candles_processed": 1006560,
+  "input_entry_fills": 910,
+  "completed_trades": 199,
+  "ignored_entries": 710,
+  "incomplete_positions": 1,
+  "nonoverlap_checks": 198,
+  "trades_matched_to_independent_exit_analysis": 199,
+  "elapsed_seconds": 22.23,
+  "source_sha256": {
+    "entry_fills": "8156eb8858b03905ff44fd61def26e95f7f3ae7e11739145663420476d1ee340",
+    "raw_1m": "895566d79dcad524dc71fe9ef1a90c1cf5adda251e15e360c042dac16eb53aaa",
+    "reference_trades": "059b29c074fb7a3942b0e44ccd2c406b3ee4b47c7cdd91da6df235b6560c8488"
+  }
+}

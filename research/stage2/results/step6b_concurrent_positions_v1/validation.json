@@ -1,0 +1,20 @@
+{
+  "step": "stage2_step6b_concurrent_positions",
+  "status": "PASS",
+  "potential_complete_trade_outcomes": 909,
+  "incomplete_signals_excluded": 1,
+  "position_limits": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "sizing_variants": 15,
+  "comparisons": 450,
+  "portfolio_event_rows": 196983,
+  "leverage_used": false,
+  "one_position_primary_bridge_final_equity": 130.84459166855268,
+  "one_position_control_bridge_final_equity": 118.43893815902571,
+  "source_sha256": "8156eb8858b03905ff44fd61def26e95f7f3ae7e11739145663420476d1ee340"
+}

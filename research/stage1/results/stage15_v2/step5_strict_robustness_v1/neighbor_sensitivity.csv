@@ -1,0 +1,8 @@
+candidate,neighbor_timeframe,neighbor_touch_zone,changed_parameter,trades_earlier,mean_pct_earlier,trades_later,mean_pct_later,positive_both
+refined_primary,1m,0.5,timeframe,42,0.2108921487611216,44,0.11685725144813991,True
+refined_primary,5m,0.5,timeframe,42,0.35263877113356273,35,0.27909679030869644,True
+refined_primary,3m,1.0,touch_zone,40,-0.21064252965781788,32,-0.6057698222245469,False
+current_control,3m,0.5,timeframe,62,0.2053537672810536,61,0.29011972329125524,True
+current_control,5m,1.0,touch_zone,63,-0.27064847287173943,53,-0.5496851535031775,False
+rising_average_secondary,3m,0.5,timeframe,29,0.7056044291309552,30,0.7359549330161995,True
+rising_average_secondary,5m,1.0,touch_zone,29,0.25715449787719363,22,-0.5776484821273549,False

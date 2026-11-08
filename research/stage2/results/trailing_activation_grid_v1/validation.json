@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "focused_simulator_tests": 4,
+  "fixed_primary_bridge": {
+    "earlier_trades": 42,
+    "later_trades": 40,
+    "earlier_mean_net_pct": 0.352998,
+    "later_mean_net_pct": 0.367949
+  },
+  "stage1_sources": {
+    "SOLUSDT_3m_exit_candidates.parquet": "418d0707e7d5c5d09c984d994ac4b206ff9711ac84effdaa8cedf1888f64e3b6",
+    "SOLUSDT_5m_exit_candidates.parquet": "c3bfadb9d657eec29a97bd348e5761d84ba4aa065fc50633d0781e63f38d65f8",
+    "SOLUSDT_1m.parquet": "895566d79dcad524dc71fe9ef1a90c1cf5adda251e15e360c042dac16eb53aaa"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "step": "stage15_v2_step1",
+  "scope": "confirmed_bounce_entries",
+  "configurations": 81,
+  "policies": 3,
+  "candidate_rows": 226320,
+  "provisional_passes": 0,
+  "robust_passes": 0,
+  "protected_files_unchanged": 466,
+  "validation": "PASS"
+}

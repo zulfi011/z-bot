@@ -1,0 +1,6 @@
+dimension,variants,profitable_full,profitable_earlier_and_later,minimum_full_profit,median_full_profit,maximum_full_profit
+stop_pct,8,7,6,-7.88,86.845,134.05
+zone_pct,5,4,3,-2.69,35.73,134.05
+average_days,5,3,3,-33.37,30.61,134.05
+signal_minutes,3,3,3,104.58,109.98,134.05
+activation_giveback_pair,11,11,11,79.8603515625,93.00273132324219,134.0498809814453

@@ -1,0 +1,16 @@
+{
+  "experiment_id": "eth_trade_quality_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "classification": {
+    "winner_above_net_return_pct": 0.25,
+    "flat_lower_inclusive_pct": -0.25,
+    "flat_upper_inclusive_pct": 0.25,
+    "loser_below_net_return_pct": -0.25
+  },
+  "tail_definition": {
+    "top_trade_fraction_pct": 5.0,
+    "rounding": "ceiling"
+  },
+  "notes": "Reporting-only experiment. Exact P&L and all trading rules remain unchanged."
+}

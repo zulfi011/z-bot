@@ -1,0 +1,7 @@
+check,status,observations,detail
+lookahead_prevention,PASS,20,future access probes blocked
+independent_exit_replay,PASS,361,trade exits matched
+same_candle_exit_policy,PASS,3,conservative cases passed
+overlap_and_selection,PASS,361,trades matched; maximum positions 2
+cost_calculations,PASS,361,trade cash flows matched
+balance_reconciliation,PASS,2013120,account rows; max error 7.105e-14

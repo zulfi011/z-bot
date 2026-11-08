@@ -1,0 +1,40 @@
+{
+  "experiment_id": "eth_monthly_compounding_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "scope": "position_size_only",
+  "variants": [
+    {
+      "name": "monthly_symmetric_20pct",
+      "equity_fraction": 0.20,
+      "minimum_order_usd": 70.0,
+      "maximum_order_usd": 130.0,
+      "profit_only": false
+    },
+    {
+      "name": "monthly_profit_only_20pct",
+      "equity_fraction": 0.20,
+      "minimum_order_usd": 100.0,
+      "maximum_order_usd": 130.0,
+      "profit_only": true
+    }
+  ],
+  "rule": "Freeze one target order size for each UTC month from marked strategy equity at that month's opening boundary. Apply it only to new positions; never resize open positions.",
+  "acceptance": {
+    "full_profit_change_gt": 0.0,
+    "walk_forward_profit_change_gt": 0.0,
+    "minimum_walk_forward_windows_improved": 4,
+    "profit_to_drawdown_improvement_gt": 0.0,
+    "average_loss_not_worse": true,
+    "drawdown_not_worse": true
+  },
+  "constraints": [
+    "500_usd_initial_cash",
+    "five_shared_slots",
+    "no_leverage",
+    "no_borrowing",
+    "available_cash_is_a_hard_limit",
+    "70_to_130_usd_order_bounds"
+  ],
+  "notes": "Both schedules are fixed before results. Increased absolute profit alone is insufficient; risk-adjusted performance and average loss must also improve."
+}

@@ -1,0 +1,89 @@
+{
+  "schema_version": 2,
+  "strategy_id": "btc_5d_above30_fixed100_trail1257_v1",
+  "name": "BTC 5-day touch above 30-day · fixed $100 lots",
+  "status": "paper_trading",
+  "market": {
+    "symbol": "BTCUSDT",
+    "fee_symbol": "BNBUSDT",
+    "trading_mode": "spot",
+    "direction": "long_only",
+    "timezone": "UTC",
+    "execution_timeframe": "1m",
+    "signal_timeframe": "5m"
+  },
+  "averages": {
+    "type": "simple_moving_average",
+    "source": "completed_daily_closes_only",
+    "signal_average_days": 5,
+    "regime_periods_days": [
+      7,
+      15,
+      30
+    ]
+  },
+  "entry": {
+    "touch_zone_pct": 0.2,
+    "approach": "from_below",
+    "touch_condition": "high >= average_5d * 0.998 AND low <= average_5d * 1.002",
+    "prior_candle_condition": "prior_high < prior_average_5d * 0.998",
+    "deduplication": "first_candle_of_each_maximal_consecutive_touch_run",
+    "confirmation": {
+      "type": "bullish_candle",
+      "condition": "close > open",
+      "maximum_wait_minutes": 30
+    },
+    "market_filter": {
+      "type": "avoid_strong_bearish",
+      "reject_when": "average_7d < average_15d < average_30d"
+    },
+    "trend_filter": {
+      "type": "confirmation_close_above_average_30d",
+      "condition": "confirmation_close > average_30d (completed daily closes, effective that UTC day)"
+    },
+    "blocked_entry_hours_utc": {
+      "start": 6,
+      "end": 12
+    },
+    "fill_timing": "raw_1m_open_at_confirmation_5m_candle_close_boundary"
+  },
+  "exit": {
+    "protective_stop_pct_from_entry_fill": 3.0,
+    "maximum_hold_minutes": null,
+    "trailing_stop": {
+      "activation_pct_from_entry_fill": 1.257,
+      "giveback_of_open_profit_pct": 14.0,
+      "activation_candle_can_trigger_trail": false,
+      "formula": "entry_fill + 0.86 * (prior_peak - entry_fill)"
+    },
+    "same_candle_activation_and_stop": "stop_wins",
+    "gap_fill": "min(level, candle_open)"
+  },
+  "portfolio": {
+    "reference_capital_usd": 300.0,
+    "default_lot_size_usd": 100.0,
+    "default_lots": 3,
+    "minimum_lot_size_usd": 10.0,
+    "maximum_lot_size_usd": 100000.0,
+    "maximum_lots_per_coin": 20,
+    "sizing_rule": "Each coin gets lot size x lots from the free USDT in the Binance wallet. A trade buys exactly one full lot when the coin has a free slot and Binance has at least one lot of free USDT; smaller amounts are never traded.",
+    "leverage_allowed": false,
+    "short_selling_allowed": false
+  },
+  "execution_model": {
+    "usdt_fee_bps_per_side": 10.0,
+    "bnb_fee_bps_per_side": 7.5,
+    "slippage_bps_per_side": 2.0,
+    "bnb_fee_fallback": "pay_usdt_fee_when_bnb_balance_is_insufficient"
+  },
+  "evaluation": {
+    "minimum_calendar_days": 180,
+    "minimum_completed_trades": 50,
+    "maximum_drawdown_review_pct": 15.0
+  },
+  "provenance": {
+    "research": "stage2_backtesting/results/btc_full_research_v1/REPORT.md",
+    "backtest_bnb_fees": "Oct 2024 – Jul 2026 on $300 as 3 × $100 full lots: 189 trades, +$71.92 with USDT fees, +$81.41 with BNB fees, max drawdown about −8%; unseen Aug–Sep 2026 −$13.38",
+    "caveats": "Fragile: only the 5-day average and ±0.2% zone work (neighbours lose); 82% of profit in the earlier period; later −$5.19 at stress costs; walk-forward −$19.80. Ranked last of SOL/ETH/BTC."
+  }
+}

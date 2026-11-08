@@ -1,0 +1,10 @@
+variant,source_candidates,survived_to_checkpoint,unarmed,low_progress,reference_failed
+dip_6h,492,358,305,167,139
+dip_12h,492,271,210,111,94
+dip_24h,492,177,134,62,54
+pullback_6h,136,116,94,46,37
+pullback_12h,136,98,76,30,23
+pullback_24h,136,67,48,17,9
+breakout_6h,62,50,46,23,10
+breakout_12h,62,37,30,17,10
+breakout_24h,62,25,20,9,4

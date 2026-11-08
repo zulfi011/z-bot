@@ -1,0 +1,34 @@
+{
+  "experiment_id": "eth_time_to_arm_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "scope": "all_entry_families",
+  "checkpoints_hours": [3, 6, 12, 24, 48],
+  "rule": "At the completed five-minute checkpoint, exit at the next one-minute open only when the position is still open and has never armed.",
+  "economic_winner_threshold_pct": 0.25,
+  "acceptance": {
+    "full_profit_change_gt": 0.0,
+    "walk_forward_profit_change_gt": 0.0,
+    "minimum_walk_forward_windows_improved": 4,
+    "economic_win_rate_not_worse": true,
+    "average_loss_not_worse": true,
+    "drawdown_not_worse": true
+  },
+  "diagnostics": [
+    "surviving_unarmed_positions",
+    "later_arm_rate",
+    "eventual_economic_win_flat_loss",
+    "eventual_protective_stop_rate",
+    "direct_checkpoint_exit_pnl_change",
+    "result_by_entry_family"
+  ],
+  "unchanged": [
+    "all_ETH_entry_signals",
+    "armed_position_exits",
+    "five_shared_slots",
+    "500_usd_wallet",
+    "fees_and_slippage",
+    "no_leverage"
+  ],
+  "notes": "Five fixed checkpoints are diagnostic candidates, not a parameter grid. August-September 2026 remains post-selection evidence only."
+}

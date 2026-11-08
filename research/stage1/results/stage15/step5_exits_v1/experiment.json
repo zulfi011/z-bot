@@ -1,0 +1,79 @@
+{
+  "experiment": {
+    "name": "stage15_step5_exits_v1",
+    "scope": "exit_and_holding_time_all_81_configurations"
+  },
+  "source_candidates": "data/research/stage15/step4_downside_protection_v1",
+  "entry_policies": [
+    "first_touch_0m",
+    "bullish_candle_30m"
+  ],
+  "exit_families": {
+    "fixed_time_minutes": [
+      15,
+      30,
+      60,
+      120,
+      240,
+      480,
+      720,
+      1440
+    ],
+    "target_then_24h_pct": [
+      1.0,
+      1.5,
+      2.0,
+      2.5,
+      3.0,
+      4.0,
+      5.0
+    ],
+    "trailing": {
+      "activation_pct": 2.5,
+      "giveback_of_open_profit_pct": [
+        20,
+        30,
+        40,
+        50
+      ],
+      "maximum_hold_minutes": 1440
+    }
+  },
+  "risk_variants": [
+    "no_stop",
+    "stop_4"
+  ],
+  "execution": {
+    "prices": "raw_1m_ohlc",
+    "fixed_time_exit": "close_of_final_minute",
+    "target_fill": "better_of_target_or_trigger_minute_open",
+    "stop_fill": "worse_of_stop_or_trigger_minute_open",
+    "target_stop_same_minute": "conservative_stop_and_mark_ambiguous",
+    "trailing_activation": "known_after_activation_minute_closes",
+    "trailing_reference_peak": "prior_completed_minute",
+    "fees_slippage_latency": "not_modeled"
+  },
+  "evaluation": {
+    "comparison_baseline": "no_stop_1440m_hold",
+    "split_utc": "2025-09-01",
+    "periods": [
+      "all",
+      "earlier",
+      "later"
+    ],
+    "segments": [
+      "all_entries",
+      "bullish_regime"
+    ],
+    "minimum_entries_per_period": 100,
+    "bootstrap_block_days": 7,
+    "bootstrap_repetitions": 1000,
+    "bootstrap_seed": 1505,
+    "note": "later_period_is_not_untouched_out_of_sample"
+  },
+  "scope_limits": {
+    "position_overlap_and_sizing": "not_modeled",
+    "costs": "not_modeled",
+    "final_exit_adoption": "none_in_this_step"
+  }
+}

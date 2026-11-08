@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "strategy_id": "sol_fixed100_micro_trail",
+  "status": "frozen_for_stage3_paper_trading",
+  "paper_trading_only": true,
+  "real_money_approved": false,
+  "rules_locked_during_forward_test": true,
+  "market": {
+    "symbol": "SOLUSDT",
+    "trading_mode": "spot",
+    "direction": "long_only",
+    "timezone": "UTC",
+    "execution_timeframe": "1m",
+    "signal_timeframe": "5m",
+    "daily_session": "UTC"
+  },
+  "averages": {
+    "type": "simple_moving_average",
+    "source": "completed_daily_closes_only",
+    "periods_days": [
+      7,
+      15,
+      30
+    ],
+    "signal_average_days": 13,
+    "minimum_observations_equal_period": true
+  },
+  "entry": {
+    "touch_zone_pct": 0.1,
+    "approach": "from_below",
+    "touch_condition": {
+      "high_gte": "average_15d * 0.995",
+      "low_lte": "average_15d * 1.005"
+    },
+    "prior_candle_condition": "prior_high < prior_average_15d * 0.995",
+    "deduplication": "first_candle_of_each_maximal_consecutive_touch_run",
+    "confirmation": {
+      "type": "bullish_candle",
+      "condition": "close > open",
+      "maximum_wait_minutes": 30,
+      "include_touch_candle": true,
+      "include_30_minute_boundary": true,
+      "include_first_non_touch_candle": true,
+      "cancel_after_first_non_touch_candle": true,
+      "reject_if_not_confirmed": true
+    },
+    "market_filter": {
+      "type": "avoid_strong_bearish",
+      "reject_when": "average_7d < average_15d < average_30d",
+      "evaluate_at": "first_touch_candle"
+    },
+    "fill_timing": "raw_1m_open_at_confirmation_candle_close_boundary"
+  },
+  "exit": {
+    "protective_stop_pct_from_entry_fill": 1.0,
+    "maximum_hold_minutes": 1000000000,
+    "time_exit": "close_of_1440th_raw_1m_candle_including_entry_minute",
+    "monitoring_starts": "entry_minute",
+    "trailing_stop": {
+      "enabled": true,
+      "activation_pct_from_entry_fill": 0.245,
+      "giveback_of_open_profit_pct": 10.0,
+      "activation_candle_can_trigger_trail": false,
+      "uses_peak_known_before_current_1m_candle": true,
+      "formula": "entry_fill + 0.90 * (prior_peak - entry_fill)"
+    },
+    "same_candle_activation_and_stop": "stop_wins",
+    "stop_gap_fill": "min(stop_price, candle_open)",
+    "trail_gap_fill": "min(trail_price, candle_open)"
+  },
+  "portfolio": {
+    "account_scope": "independent_SOL_account",
+    "initial_paper_equity_usd": 300.0,
+    "maximum_open_positions": 3,
+    "position_size_method": "fixed_usd_capped_at_free_cash",
+    "equity_fraction_per_entry": 1.0,
+    "allocation_capped_at_available_cash": true,
+    "signals_when_slot_available": "open_new_independent_lot",
+    "signals_when_two_positions_open": "ignore",
+    "each_lot_managed_independently": true,
+    "same_boundary_order": "process_exits_before_entries",
+    "leverage_allowed": false,
+    "short_selling_allowed": false,
+    "fixed_allocation_usd": 100.0
+  },
+  "execution_model": {
+    "fee_bps_per_side": 10.0,
+    "slippage_bps_per_side": 2.0,
+    "entry_fill": "raw_open * (1 + slippage_bps / 10000)",
+    "exit_fill": "raw_exit * (1 - slippage_bps / 10000)",
+    "fees_apply_on": [
+      "entry",
+      "exit"
+    ],
+    "conservative_cost_ceiling_bps_round_trip": 40.0
+  },
+  "paper_evaluation": {
+    "minimum_calendar_days": 180,
+    "minimum_completed_trades": 50,
+    "net_pnl_must_be_positive": true,
+    "profit_factor_minimum": 1.0,
+    "maximum_drawdown_review_pct": 15.0,
+    "maximum_average_round_trip_cost_bps": 40.0,
+    "strategy_rule_mismatches_allowed": 0,
+    "rule_change_requires_new_forward_sample": true
+  },
+  "provenance": {
+    "source_strategy": "../stage2_backtesting/config/strategies/sol_15d_touch_v1.yaml",
+    "source_strategy_sha256": "895149af9107b02a7d511f40f570ebf2b61a099011ce9ab1b3351e514283cc7e",
+    "stage2_decision": "../stage2_backtesting/results/stage2_final_report_v1/decision.json",
+    "stage2_decision_sha256": "2ec33c476d31c06f044669088f3c3f9dbab98750ee0ba65c978872e9506ec2af",
+    "decision": "GO_WITH_GUARDRAILS",
+    "frozen_at_utc": "2026-09-08"
+  }
+}

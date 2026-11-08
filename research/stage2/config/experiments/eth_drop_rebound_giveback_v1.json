@@ -1,0 +1,42 @@
+{
+  "experiment_id": "eth_drop_rebound_giveback_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "strategy_control": "eth_drop_rebound_min_net_floor_v1_minimum_net_0.30pct",
+  "scope": "giveback_test_on_best_rolling_drop_addon",
+  "frozen_rule": {
+    "lookback_minutes": 60,
+    "fall_pct": 5.0,
+    "protective_stop_pct": 2.0,
+    "activation_pct": 0.19,
+    "minimum_net_exit_pct": 0.30
+  },
+  "giveback_percentages": [30.0, 45.0, 60.0],
+  "acceptance_vs_current_best": {
+    "full_profit_change_gt": 0.0,
+    "later_profit_change_gte": 0.0,
+    "walk_forward_profit_change_gt": 0.0,
+    "addon_average_win_change_gt": 0.0,
+    "maximum_combined_win_rate_reduction_pp": 2.0
+  },
+  "base_safety": {
+    "minimum_combined_headline_win_rate_pct": 75.0,
+    "minimum_additional_trades": 20,
+    "minimum_walk_forward_windows_improved": 4,
+    "average_loss_not_worse_than_base": true,
+    "drawdown_not_worse_than_base": true
+  },
+  "unchanged": [
+    "all_current_ETH_signals_and_exits",
+    "unfiltered_60m_5pct_drop_entries",
+    "0.19pct_mode_b_arm",
+    "0.30pct_minimum_net_floor",
+    "causal_next_minute_floor_attachment",
+    "five_shared_slots",
+    "500_usd_wallet",
+    "base_signals_have_same_minute_priority",
+    "BNB_fees_and_2bps_slippage",
+    "no_leverage"
+  ],
+  "notes": "30pct is the accepted control. A wider giveback must beat that control, not merely the original ETH base."
+}

@@ -1,0 +1,45 @@
+{
+  "experiment_id": "eth_futures_crowding_v1",
+  "symbol": "ETHUSDT",
+  "derivative_symbol": "ETHUSDT USD-M perpetual",
+  "baseline": "eth_canonical_v1",
+  "scope": "all_eth_entry_families_position_size_only",
+  "data": {
+    "start": "2024-07-01",
+    "end_exclusive": "2026-09-11",
+    "metrics_csv": "data/eth_futures_crowding/metrics_5m.csv",
+    "funding_csv": "data/eth_futures_crowding/funding_rates.csv",
+    "source": "Binance official public USD-M futures archive and funding-rate REST endpoint"
+  },
+  "definitions": {
+    "funding": "Latest published funding rate strictly before the candidate entry.",
+    "open_interest_growth": "Latest published sum_open_interest_value strictly before entry divided by its value 24 hours earlier minus one.",
+    "thresholds": "Percentiles use only values from the previous 90 completed UTC days.",
+    "crowded_long": "Funding and 24-hour open-interest growth are both positive and at or above the same frozen trailing percentile."
+  },
+  "variants": [
+    {"name": "crowded_q90_size70", "percentile": 0.90, "crowded_size_usd": 70.0, "normal_size_usd": 100.0},
+    {"name": "crowded_q95_size50", "percentile": 0.95, "crowded_size_usd": 50.0, "normal_size_usd": 100.0}
+  ],
+  "reference_days": 90,
+  "economic_winner_threshold_pct": 0.25,
+  "excluded_entry_months": ["2025-04", "2025-05"],
+  "acceptance": {
+    "minimum_full_profit_retention_pct": 90.0,
+    "minimum_ordinary_profit_retention_pct": 90.0,
+    "minimum_walk_forward_profit_retention_pct": 90.0,
+    "profit_to_drawdown_improvement_gt": 0.0,
+    "minimum_risk_adjusted_walk_forward_windows_improved": 4,
+    "average_loss_not_worse": true,
+    "drawdown_not_worse": true
+  },
+  "unchanged": [
+    "all_eth_signals_entry_times_and_exits",
+    "five_shared_slots",
+    "500_usd_wallet",
+    "fees_and_slippage",
+    "normal_order_size_100_usd",
+    "no_leverage_and_no_borrowing"
+  ],
+  "notes": "The two percentile-and-size pairs are frozen and tested separately. Missing or not-yet-seasoned futures observations default to the normal $100 size. August-September 2026 is diagnostic only."
+}

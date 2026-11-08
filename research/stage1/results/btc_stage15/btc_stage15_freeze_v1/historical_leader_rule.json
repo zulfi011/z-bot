@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "strategy_id": "btc_30d_bullish_target_5m_v1",
+  "status": "REJECT",
+  "paper_trade_only": true,
+  "asset": "BTCUSDT",
+  "venue_type": "spot",
+  "direction": "long_only",
+  "signal": {
+    "timeframe": "5m",
+    "execution_timeframe": "1m",
+    "daily_average_source": "completed_UTC_daily_closes_only",
+    "averages": {
+      "type": "simple",
+      "days": [
+        7,
+        15,
+        30
+      ]
+    },
+    "regime": "average_7d > average_15d > average_30d",
+    "reference_average": "30d",
+    "touch_zone_pct": 1.5,
+    "deduplication": "one_episode_for_consecutive_touching_candles",
+    "confirmation": "first_bullish_5m_candle_within_30_minutes",
+    "confirmation_expiry": "first_non_touch_candle_included_or_30_minutes_whichever_first"
+  },
+  "execution": {
+    "entry": "next_raw_1m_open_after_confirmation_close",
+    "maximum_open_positions": 1,
+    "profit_target_pct_from_actual_entry_fill": 1.0,
+    "protective_stop": null,
+    "maximum_hold_minutes": 1440,
+    "same_candle_conflict": "protective_stop_wins_if_a_future_version_adds_a_stop"
+  },
+  "position_sizing": {
+    "maximum_position_notional_pct_of_net_liquidation": 10.0,
+    "formula": "min(available_quote_balance, net_liquidation*0.10)",
+    "leverage": "none"
+  },
+  "paper_cost_model": {
+    "fee_bps_per_side": 10.0,
+    "slippage_bps_per_side": 2.0,
+    "adverse_slippage_on_entry_and_exit": true
+  },
+  "historical_audit": {
+    "data_start_utc": "2024-09-01",
+    "data_end_utc": "2026-07-31",
+    "split_utc": "2025-09-01",
+    "earlier_trades": 29,
+    "later_trades": 29,
+    "realistic_mean_pct_earlier": 0.3017213275984595,
+    "realistic_mean_pct_later": 0.05514843561464579,
+    "strict_historical_validation_pass": false
+  },
+  "immutability": {
+    "rule_changes_require_new_strategy_id": true,
+    "historical_source_manifest": {
+      "data/research/stage15/step5_exits_v1/BTCUSDT/BTCUSDT_1m_exit_candidates.parquet": {
+        "size": 25354434,
+        "sha256": "8d5f1a7daf045075b1bcfecb8d0b6f18aae04f1c94572edd9d739000afa3a51a"
+      },
+      "data/research/stage15/step5_exits_v1/BTCUSDT/BTCUSDT_3m_exit_candidates.parquet": {
+        "size": 14950042,
+        "sha256": "d18523712d2307fb21644a48710fca7dc2ea28e88491c644fb2cceaf40b6c10b"
+      },
+      "data/research/stage15/step5_exits_v1/BTCUSDT/BTCUSDT_5m_exit_candidates.parquet": {
+        "size": 11501694,
+        "sha256": "2db733d237dcdee50582c810dcaa346471e24960067f1016d67a3910160ef79d"
+      },
+      "data/processed/BTCUSDT/BTCUSDT_1m_with_averages.parquet": {
+        "size": 66829005,
+        "sha256": "724beade8ccecc2a075246d63e0890a9552d4981bb39c9fd111b957ace5dd122"
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "config/strategies/sol_15d_touch_v1.yaml": "895149af9107b02a7d511f40f570ebf2b61a099011ce9ab1b3351e514283cc7e",
+  "results/step9_performance_v1/performance_metrics.json": "fdf36e27db5a91c3a1239c4cdb1db42c06e7762b76bf77d353bd599422b6a04b",
+  "results/step11_strategy_comparison_v1/comparison.csv": "4140b58caebdbb720aea86c8235fbfdadf7cf7498a87940819206f64391fe60e",
+  "results/step10_strict_validation_v1/validation.json": "8d6bdec49ac16e3f8ae49715a49d739c73768ebb464a865036cc01185bde107a",
+  "results/step2_chronological_engine_v1/validation.json": "ac107148ec7ab9e64ef3c4cfa0cd2dd47855f76065b486648b0b4eb876ab5cab",
+  "results/step3_entries_v1/validation.json": "72c995e2b4524d9d3f657a9bec0bff8d228986514a3bdfb376ba5a28e614ba91",
+  "results/step4_exits_v1/validation.json": "29d61d6d140cab015697dde4a0608ce3063aed130e8a5c0f2de37bcc57d83155",
+  "results/step5_realistic_costs_v1/validation.json": "5906fd1f85967b7f9d3d74af18d9f9f138bf47a7abfca6fd0091707f1d41705a",
+  "results/step6_position_sizing_v1/validation.json": "d9b78243afb56cb9444843561dfbb3c3f93aad906c031eec91730e5f3288475f",
+  "results/step6b_concurrent_positions_v1/validation.json": "e04eab26c470c380e72f8c605524a28ee84c426c7ece719ceffae2c7577876ac",
+  "results/step7_account_tracking_v1/validation.json": "fa87114e5630354e16a9c4646bd81eb2a6de84f5df8c09e55960559140faca36",
+  "results/step8_trade_records_v1/validation.json": "085a213c8be87ff5aae40e07b190476340464d0d55fa0cc1e47fbf9e6b00b07a",
+  "results/step9_performance_v1/validation.json": "7fddbaafbd3aecafe340de8c17d498ff7356990f16d11e476445580c210d9517",
+  "results/step11_strategy_comparison_v1/validation.json": "5c1fe881303e0b8c401cb9af7994893cfe514d28c26de4b56043389c050e33ae"
+}

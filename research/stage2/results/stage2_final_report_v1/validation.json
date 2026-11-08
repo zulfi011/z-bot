@@ -1,0 +1,11 @@
+{
+  "step": "stage2_step12_final_report",
+  "status": "PASS",
+  "source_validations_passed": 11,
+  "primary_positive_baseline": true,
+  "primary_positive_conservative_earlier": true,
+  "primary_positive_conservative_later": true,
+  "primary_beats_control_comparisons": 15,
+  "paper_trading_decision": "GO_WITH_GUARDRAILS",
+  "real_money_decision": "NO_GO"
+}

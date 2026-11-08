@@ -1,0 +1,33 @@
+{
+  "experiment_id": "eth_pullback_quality_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "scope": "pullback_only",
+  "variants": [
+    {"name": "ema_rising_6h", "ema_lookback_minutes": 360},
+    {"name": "ema_rising_12h", "ema_lookback_minutes": 720},
+    {"name": "reclaim_above_previous_5m_high", "previous_high_definition": "high of the immediately preceding completed UTC-aligned five-minute candle"}
+  ],
+  "excluded_entry_months": ["2025-04", "2025-05"],
+  "economic_winner_threshold_pct": 0.25,
+  "unchanged": [
+    "24_hour_ema_and_180_minute_below_ema_dwell",
+    "daily_7d_15d_30d_uptrend_stack",
+    "buy_at_next_minute_open",
+    "dip_and_mode_c_entries",
+    "all_exits_stops_arm_and_break_even_floor",
+    "five_shared_100_usd_slots",
+    "fees_and_slippage",
+    "06_12_utc_block"
+  ],
+  "acceptance": {
+    "full_profit_change_gt": 0,
+    "ordinary_profit_change_gt": 0,
+    "walk_forward_change_gt": 0,
+    "minimum_walk_forward_windows_improved": 4,
+    "economic_win_rate_not_lower": true,
+    "average_economic_loss_not_worse": true,
+    "drawdown_not_worse": true
+  },
+  "notes": "The three filters are frozen and tested separately, never combined. April-May 2025 is excluded by filled trade entry month for the ordinary-period diagnostic. August-September 2026 is diagnostic only and excluded from acceptance."
+}

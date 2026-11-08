@@ -1,0 +1,128 @@
+{
+  "schema_version": 2,
+  "strategy_id": "sol_12d_trend8h_breakout_pyramid_v3",
+  "name": "SOL dip + consolidation + adds · trend exit",
+  "status": "paper_trading",
+  "market": {
+    "symbol": "SOLUSDT",
+    "fee_symbol": "BNBUSDT",
+    "trading_mode": "spot",
+    "direction": "long_only",
+    "timezone": "UTC",
+    "execution_timeframe": "1m",
+    "signal_timeframe": "3m"
+  },
+  "averages": {
+    "type": "simple_moving_average",
+    "source": "completed_daily_closes_only",
+    "signal_average_days": 12,
+    "regime_periods_days": [
+      7,
+      15,
+      30
+    ]
+  },
+  "entry": {
+    "touch_zone_pct": 0.5,
+    "approach": "from_below",
+    "touch_condition": "high >= average_12d * 0.995 AND low <= average_12d * 1.005",
+    "prior_candle_condition": "prior_high < prior_average_12d * 0.995",
+    "deduplication": "first_candle_of_each_maximal_consecutive_touch_run",
+    "confirmation": {
+      "type": "bullish_candle",
+      "condition": "close > open",
+      "maximum_wait_minutes": 30
+    },
+    "market_filter": {
+      "type": "avoid_strong_bearish",
+      "reject_when": "average_7d < average_15d < average_30d"
+    },
+    "blocked_entry_hours_utc": {
+      "start": 6,
+      "end": 12
+    },
+    "fill_timing": "raw_1m_open_at_confirmation_candle_close_boundary",
+    "consolidation_breakout": {
+      "description": "A second way in, for when SOL never comes back down to its average: buy the break out of a quiet band.",
+      "chart_minutes": 60,
+      "zone_bars": 24,
+      "maximum_zone_pct": 2.0,
+      "confirmation_wait_minutes": 0,
+      "condition": "The 24 bars before the current one sit inside a band no wider than 2% (highest high / lowest low - 1). The first bar to close above that band's top buys at the next minute's open. Only the first break of each quiet stretch counts.",
+      "market_filter": "Only the blocked hours are shared with the dip rule. The downtrend filter is deliberately NOT applied: requiring the averages to be stacked upward before a break screens out exactly the breaks that start a new trend, and cost -$16.24 on SOL in the backtest.",
+      "exit": {
+        "protective_stop_pct_from_entry_fill": 4.0,
+        "activation_pct_from_entry_fill": 1.283,
+        "giveback_of_open_profit_pct": 22.0,
+        "note": "A break comes out of a quiet band rather than a dip, so it carries its own wider stop and its own trail. The trend exit (Mode A) applies to these lots on the same terms as any other."
+      }
+    },
+    "pyramid_add": {
+      "description": "A fourth way in: add to a lot that is already winning, while the climb holds its line.",
+      "step_pct": 0.5,
+      "maximum_adds": 2,
+      "add_exit": "with_parent",
+      "condition": "Any open lot is a parent. While price closes above the 480-minute trend line, add one lot at +0.5% above the parent's fill and a second at +1.0%, in order, at the next minute's open. Blocked hours apply.",
+      "exit_note": "An add has no exit of its own: it parks the parent's stop price and is sold in the same minute the parent is. SOL turns quickly, and in the research an add left behind by its parent gave the profit back.",
+      "note": "Adds share the coin's lots with the dip and Mode C, first come first served - there are no reserved slots. Separate add lots were built and then removed: at equal money, bigger shared lots beat them. On or off from the dashboard, and it ships off."
+    }
+  },
+  "exit": {
+    "protective_stop_pct_from_entry_fill": 2.0,
+    "maximum_hold_minutes": null,
+    "trailing_stop": {
+      "activation_pct_from_entry_fill": 1.251,
+      "giveback_of_open_profit_pct": 12.0,
+      "activation_candle_can_trigger_trail": false,
+      "formula": "entry_fill + 0.88 * (prior_peak - entry_fill)"
+    },
+    "break_even_floor": {
+      "description": "The break-even floor. The moment a lot arms - reaches the trail activation - a lot that is being held against the trend line has its protective stop lifted from the -X% level to its own buy price plus the cost of a round trip, and the order parked on Binance is cancelled and re-placed at the new level. A lot that has proved itself and then comes all the way back exits level instead of slightly negative.",
+      "level": "entry_fill_price * (1 + break_even_floor_pct / 100)",
+      "break_even_floor_pct": "Derived, never hard-coded: (bnb_fee_bps_per_side + slippage_bps_per_side) * 2 / 100 from this file's execution_model. At 7.5bps fee and 2bps slippage that is 0.19%.",
+      "applies_to": "Mode A lots only - the ones opened in a clean uptrend and held against the line. Mode B lots keep the giveback trail and never get a floor.",
+      "requires_arming": "Yes. A lot that never reaches the trail activation keeps only its protective stop. Attaching the floor earlier - as soon as a lot has merely traded above its costs - was tested and is far worse: it turns a normal wobble on the way up into an exit (walk-forward $169 against $410, better in 0 of 6 windows).",
+      "exit_reason": "break_even",
+      "never_caps_a_winner": "A lot that trends does not return to its own buy price, so the floor is simply never reached and the line takes the lot out far above it.",
+      "evidence": "ETH, 5 x $100 shared, Oct 2024 - Jul 2026: losing lots 105 -> 67, win rate 77.1% -> 85.4%, profit $415.50 -> $430.16, better in 6 of 6 walk-forward windows. The two variants people reach for first were both rejected: a floor that rides 0.19% above the trend line instead of sitting at the buy price (walk-forward $325 against $410 - it is a moving level, so it sells the dips that trending lots recover from), and dropping the arming requirement. See stage2_backtesting/scripts/eth_line_gap.py and eth_floor_and_arm.py."
+    },
+    "same_candle_activation_and_stop": "stop_wins",
+    "gap_fill": "min(level, candle_open)",
+    "trend_exit": {
+      "ema_minutes": 480,
+      "requires_uptrend": true,
+      "condition": "Once the trail has armed, a lot opened while 7d > 15d > 30d ignores the giveback and is sold at the next minute's open after a 1-minute close below the 480-minute EMA of 1-minute closes (pandas ewm span=480, adjust=False). The protective stop stays active throughout. From the minute after it arms the protective stop sits at the break-even floor, not the original level, so the lot cannot finish negative while it waits for the line.",
+      "fallback": "Lots opened outside a clean uptrend keep the 12% giveback trailing stop.",
+      "note": "8 hours, not ETH's 16: SOL moves faster and a longer line holds it through reversals. 8h-11h all give +$77 to +$85, so the choice sits on a plateau."
+    }
+  },
+  "portfolio": {
+    "reference_capital_usd": 300.0,
+    "default_lot_size_usd": 100.0,
+    "default_lots": 3,
+    "minimum_lot_size_usd": 10.0,
+    "maximum_lot_size_usd": 100000.0,
+    "maximum_lots_per_coin": 20,
+    "sizing_rule": "Each coin gets lot size x lots from the free USDT in the Binance wallet. A trade buys exactly one full lot when the coin has a free slot and Binance has at least one lot of free USDT; smaller amounts are never traded.",
+    "leverage_allowed": false,
+    "short_selling_allowed": false
+  },
+  "execution_model": {
+    "usdt_fee_bps_per_side": 10.0,
+    "bnb_fee_bps_per_side": 7.5,
+    "slippage_bps_per_side": 2.0,
+    "bnb_fee_fallback": "pay_usdt_fee_when_bnb_balance_is_insufficient"
+  },
+  "evaluation": {
+    "minimum_calendar_days": 180,
+    "minimum_completed_trades": 50,
+    "maximum_drawdown_review_pct": 15.0
+  },
+  "provenance": {
+    "research": "stage2_backtesting/results/sol_ema_exit_grid.parquet, sol_consolidation_v4, sol_three_modes.py and sol_selection_test.py",
+    "backtest_bnb_fees": "Oct 2024 - Sep 2026 on $300 as 3 x $100 lots: +$85.01 over 241 trades (222 dip, 19 breakout) at a 72.6% win rate, max drawdown -6.70%, walk-forward +$101.31. The deployed giveback-only rule made +$57.32 at -6.69% and +$71.56 walk-forward.",
+    "caveats": "Unlike ETH, this survived a walk-forward selection test: choosing the settings six months in advance rather than in hindsight still earned $97.90 against the old rule's $71.56 across the six out-of-sample windows, and the fixed choice (+$101.31) sits far closer to blind selection than to the $122.13 oracle. Mode C helped in 4 of 6 windows at every EMA length tested. Remaining weaknesses: the breakout rests on 19 trades in two years, and the most recent walk-forward window is the one this strategy lost (-$6.78 against the old rule's -$3.31).",
+    "pyramid_research": "stage2_backtesting/scripts/sol_pyramid.py",
+    "pyramid_backtest": "Oct 2024 - Sep 2026. On top of the 3 x $100 core, 2 x $100 add lots at +0.5% steps (max 2 adds, sold with the parent) earned +$29.95 in the honest walk-forward selection test, the best of every combination tried. Sharing the core's 3 lots instead, or letting adds hold their own Mode A exit, both earned less. Splitting one lot into two $50 halves made $23.79."
+  }
+}

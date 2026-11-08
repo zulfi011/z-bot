@@ -1,0 +1,41 @@
+{
+  "base": {
+    "variant": "current_eth_base",
+    "profit": 430.1634322398789,
+    "trades": 459,
+    "headline_win_rate_pct": 85.40305010893246,
+    "economic_win_rate_pct": 71.0239651416122,
+    "average_win": 1.875124841500273,
+    "average_loss": -4.550529934749674,
+    "profit_factor": 2.410901549266866,
+    "max_drawdown_pct": -9.66215811329656,
+    "profit_to_drawdown": 8.839857382246866
+  },
+  "selected": {
+    "selected": true,
+    "lookback_minutes": 60,
+    "fall_pct": 5.0,
+    "stop_pct": 2.0,
+    "profit": 17.135097345849317,
+    "profit_change": -413.02833489402957,
+    "trades": 100,
+    "headline_win_rate_pct": 58.0,
+    "economic_win_rate_pct": 31.0,
+    "average_win": 0.529538814136882,
+    "average_loss": -0.3232893779545199,
+    "profit_factor": 2.2619607573122975,
+    "max_drawdown_pct": -0.5072140182441953,
+    "profit_to_drawdown": 6.581905743817829,
+    "later_profit": 3.8677111517784653,
+    "later_change": -137.70757684973165,
+    "walk_forward_profit": 7.60251868886634,
+    "walk_forward_change": -402.5406874258004,
+    "walk_forward_windows_improved": 0,
+    "post_selection_profit": 1.5659916103577132,
+    "arm_rate_pct": 98.0,
+    "accepted": false
+  },
+  "selection_combinations": 810,
+  "eligible_selection_combinations": 522,
+  "decision": "reject"
+}

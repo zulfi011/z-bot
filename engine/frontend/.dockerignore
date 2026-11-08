@@ -1,0 +1,5 @@
+node_modules
+dist
+# tsc -b emits these next to vite.config.ts; two vite configs in the image break the build
+vite.config.js
+vite.config.d.ts

@@ -1,0 +1,5 @@
+variant,eligible_touch_episodes,confirmed_before_filters,trend_rejections,blocked_hour_rejections,candidate_dip_signals
+current_green,684,640,0,148,492
+close_above_zone_midpoint,684,105,0,20,85
+close_above_zone_top,684,29,0,2,27
+close_above_previous_5m_high,684,567,0,135,432

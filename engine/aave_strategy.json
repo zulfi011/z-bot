@@ -1,0 +1,103 @@
+{
+  "schema_version": 2,
+  "strategy_id": "aave_10d_breakout_arm175_v3",
+  "name": "AAVE dip + consolidation",
+  "status": "paper_trading",
+  "market": {
+    "symbol": "AAVEUSDT",
+    "fee_symbol": "BNBUSDT",
+    "trading_mode": "spot",
+    "direction": "long_only",
+    "timezone": "UTC",
+    "execution_timeframe": "1m",
+    "signal_timeframe": "3m"
+  },
+  "averages": {
+    "type": "simple_moving_average",
+    "source": "completed_daily_closes_only",
+    "signal_average_days": 10,
+    "regime_periods_days": [
+      7,
+      15,
+      30
+    ]
+  },
+  "entry": {
+    "touch_zone_pct": 0.1,
+    "approach": "from_below",
+    "touch_condition": "high >= average_10d * 0.999 AND low <= average_10d * 1.001",
+    "prior_candle_condition": "prior_high < prior_average_10d * 0.999",
+    "deduplication": "first_candle_of_each_maximal_consecutive_touch_run",
+    "confirmation": {
+      "type": "bullish_candle",
+      "condition": "close > open",
+      "maximum_wait_minutes": 30
+    },
+    "market_filter": {
+      "type": "avoid_strong_bearish",
+      "reject_when": "average_7d < average_15d < average_30d"
+    },
+    "blocked_entry_hours_utc": {
+      "start": 6,
+      "end": 12
+    },
+    "fill_timing": "raw_1m_open_at_confirmation_3m_candle_close_boundary",
+    "consolidation_breakout": {
+      "description": "A second way in, for when AAVE never comes back down to its average: buy the break out of a quiet band.",
+      "chart_minutes": 30,
+      "zone_bars": 24,
+      "maximum_zone_pct": 2.0,
+      "confirmation_wait_minutes": 60,
+      "condition": "The 24 bars before the current one sit inside a band no wider than 2% (highest high / lowest low - 1). The first bar to close above that band's top is the break; 60 minutes later the 1-minute close must still be above the top, and the buy lands on the next minute's open. Only the first break of each quiet stretch counts.",
+      "market_filter": "Only the blocked hours are shared with the dip rule. The downtrend filter is deliberately NOT applied: requiring the averages to be stacked upward before a break screens out exactly the breaks that start a new trend.",
+      "exit": {
+        "protective_stop_pct_from_entry_fill": 3.5,
+        "activation_pct_from_entry_fill": 1.283,
+        "giveback_of_open_profit_pct": 22.0,
+        "note": "A break comes out of a quiet band rather than a dip, so it carries its own tighter stop and its own trail."
+      }
+    }
+  },
+  "exit": {
+    "protective_stop_pct_from_entry_fill": 4.0,
+    "maximum_hold_minutes": null,
+    "trailing_stop": {
+      "activation_pct_from_entry_fill": 1.75,
+      "giveback_of_open_profit_pct": 20.0,
+      "activation_candle_can_trigger_trail": false,
+      "formula": "entry_fill + 0.80 * (prior_peak - entry_fill)",
+      "note": "The arm was raised from +1.276% to +1.75% in September 2026. It applies to DIP lots only - a Mode C lot keeps its own +1.283% arm, where the later arm was measured to do nothing."
+    },
+    "same_candle_activation_and_stop": "stop_wins",
+    "gap_fill": "min(level, candle_open)"
+  },
+  "portfolio": {
+    "reference_capital_usd": 300.0,
+    "default_lot_size_usd": 100.0,
+    "default_lots": 3,
+    "minimum_lot_size_usd": 10.0,
+    "maximum_lot_size_usd": 100000.0,
+    "maximum_lots_per_coin": 20,
+    "sizing_rule": "Each coin gets lot size x lots from the free USDT in the Binance wallet. A trade buys exactly one full lot when the coin has a free slot and Binance has at least one lot of free USDT; smaller amounts are never traded.",
+    "leverage_allowed": false,
+    "short_selling_allowed": false
+  },
+  "execution_model": {
+    "usdt_fee_bps_per_side": 10.0,
+    "bnb_fee_bps_per_side": 7.5,
+    "slippage_bps_per_side": 2.0,
+    "bnb_fee_fallback": "pay_usdt_fee_when_bnb_balance_is_insufficient"
+  },
+  "evaluation": {
+    "minimum_calendar_days": 180,
+    "minimum_completed_trades": 50,
+    "maximum_drawdown_review_pct": 15.0
+  },
+  "provenance": {
+    "research": "stage2_backtesting/results/aave_consolidation_full, aave_three_modes.py and selection_test.py",
+    "backtest_bnb_fees": "Oct 2024 - Sep 2026 on $300 as 3 x $100 lots. With the deployed +1.276% arm: +$115.91 over 289 trades (255 dip, 34 breakout) at an 85.1% win rate, max drawdown -7.88%, five of six walk-forward windows. With the +1.75% arm now deployed, the same period gives +$116.37 over 271 trades at 79.3%, walk-forward +$123.62 against +$104.19, better in six of six windows, at a -10.23% mark-to-market drawdown. The breakout alone: 38 trades, +$24.44, an 89.5% win rate, six of six windows and a -1.36% drawdown.",
+    "caveats": "A trend exit (Mode A) was tested and deliberately left out. On paper it added about $100, but a walk-forward selection test put its honest contribution at $2: the gain came from a few large moves in the first year and the right line length could not have been chosen in advance (16h +$169, 24h +$206, 36h +$124 - a spike, not a plateau). AAVE wins small and often, which is what the giveback trailing stop is for. Mode C, by contrast, improved four of six windows at every setting tested.",
+    "arm_research": "stage2_backtesting/scripts/aave_settings_recheck.py and aave_atr_stop.py",
+    "arm_change": "Sept 2026 recheck: every other deployed setting was confirmed, but the dip's trail armed too early. Walk-forward rises steadily with the arming level - +1.276% $104.19, +1.5% $111.54, +1.75% $123.62, +2% $141.19, +2.25% $164.60, +2.5% $177.11 - and inside a pre-committed range of no more than double the deployed arm, choosing honestly beat leaving it alone ($126.02 against $104.19), the only setting change in the whole research programme to pass that gate. +1.75% was chosen as the conservative point: better in 6 of 6 walk-forward windows (+1.17, +0.28, +0.28, +2.50, +3.95, +11.24 = +$19.43 on $300) at a -10.23% mark-to-market drawdown against -9.62%. The cost is win rate: 85.2% -> 79.3%, fewer and larger wins. The gain is entirely in the dip lots ($100.78 -> $120.77 over the full window); Mode C is unaffected and its own arm was left alone. An ATR-scaled arm reaches the same place (0.4x ATR = about +2.9%) and adds nothing over a fixed number, so the fixed number is used."
+  }
+}

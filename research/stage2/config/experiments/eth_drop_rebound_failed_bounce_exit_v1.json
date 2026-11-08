@@ -1,0 +1,51 @@
+{
+  "experiment_id": "eth_drop_rebound_failed_bounce_exit_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "strategy_control": "eth_drop_rebound_min_net_floor_v1_minimum_net_0.30pct",
+  "scope": "time_based_failed_bounce_exit_on_best_rolling_drop_addon",
+  "frozen_rule": {
+    "lookback_minutes": 60,
+    "fall_pct": 5.0,
+    "protective_stop_pct": 2.0,
+    "activation_pct": 0.19,
+    "minimum_net_exit_pct": 0.30,
+    "giveback_pct": 30.0
+  },
+  "failed_bounce_exit_minutes": [30, 60, 180],
+  "exit_mechanics": {
+    "condition": "trade_has_not_armed_by_the_end_of_the_checkpoint_candle",
+    "decision_time": "after_checkpoint_candle_is_complete",
+    "execution": "next_minute_open_with_standard_exit_slippage_and_fee",
+    "precedence": "an_existing_protective_stop_before_or_on_the_checkpoint_is_unchanged"
+  },
+  "acceptance_vs_current_best": {
+    "full_profit_change_gt": 0.0,
+    "later_profit_change_gte": 0.0,
+    "walk_forward_profit_change_gt": 0.0,
+    "addon_win_rate_change_gte_pp": 0.0,
+    "addon_average_loss_change_gte": 0.0,
+    "maximum_combined_win_rate_reduction_pp": 2.0
+  },
+  "base_safety": {
+    "minimum_combined_headline_win_rate_pct": 75.0,
+    "minimum_additional_trades": 20,
+    "minimum_walk_forward_windows_improved": 4,
+    "average_loss_not_worse_than_base": true,
+    "drawdown_not_worse_than_base": true
+  },
+  "unchanged": [
+    "all_current_ETH_signals_and_exits",
+    "unfiltered_60m_5pct_drop_entries",
+    "0.19pct_mode_b_arm",
+    "0.30pct_minimum_net_floor",
+    "30pct_giveback",
+    "2pct_protective_stop",
+    "five_shared_slots",
+    "500_usd_wallet",
+    "base_signals_have_same_minute_priority",
+    "BNB_fees_and_2bps_slippage",
+    "no_leverage"
+  ],
+  "notes": "Three preregistered causal early exits; no stop-tightening grid."
+}

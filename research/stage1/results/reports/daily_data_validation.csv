@@ -1,0 +1,4 @@
+symbol,required_columns,timestamps_utc,sorted,duplicate_rows,duplicate_timestamps,incorrect_intervals,high_less_than_low,open_outside_range,close_outside_range,non_positive_prices,negative_volume,missing_values,rows,first_date,last_date,overall
+BTCUSDT,True,True,True,0,0,0,0,0,0,0,0,0,699,2024-09-01 00:00:00+00:00,2026-07-31 00:00:00+00:00,True
+ETHUSDT,True,True,True,0,0,0,0,0,0,0,0,0,699,2024-09-01 00:00:00+00:00,2026-07-31 00:00:00+00:00,True
+SOLUSDT,True,True,True,0,0,0,0,0,0,0,0,0,699,2024-09-01 00:00:00+00:00,2026-07-31 00:00:00+00:00,True

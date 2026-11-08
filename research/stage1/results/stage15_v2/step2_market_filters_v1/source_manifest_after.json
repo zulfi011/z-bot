@@ -1,0 +1,1974 @@
+{
+  "AGENTS.md": {
+    "size": 3011,
+    "sha256": "829241eae792172f69fccf06648b3c98b0fb81ccd25f871162d9ca304442dc13"
+  },
+  "README.md": {
+    "size": 2014,
+    "sha256": "ad55a4273492e3284823a55dca1270bcfb07ab0cab5f400630c39440f5096bb0"
+  },
+  "V1_Stage1_Historical_Engine_Results.md": {
+    "size": 18261,
+    "sha256": "48c36cc6551567f390abee33e6acd253517f3a7042bfd71733b7287bd210c4d3"
+  },
+  "config/experiments/sol_15d_5m_test.yaml": {
+    "size": 1102,
+    "sha256": "9feec8bf9376422fea201036691f292418c62c7a695608da6ec443123649137e"
+  },
+  "config/experiments/v1_stage1.yaml": {
+    "size": 1204,
+    "sha256": "f3d41481325df4ac7cc744da69ad57992a2910ee684eb45b1b5133f3589f7b4f"
+  },
+  "config/experiments/v1_stage15_step1.yaml": {
+    "size": 630,
+    "sha256": "777bc449fb8878336b157b5b524a35db9ab91c555e08fd295ffeb9f8a7e7a019"
+  },
+  "config/experiments/v1_stage15_step2_entries.yaml": {
+    "size": 1214,
+    "sha256": "10f573ad0edb6f41ad3de2a6701e5dade84c9ae4b0a30d25f6007f28c4e1f86a"
+  },
+  "config/experiments/v1_stage15_step3_market_conditions.yaml": {
+    "size": 1302,
+    "sha256": "b834cc63832cca1d52576bdbf8a910b516660ae85a0b0067c8b459275a46ba90"
+  },
+  "config/experiments/v1_stage15_step4_downside_protection.yaml": {
+    "size": 1110,
+    "sha256": "b93f383844820920073242ae5967d01486aeeeebab760106f871d48809bc569f"
+  },
+  "config/experiments/v1_stage15_step5_exits.yaml": {
+    "size": 1338,
+    "sha256": "695ff48239b72ffa3e72bd8248919bf8ffbb09c8b8ab0d779bbf78b67535e02f"
+  },
+  "config/experiments/v1_stage15_step6_robustness.yaml": {
+    "size": 1226,
+    "sha256": "d60a123158cc4b6d0d1e558a66599923822a3c2dca4fa7500a319b5a179a4a27"
+  },
+  "config/experiments/v1_stage15_v2_step1_bounce_entries.yaml": {
+    "size": 1224,
+    "sha256": "a6f48799ccc5967f43131862f6143a7ba0975568f737d214d0340629c74b4d33"
+  },
+  "config/experiments/v1_stage15_v2_step2_market_filters.yaml": {
+    "size": 1446,
+    "sha256": "ac7f80f2428599f54d125e71ac71254d23d9dae0cd5d0b507f0886a63ba36a36"
+  },
+  "config/settings.py": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "config/symbols.py": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "data/processed/BTCUSDT/.gitkeep": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "data/processed/BTCUSDT/BTCUSDT_1d.parquet": {
+    "size": 68456,
+    "sha256": "09e6663dd17b796802f40ce90d3c6be4acc00aef8ef00207bbebb7c025203a8e"
+  },
+  "data/processed/BTCUSDT/BTCUSDT_1m_with_averages.parquet": {
+    "size": 66829005,
+    "sha256": "724beade8ccecc2a075246d63e0890a9552d4981bb39c9fd111b957ace5dd122"
+  },
+  "data/processed/BTCUSDT/BTCUSDT_1m_with_distances.parquet": {
+    "size": 90910588,
+    "sha256": "e8f2061c4c6bcfdbe6d9dce88464070cc5bc3db23b0bd5aad2aed52e57fb6f37"
+  },
+  "data/processed/BTCUSDT/BTCUSDT_1m_with_touches.parquet": {
+    "size": 91058842,
+    "sha256": "825222b4c8d666ce9120ef37fdbaa03aba761747245348a7dea33edd07f57e19"
+  },
+  "data/processed/BTCUSDT/BTCUSDT_3m.parquet": {
+    "size": 24532135,
+    "sha256": "c9da8df6b54e08a63a4499cd47fd2a2e6a215c2e12b0e061e2c283501141c02a"
+  },
+  "data/processed/BTCUSDT/BTCUSDT_3m_with_averages.parquet": {
+    "size": 24561018,
+    "sha256": "3d9b6752c3c73bfc35dee61668b3ab9d0df0978c41b97644aea1158733906c85"
+  },
+  "data/processed/BTCUSDT/BTCUSDT_3m_with_distances.parquet": {
+    "size": 33172738,
+    "sha256": "a5916e3641f631369bcacad54ea2b8a3596f5d7c9e6d4f70afd51efa9698f736"
+  },
+  "data/processed/BTCUSDT/BTCUSDT_3m_with_touches.parquet": {
+    "size": 33241026,
+    "sha256": "31d81d02ba1f3f748931bfc63b282a7c1f8c3428f9daca4c3c9533d7baeb00d7"
+  },
+  "data/processed/BTCUSDT/BTCUSDT_5m.parquet": {
+    "size": 15930408,
+    "sha256": "04a1a47ea803b38c8da119602d3e204207c84e252fffda732ffc40884566d0b4"
+  },
+  "data/processed/BTCUSDT/BTCUSDT_5m_with_averages.parquet": {
+    "size": 15957889,
+    "sha256": "79285be5396ffa7bfcef476e36ff98a44f1a6aafa86487d0f720931b6f5a2ae6"
+  },
+  "data/processed/BTCUSDT/BTCUSDT_5m_with_distances.parquet": {
+    "size": 21456864,
+    "sha256": "108a5c7a2d7229e68a9789522b4558272412303e2e9fb7f6a49eba69f5cccf2a"
+  },
+  "data/processed/BTCUSDT/BTCUSDT_5m_with_touches.parquet": {
+    "size": 21506575,
+    "sha256": "08a7236f30bb6060e35f28c41b5fc994cbd593cc39ae5e86ac9a931d869da712"
+  },
+  "data/processed/BTCUSDT/BTCUSDT_available_closes.parquet": {
+    "size": 19189,
+    "sha256": "996597ef7796065d661a256070fba8de76c262a50cf262260fd1a38cd37f8f03"
+  },
+  "data/processed/ETHUSDT/.gitkeep": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "data/processed/ETHUSDT/ETHUSDT_1d.parquet": {
+    "size": 67419,
+    "sha256": "d1ff4835c01b6a175a5ceab307d928633f3523b841272998911700a264f1c7a6"
+  },
+  "data/processed/ETHUSDT/ETHUSDT_1m_with_averages.parquet": {
+    "size": 60539389,
+    "sha256": "c46083282733e673c027041a52e54527fbb0d3fd87c246ad551fe20eb9425b9d"
+  },
+  "data/processed/ETHUSDT/ETHUSDT_1m_with_distances.parquet": {
+    "size": 84409069,
+    "sha256": "8e212840b66824fd3789b7f9696b89fc7ec8db03cb3a9a3f8d22d8249f514115"
+  },
+  "data/processed/ETHUSDT/ETHUSDT_1m_with_touches.parquet": {
+    "size": 84557339,
+    "sha256": "5db27e494a2af1a6d5e2fcd973436755b3d2eac5eb246511f370253bca6cf238"
+  },
+  "data/processed/ETHUSDT/ETHUSDT_3m.parquet": {
+    "size": 22524696,
+    "sha256": "f3f35e67c9748b634a85aec7a8e34857725ce3652d88ca576375a522ba04f5fa"
+  },
+  "data/processed/ETHUSDT/ETHUSDT_3m_with_averages.parquet": {
+    "size": 22553232,
+    "sha256": "389cc1acfe0313978679f387953f890200d7cd1bcc51c8a40b941d7571ea4ee0"
+  },
+  "data/processed/ETHUSDT/ETHUSDT_3m_with_distances.parquet": {
+    "size": 31086396,
+    "sha256": "135b9e65eb994c5845a39fc4764377260e71fd769e4d4ec2c5c7168dd4ab15a8"
+  },
+  "data/processed/ETHUSDT/ETHUSDT_3m_with_touches.parquet": {
+    "size": 31154497,
+    "sha256": "f05ff4daead498dd56057a6494575b20f01865cea405ddd70ac0fdd06a8d005d"
+  },
+  "data/processed/ETHUSDT/ETHUSDT_5m.parquet": {
+    "size": 14668760,
+    "sha256": "9663379ea07d1ff1db277d2022806d523c00443682f374471af1819701eae686"
+  },
+  "data/processed/ETHUSDT/ETHUSDT_5m_with_averages.parquet": {
+    "size": 14695893,
+    "sha256": "4c038558aba1a445d77da1c0e2938ffa5023f96cef13b446a0a6668f70483786"
+  },
+  "data/processed/ETHUSDT/ETHUSDT_5m_with_distances.parquet": {
+    "size": 20154203,
+    "sha256": "7a16bc70acfe726f597c220852b40895d82c70733b3e631c8023d0f206bf0cbe"
+  },
+  "data/processed/ETHUSDT/ETHUSDT_5m_with_touches.parquet": {
+    "size": 20203275,
+    "sha256": "86fe5ba90d0c6870c853862c62297df8889c042052d6b58e563452f2b01cea3a"
+  },
+  "data/processed/ETHUSDT/ETHUSDT_available_closes.parquet": {
+    "size": 18945,
+    "sha256": "2d14a808094f6bdc02df3d7b7e8aa5479935a53151e9a32d9f6047af25c50d07"
+  },
+  "data/processed/SOLUSDT/.gitkeep": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "data/processed/SOLUSDT/SOLUSDT_1d.parquet": {
+    "size": 65213,
+    "sha256": "26de49b5467c8c0c15d4e825233cb30125050f702cb377adf11e772327dc3bc1"
+  },
+  "data/processed/SOLUSDT/SOLUSDT_1m_with_averages.parquet": {
+    "size": 50708416,
+    "sha256": "f9b69f91a4e3a145965a92a202a6a31742d6d92214ef20e5152ad9879c452fce"
+  },
+  "data/processed/SOLUSDT/SOLUSDT_1m_with_distances.parquet": {
+    "size": 64741021,
+    "sha256": "c503c444b7230a7021f938bc9c1b5e64eaf657f4c8f7dd7d613c2712b6420e6c"
+  },
+  "data/processed/SOLUSDT/SOLUSDT_1m_with_touches.parquet": {
+    "size": 64890952,
+    "sha256": "08fa1958e882406d2b9be2f5b4fcf5e6bcdc46a2568073b57fd1dd72d1620943"
+  },
+  "data/processed/SOLUSDT/SOLUSDT_3m.parquet": {
+    "size": 18592452,
+    "sha256": "127d4280edaa30875c0e355f1659c30498915e7686604c80333c9a959d66be68"
+  },
+  "data/processed/SOLUSDT/SOLUSDT_3m_with_averages.parquet": {
+    "size": 18619313,
+    "sha256": "ff4ccb7c70046d41b95deb2041e0becdc7a10573a0be5e38777a1a05dc56f5d3"
+  },
+  "data/processed/SOLUSDT/SOLUSDT_3m_with_distances.parquet": {
+    "size": 25309538,
+    "sha256": "e18d56ecc5dc715deb981480a2d980df46d7321deaaf2317b5fb0a9459677f4f"
+  },
+  "data/processed/SOLUSDT/SOLUSDT_3m_with_touches.parquet": {
+    "size": 25377896,
+    "sha256": "dcd28e5e03ab03e6fb819b5126d8b47f17c47add15e1b7db1d087c2cf849e27c"
+  },
+  "data/processed/SOLUSDT/SOLUSDT_5m.parquet": {
+    "size": 12053167,
+    "sha256": "2812838c7ca1ef00ffea2d52c57e89d1d5dd658b82a5a0636a06dff657b3a3c1"
+  },
+  "data/processed/SOLUSDT/SOLUSDT_5m_with_averages.parquet": {
+    "size": 12078623,
+    "sha256": "8c7138ef8970c55c4c0c2d94802bec5904c81a84037340ea63e38a4eff209207"
+  },
+  "data/processed/SOLUSDT/SOLUSDT_5m_with_distances.parquet": {
+    "size": 16691160,
+    "sha256": "59db081b75a0788617ac8d7f25c437d7cd1c5d6f6851ab74c5008d302d053357"
+  },
+  "data/processed/SOLUSDT/SOLUSDT_5m_with_touches.parquet": {
+    "size": 16740421,
+    "sha256": "d64c22de330fef946fa5a8586f037565e70fef1afbb3a5dc74666b207a202f8b"
+  },
+  "data/processed/SOLUSDT/SOLUSDT_available_closes.parquet": {
+    "size": 18505,
+    "sha256": "1e3d338473b254cd0c9fb46cefa5af4191221792cf165c1ac8cd77e1e2274bd8"
+  },
+  "data/raw/BTCUSDT/BTCUSDT_1m.parquet": {
+    "size": 66792088,
+    "sha256": "0a7817a29b724691403402fea7d9a6db617e98c66d4a8d4bd856d103aacce960"
+  },
+  "data/raw/ETHUSDT/ETHUSDT_1m.parquet": {
+    "size": 60502819,
+    "sha256": "d789a57059e45ab7162d5f8f0c977d2e8319d629a12598e7a53fc1515f36e490"
+  },
+  "data/raw/SOLUSDT/SOLUSDT_1m.parquet": {
+    "size": 50673521,
+    "sha256": "895566d79dcad524dc71fe9ef1a90c1cf5adda251e15e360c042dac16eb53aaa"
+  },
+  "data/research/BTCUSDT/.gitkeep": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "data/research/BTCUSDT/BTCUSDT_1m_touch_events.parquet": {
+    "size": 47948553,
+    "sha256": "c1ddbe45ff9a3fbf89030422cac310ed242c4ceeac9c31342c7d548a608a8036"
+  },
+  "data/research/BTCUSDT/BTCUSDT_1m_touch_events_with_first_hit.parquet": {
+    "size": 289594556,
+    "sha256": "93fde35b1035f63875d8b2d7102f93f247f740f98ef23db014e2e473ff9c057a"
+  },
+  "data/research/BTCUSDT/BTCUSDT_1m_touch_events_with_max_downside.parquet": {
+    "size": 212134278,
+    "sha256": "592e504ad04e3a5baae78bcc8acd183c2d190acea1abbae57fe43f1eed6da362"
+  },
+  "data/research/BTCUSDT/BTCUSDT_1m_touch_events_with_max_upside.parquet": {
+    "size": 245195190,
+    "sha256": "5b0d3191cccb597ee41b41b9720739e1f5c5a50b5e28145f06c2231bfa298c43"
+  },
+  "data/research/BTCUSDT/BTCUSDT_1m_touch_events_with_post_activation.parquet": {
+    "size": 300477748,
+    "sha256": "4677db401541e73497689ecda88c411fcea76e68bec002e2e887ac9119317b43"
+  },
+  "data/research/BTCUSDT/BTCUSDT_1m_touch_events_with_profit_reach.parquet": {
+    "size": 178691203,
+    "sha256": "c03af3674d56434536804c7d7820575b21c07d35f42f293de9354cc0320d2d64"
+  },
+  "data/research/BTCUSDT/BTCUSDT_1m_touch_events_with_regime.parquet": {
+    "size": 47995626,
+    "sha256": "338b6207bc5d6ee17af85fb9366579b4a0f4f28428b9937f9fcb605cf7d781a8"
+  },
+  "data/research/BTCUSDT/BTCUSDT_1m_touch_events_with_returns.parquet": {
+    "size": 126805860,
+    "sha256": "3922a921107cea396402dd58624da1593ae1378f631085bf438e101519d17845"
+  },
+  "data/research/BTCUSDT/BTCUSDT_1m_touch_events_with_trailing_research.parquet": {
+    "size": 313577375,
+    "sha256": "8e69a060ba0a7b0cd0418a1599ce168f6cda13a383a12ad9bd69103d8d56b405"
+  },
+  "data/research/BTCUSDT/BTCUSDT_3m_touch_events.parquet": {
+    "size": 17931328,
+    "sha256": "d198fb57779aa3df46ff7efb4ea95310ad289f613fd3a826ff79bcd5197fcd54"
+  },
+  "data/research/BTCUSDT/BTCUSDT_3m_touch_events_with_first_hit.parquet": {
+    "size": 110860321,
+    "sha256": "b4f3ade7d85f7ab58574685f2e1a3adf07f495e2f9f6145b1132e15b61889963"
+  },
+  "data/research/BTCUSDT/BTCUSDT_3m_touch_events_with_max_downside.parquet": {
+    "size": 80207810,
+    "sha256": "976526058d14d4398ff59c33b673bfaf7bbb9e15d1007db1f590ee5207440cab"
+  },
+  "data/research/BTCUSDT/BTCUSDT_3m_touch_events_with_max_upside.parquet": {
+    "size": 93439103,
+    "sha256": "10d91bf1519a6db61985d1ee84226064efc7d0a3c86c6875e62e853f4fc8f394"
+  },
+  "data/research/BTCUSDT/BTCUSDT_3m_touch_events_with_post_activation.parquet": {
+    "size": 115259853,
+    "sha256": "baf3ed90c80c649c90d14b35dd5569f199df194d3ff22c3793d18051e976b2e2"
+  },
+  "data/research/BTCUSDT/BTCUSDT_3m_touch_events_with_profit_reach.parquet": {
+    "size": 66935000,
+    "sha256": "f6e42000752803e1c34f65a329141f685227bee740f9b8bde1e56ef1980fb237"
+  },
+  "data/research/BTCUSDT/BTCUSDT_3m_touch_events_with_regime.parquet": {
+    "size": 17961671,
+    "sha256": "b086931be0c22ee4a7eca0c7cc2320978d31251cfd52f44b066f83b72099ed03"
+  },
+  "data/research/BTCUSDT/BTCUSDT_3m_touch_events_with_returns.parquet": {
+    "size": 46551961,
+    "sha256": "a3a2dbd829ffe55d9e3f90f2ad9755c786cc13ff5e7ba297a2592ea6e30d3cbb"
+  },
+  "data/research/BTCUSDT/BTCUSDT_3m_touch_events_with_trailing_research.parquet": {
+    "size": 120301030,
+    "sha256": "8bc7d4e6b637021504217f2125b8c9496570143efad48e501b0acf2bda0b389a"
+  },
+  "data/research/BTCUSDT/BTCUSDT_5m_touch_events.parquet": {
+    "size": 11087741,
+    "sha256": "d66e1f1a675961149da927dab4056eb7fb4a6839a31a66e8420e499c3d8231e5"
+  },
+  "data/research/BTCUSDT/BTCUSDT_5m_touch_events_with_first_hit.parquet": {
+    "size": 68264823,
+    "sha256": "2b140ea722d6258f4827741fdb2118ea6b88dab1b6913bbba08d52d047bf7e64"
+  },
+  "data/research/BTCUSDT/BTCUSDT_5m_touch_events_with_max_downside.parquet": {
+    "size": 48947347,
+    "sha256": "51f535192f3fc988f074712e9c77e00fb2822425c6a858ff48a33dc455e10e52"
+  },
+  "data/research/BTCUSDT/BTCUSDT_5m_touch_events_with_max_upside.parquet": {
+    "size": 57209692,
+    "sha256": "f86f3f43be414a9315601a2e73b84bca8603c92efb5ac72fbc8fda9b3ef8c571"
+  },
+  "data/research/BTCUSDT/BTCUSDT_5m_touch_events_with_post_activation.parquet": {
+    "size": 71125793,
+    "sha256": "9731eb0055aafa6b60afb9dee3d80ab111ea9c383c4f5aefce16c25a7e42a901"
+  },
+  "data/research/BTCUSDT/BTCUSDT_5m_touch_events_with_profit_reach.parquet": {
+    "size": 40655863,
+    "sha256": "2e3d440107c92cc8a0e0ce42de9a0bcee6b28aed2f6e09417d01137baf8cf9b9"
+  },
+  "data/research/BTCUSDT/BTCUSDT_5m_touch_events_with_regime.parquet": {
+    "size": 11114791,
+    "sha256": "03105522c9c1773e5878e58f541e256186b8328610467a16e85dd55f54366d21"
+  },
+  "data/research/BTCUSDT/BTCUSDT_5m_touch_events_with_returns.parquet": {
+    "size": 27694599,
+    "sha256": "386d8b791a5239970edc85ea0a78813dd79578497ebdbc315c0e0d857432b04a"
+  },
+  "data/research/BTCUSDT/BTCUSDT_5m_touch_events_with_trailing_research.parquet": {
+    "size": 74313499,
+    "sha256": "021ebf40f86dae464aa66954c2466ec644633a1674ee680a095b27e95aade696"
+  },
+  "data/research/ETHUSDT/.gitkeep": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "data/research/ETHUSDT/ETHUSDT_1m_touch_events.parquet": {
+    "size": 32340834,
+    "sha256": "35d157275bf8f9c851a1201ea51ff62c34bc91f287ae31ca9d1b6fcc52421fd7"
+  },
+  "data/research/ETHUSDT/ETHUSDT_1m_touch_events_with_first_hit.parquet": {
+    "size": 207228539,
+    "sha256": "65209695ddd72a059708e28b8314724196093c30f3161d55daf49f373091109a"
+  },
+  "data/research/ETHUSDT/ETHUSDT_1m_touch_events_with_max_downside.parquet": {
+    "size": 151156787,
+    "sha256": "4be9b5a47934f60da34a4b65ed9c28d0f0c5b480caeb25f7ad409d685b5f4277"
+  },
+  "data/research/ETHUSDT/ETHUSDT_1m_touch_events_with_max_upside.parquet": {
+    "size": 176082129,
+    "sha256": "a4420a6ce2d92f0981c7b305ff889ea287b6a7bdc7cbe08ec9aac05f11070d33"
+  },
+  "data/research/ETHUSDT/ETHUSDT_1m_touch_events_with_post_activation.parquet": {
+    "size": 217669929,
+    "sha256": "954a074bd11ed083218687189b0d60dd60084531af271f5b13f4ed195bb00037"
+  },
+  "data/research/ETHUSDT/ETHUSDT_1m_touch_events_with_profit_reach.parquet": {
+    "size": 126238547,
+    "sha256": "c03bfa02c7dbef1fb4f532d66557eb1ec4e6f4871ef8f97dc306d762b79572fd"
+  },
+  "data/research/ETHUSDT/ETHUSDT_1m_touch_events_with_regime.parquet": {
+    "size": 32378185,
+    "sha256": "a34535e07ffb3f3821f57ad98acdcf006da5878e2b106d231d62c6933a0c6458"
+  },
+  "data/research/ETHUSDT/ETHUSDT_1m_touch_events_with_returns.parquet": {
+    "size": 89837315,
+    "sha256": "d476a094cfed6154b7e782aabb69da75103b5084b218d56be938544aa3f74145"
+  },
+  "data/research/ETHUSDT/ETHUSDT_1m_touch_events_with_trailing_research.parquet": {
+    "size": 235688995,
+    "sha256": "96665b02a01dbbe1e49b1c35350c70f95bc45a8f46935208d027228543330e0a"
+  },
+  "data/research/ETHUSDT/ETHUSDT_3m_touch_events.parquet": {
+    "size": 12320240,
+    "sha256": "d4546f50c4c649088fb750dec1ce00f7542b5c12adc533d7f02209d62b69b00a"
+  },
+  "data/research/ETHUSDT/ETHUSDT_3m_touch_events_with_first_hit.parquet": {
+    "size": 78563782,
+    "sha256": "6aea81310461de3ab069d0b6cfde73232620ee51d7431be4e988eaff6b7bf741"
+  },
+  "data/research/ETHUSDT/ETHUSDT_3m_touch_events_with_max_downside.parquet": {
+    "size": 56283902,
+    "sha256": "5fbcf8251ee0c8171b90bac55d5ff864f78d4b4438c322511c98f04370223e7e"
+  },
+  "data/research/ETHUSDT/ETHUSDT_3m_touch_events_with_max_upside.parquet": {
+    "size": 66013126,
+    "sha256": "213bcc2ae9a3ff118e4517b9ec44c1b6f46d6029d21ec0e2742d25dfe1ea5586"
+  },
+  "data/research/ETHUSDT/ETHUSDT_3m_touch_events_with_post_activation.parquet": {
+    "size": 82807876,
+    "sha256": "d32b22032820c303a9b64e58e4877d3a1680a371acf82f0652f2058c466a46f2"
+  },
+  "data/research/ETHUSDT/ETHUSDT_3m_touch_events_with_profit_reach.parquet": {
+    "size": 46566513,
+    "sha256": "2994252b004b259ef8ee97a922584d00608197898f1a80ecb6ab516b4a0719c1"
+  },
+  "data/research/ETHUSDT/ETHUSDT_3m_touch_events_with_regime.parquet": {
+    "size": 12345097,
+    "sha256": "06359254b4fb1f1199619202bb13df4af0018f099917d6cb8b59e139deb9a030"
+  },
+  "data/research/ETHUSDT/ETHUSDT_3m_touch_events_with_returns.parquet": {
+    "size": 31830349,
+    "sha256": "fcb189ff903d17c23e30c795ab79b4d31e8640f97c52a02d4a9742c458ce0b11"
+  },
+  "data/research/ETHUSDT/ETHUSDT_3m_touch_events_with_trailing_research.parquet": {
+    "size": 89751589,
+    "sha256": "cc8c2ef54bc24b536f7ce2f2c5f5ce9e589f42e3a9775f10aca368d2e3be493a"
+  },
+  "data/research/ETHUSDT/ETHUSDT_5m_touch_events.parquet": {
+    "size": 7526281,
+    "sha256": "75ac0de0b898be1f3a9e69a3fc01041e2d3b2651341c763388903112aeba770c"
+  },
+  "data/research/ETHUSDT/ETHUSDT_5m_touch_events_with_first_hit.parquet": {
+    "size": 48484539,
+    "sha256": "e541c4bf056d1332c5a84c0e67ebab2454f80149d48538826d58f5a861f57b97"
+  },
+  "data/research/ETHUSDT/ETHUSDT_5m_touch_events_with_max_downside.parquet": {
+    "size": 34531724,
+    "sha256": "c956106859e6f541b7e526d29189c7bd75fe73c120d8295375d6d1cc7d9fcdfa"
+  },
+  "data/research/ETHUSDT/ETHUSDT_5m_touch_events_with_max_upside.parquet": {
+    "size": 40669842,
+    "sha256": "f430112c050d2bf6aad1c9d8562f061164673e2605cfbaeba09b858e380bdc4a"
+  },
+  "data/research/ETHUSDT/ETHUSDT_5m_touch_events_with_post_activation.parquet": {
+    "size": 51266382,
+    "sha256": "538aefcb8741bddb99ff0c168a61089bf5889bb101fad8c4a109fc59e9bb0bb6"
+  },
+  "data/research/ETHUSDT/ETHUSDT_5m_touch_events_with_profit_reach.parquet": {
+    "size": 28361501,
+    "sha256": "9cb222cfb8d9e41db1ebadd98ad8f0a39cb6f91e3c1df5c7347c9f2c25d01632"
+  },
+  "data/research/ETHUSDT/ETHUSDT_5m_touch_events_with_regime.parquet": {
+    "size": 7548840,
+    "sha256": "f5f3a8d639ac1ac683ab686e675a3bd26cdd247f52a4b8cce8c139d824b687bc"
+  },
+  "data/research/ETHUSDT/ETHUSDT_5m_touch_events_with_returns.parquet": {
+    "size": 19160031,
+    "sha256": "675860ab4fa39ca1a302ed7d23ef3485257bded7b1ac2b4b5c23df4215eb2444"
+  },
+  "data/research/ETHUSDT/ETHUSDT_5m_touch_events_with_trailing_research.parquet": {
+    "size": 55722420,
+    "sha256": "d3a0eb2e19c86f0f062c013bdb2ffdd7c57946b85ca9e0ba373426a008445dec"
+  },
+  "data/research/SOLUSDT/.gitkeep": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "data/research/SOLUSDT/SOLUSDT_1m_touch_events.parquet": {
+    "size": 21370712,
+    "sha256": "95a957c68b73c7019a265fc5780526ccea59a7fbabe0788c58407476f1b1afb8"
+  },
+  "data/research/SOLUSDT/SOLUSDT_1m_touch_events_with_first_hit.parquet": {
+    "size": 131202082,
+    "sha256": "2e0b8cac612fe7cce8c43c74952dcbfd2b62bc0162e23e6841231b508cae5002"
+  },
+  "data/research/SOLUSDT/SOLUSDT_1m_touch_events_with_max_downside.parquet": {
+    "size": 96212692,
+    "sha256": "1ad87f3203c2da47f29afb0553bb4f7330f0358e8dea8ab69db8cd6a38579b0b"
+  },
+  "data/research/SOLUSDT/SOLUSDT_1m_touch_events_with_max_upside.parquet": {
+    "size": 113097793,
+    "sha256": "5acce264e32e9684ca56dcd259719e16284b04699f6903ec6e8d3af97435a023"
+  },
+  "data/research/SOLUSDT/SOLUSDT_1m_touch_events_with_post_activation.parquet": {
+    "size": 137897990,
+    "sha256": "0fe9d7c8ca1385baf1a7a65c84c605f6c67cdc9ec20b431131a811b0889d2a82"
+  },
+  "data/research/SOLUSDT/SOLUSDT_1m_touch_events_with_profit_reach.parquet": {
+    "size": 79419301,
+    "sha256": "b2225098d5dadd43ff4356d7eb6cc582cd594b889a592f0596636d57ae07375e"
+  },
+  "data/research/SOLUSDT/SOLUSDT_1m_touch_events_with_regime.parquet": {
+    "size": 21403796,
+    "sha256": "fe686b41851d134023dc824c398f8031852c20091b6aca9b9dfb98e9618dc860"
+  },
+  "data/research/SOLUSDT/SOLUSDT_1m_touch_events_with_returns.parquet": {
+    "size": 58444005,
+    "sha256": "0475416ef5a3c52c46a8c27f19a5606e643aff9abece0e0c373ca9d55075a110"
+  },
+  "data/research/SOLUSDT/SOLUSDT_1m_touch_events_with_trailing_research.parquet": {
+    "size": 150248220,
+    "sha256": "1f23d2dbb195180070f54135cdb136e9dbc267c3656e873d9ba68ee03796b71c"
+  },
+  "data/research/SOLUSDT/SOLUSDT_3m_touch_events.parquet": {
+    "size": 8640420,
+    "sha256": "d4a0dfb4eec4673d6aa16af341a1a0ad2fe9076901226262238d68591196bd35"
+  },
+  "data/research/SOLUSDT/SOLUSDT_3m_touch_events_with_first_hit.parquet": {
+    "size": 54093056,
+    "sha256": "135335fd7d9d52b8d8c4879ba8845329009f72ff553cad2ca4f832d55fdb3e1a"
+  },
+  "data/research/SOLUSDT/SOLUSDT_3m_touch_events_with_max_downside.parquet": {
+    "size": 38711787,
+    "sha256": "9d1002cc28a1cc63231c9999addde6178519c63287c753a4cee746a3a652b84a"
+  },
+  "data/research/SOLUSDT/SOLUSDT_3m_touch_events_with_max_upside.parquet": {
+    "size": 46397081,
+    "sha256": "06ba5b99ad0800f49fec904be1f774ee606d90166b488ebe9c7d1d1d453a4344"
+  },
+  "data/research/SOLUSDT/SOLUSDT_3m_touch_events_with_post_activation.parquet": {
+    "size": 57585914,
+    "sha256": "1136e837802e1ed3203cca6cf44bfe8e255be902f84b55edb68f4d000c8c4ff4"
+  },
+  "data/research/SOLUSDT/SOLUSDT_3m_touch_events_with_profit_reach.parquet": {
+    "size": 31056186,
+    "sha256": "4a69cd1559974f1096ccad2c8794c2bff751bd4d6f943a349e3fb29f92ec5806"
+  },
+  "data/research/SOLUSDT/SOLUSDT_3m_touch_events_with_regime.parquet": {
+    "size": 8663570,
+    "sha256": "78861d1d40ce368e07080dd34949ed08553729a378c94f07d8786afbb8b4956b"
+  },
+  "data/research/SOLUSDT/SOLUSDT_3m_touch_events_with_returns.parquet": {
+    "size": 22071220,
+    "sha256": "d93108b03bed19ac59df32044a14e35bc28fda4f61927896a0b9aa50afd4618a"
+  },
+  "data/research/SOLUSDT/SOLUSDT_3m_touch_events_with_trailing_research.parquet": {
+    "size": 63686016,
+    "sha256": "7cbaedf009871dcbc9e2d651c32d8d2387087521182e8afd844baf0768d84f56"
+  },
+  "data/research/SOLUSDT/SOLUSDT_5m_touch_events.parquet": {
+    "size": 5569184,
+    "sha256": "3590aeda1f2170aa3c2d2bbb9da7c6e9b92623337bfc69a29a7fde810055e054"
+  },
+  "data/research/SOLUSDT/SOLUSDT_5m_touch_events_with_first_hit.parquet": {
+    "size": 35387779,
+    "sha256": "845b7dee0016de88b84ae3db6d2a7d1695997f0fdb71f958ab9e17f12439dee5"
+  },
+  "data/research/SOLUSDT/SOLUSDT_5m_touch_events_with_max_downside.parquet": {
+    "size": 25092822,
+    "sha256": "d43dded5a6932fc42eb4fb5ea43e28a09b39bfa207f2280f02d18658bacbb727"
+  },
+  "data/research/SOLUSDT/SOLUSDT_5m_touch_events_with_max_upside.parquet": {
+    "size": 30088426,
+    "sha256": "b923cc3d2b9bc20a1d8b7c4369b4a3fb300c87e817fbed4abf29336684c2aa18"
+  },
+  "data/research/SOLUSDT/SOLUSDT_5m_touch_events_with_post_activation.parquet": {
+    "size": 37904435,
+    "sha256": "32075994d40d34890cac9d476129470b483508d373824f50340f08ee51b17c36"
+  },
+  "data/research/SOLUSDT/SOLUSDT_5m_touch_events_with_profit_reach.parquet": {
+    "size": 20117556,
+    "sha256": "bd2058a99f7c811d64f0361d70f8aa3e9e7b04c477da9fc6904d0f77c67503e0"
+  },
+  "data/research/SOLUSDT/SOLUSDT_5m_touch_events_with_regime.parquet": {
+    "size": 5590616,
+    "sha256": "9308f9fa28188326cd003c91d504296d8a93c110964f260f5e30b5bf10b94412"
+  },
+  "data/research/SOLUSDT/SOLUSDT_5m_touch_events_with_returns.parquet": {
+    "size": 13908979,
+    "sha256": "18f4e9e61a4aefa25d44982307643bcbfcbb4b48ba3f8a2c1a3159e8ee9942af"
+  },
+  "data/research/SOLUSDT/SOLUSDT_5m_touch_events_with_trailing_research.parquet": {
+    "size": 42109002,
+    "sha256": "b4912c6c4fa6c331422a57a2cee32e8242648fc16cf1316669d7c7bbf18f50c9"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/BTCUSDT/BTCUSDT_1m_episode_outcomes.parquet": {
+    "size": 11139403,
+    "sha256": "d59a18258398f05f7790bd1b00df3848072352134d2cedf47cd8df33d857da6d"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/BTCUSDT/BTCUSDT_1m_episodes.parquet": {
+    "size": 1278152,
+    "sha256": "d12f1d80e3ca8e343f2f853eb531290017b98022f38e6f3d6580436c892b0134"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/BTCUSDT/BTCUSDT_1m_event_membership.parquet": {
+    "size": 17995372,
+    "sha256": "bc7ac21c821039a1c33002c1f0a1b6105ea6af07ee0885ae3b08be2ea4c91cf1"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/BTCUSDT/BTCUSDT_3m_episode_outcomes.parquet": {
+    "size": 6871761,
+    "sha256": "ffb4d434bd0603f2b0ce44fa02e7dbffb784072c458cbf4a945032b18d088531"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/BTCUSDT/BTCUSDT_3m_episodes.parquet": {
+    "size": 772918,
+    "sha256": "d0c4fc6c58a6e40b86d7557dd47f7f6ce105d1d005c38ec70cc0d33d16069283"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/BTCUSDT/BTCUSDT_3m_event_membership.parquet": {
+    "size": 6836983,
+    "sha256": "bf7a697c4dff7656a7527cce5701d7ba8e121964ac16755659472c74b9f45764"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/BTCUSDT/BTCUSDT_5m_episode_outcomes.parquet": {
+    "size": 5441462,
+    "sha256": "3375e39cbb7aa4df1ca6375ce43230491e98eb71fa2bc8d7facb69f4a2979def"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/BTCUSDT/BTCUSDT_5m_episodes.parquet": {
+    "size": 598517,
+    "sha256": "3b57bc35228a12696383ea4c53c89f0574f9f9a772cf1da6359be331a273f211"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/BTCUSDT/BTCUSDT_5m_event_membership.parquet": {
+    "size": 4332229,
+    "sha256": "a4925aa184400158fbbe18ca2a0633b9ae6088e5993e458e9bed586a6db43a7c"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/ETHUSDT/ETHUSDT_1m_episode_outcomes.parquet": {
+    "size": 11723325,
+    "sha256": "261bc0776f8ead4d5e569c02046d132781566d0ac5c780d576ad2ada49e0b46f"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/ETHUSDT/ETHUSDT_1m_episodes.parquet": {
+    "size": 1274133,
+    "sha256": "2be5cd7256147376135145dbbadc60ba9a558b0b6e56c91e47f41625b59cb7cc"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/ETHUSDT/ETHUSDT_1m_event_membership.parquet": {
+    "size": 14698756,
+    "sha256": "06898165f7b1b64144c5abf1b2fa1fa4d1a20f82444d7e86dc618bbd9d45355c"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/ETHUSDT/ETHUSDT_3m_episode_outcomes.parquet": {
+    "size": 7271080,
+    "sha256": "bcebcbedfc15ab671bbb4ff3c6a240621b75f7cd5a21db4f4176b0b890814ff5"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/ETHUSDT/ETHUSDT_3m_episodes.parquet": {
+    "size": 760048,
+    "sha256": "f6226442ccb2f2ce12bdf580725a4224728a6f03e5d557bd1098d7394961a180"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/ETHUSDT/ETHUSDT_3m_event_membership.parquet": {
+    "size": 5181345,
+    "sha256": "9a2878d19b5def687f3252cf2d65596929eaf51acf94ee5bff03dfe2f26727af"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/ETHUSDT/ETHUSDT_5m_episode_outcomes.parquet": {
+    "size": 5700269,
+    "sha256": "39c963df1c6a36d5b31ccb388c61e77d4920b8a777a4870994e82fd28967dc86"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/ETHUSDT/ETHUSDT_5m_episodes.parquet": {
+    "size": 591476,
+    "sha256": "8c025166dc3f03af6167521243e94719bebeeed74c5246a1bafe28d07d3f29e4"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/ETHUSDT/ETHUSDT_5m_event_membership.parquet": {
+    "size": 3243496,
+    "sha256": "20c0ad044a8605cf19bf196fbe368063fb16e93867ea8dbb5b873d03a351e13c"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/SOLUSDT/SOLUSDT_1m_episode_outcomes.parquet": {
+    "size": 10296389,
+    "sha256": "9edf1f95bc42c0c5a79d223463030f09b175fdb3f1b8d4f5f676f5b94a8eeb89"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/SOLUSDT/SOLUSDT_1m_episodes.parquet": {
+    "size": 1238626,
+    "sha256": "be89e9244b48ba4a0cf2a934f59ecfc71cd5d1d7f7a9625e89ff737b51b08b30"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/SOLUSDT/SOLUSDT_1m_event_membership.parquet": {
+    "size": 13574333,
+    "sha256": "eefbc40d334609c16e6ef8ee923f754ce0793ec89f03e7b51eba19a023904647"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/SOLUSDT/SOLUSDT_3m_episode_outcomes.parquet": {
+    "size": 6732231,
+    "sha256": "76a584b3c6f1ca3aff684f1c17062da9775503378fff4d178d7df8c0ef3f5493"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/SOLUSDT/SOLUSDT_3m_episodes.parquet": {
+    "size": 750693,
+    "sha256": "3488b1a356d81dbf34d928f258aa66141c4c1dd6b7aede975ee00542c38ca56e"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/SOLUSDT/SOLUSDT_3m_event_membership.parquet": {
+    "size": 4655708,
+    "sha256": "877de128ac836bfdcae6ff5657fd09211bd6a4f771d40e9af0644e40aaacb712"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/SOLUSDT/SOLUSDT_5m_episode_outcomes.parquet": {
+    "size": 5484782,
+    "sha256": "e40e4e044f2833a0616ec5ef5d7ae5a37f5e84dd6cf326130446f4ceb25b459f"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/SOLUSDT/SOLUSDT_5m_episodes.parquet": {
+    "size": 588161,
+    "sha256": "70eb6585c1706b4786927be8bf412337e808da81fa87d546d09e8999eef866b3"
+  },
+  "data/research/stage15/step1_consecutive_touch_first_v1/SOLUSDT/SOLUSDT_5m_event_membership.parquet": {
+    "size": 2911273,
+    "sha256": "a29da9a3fa61ca1dddff1dc44cd21a5ad7ea46bdecdb90c80ae31204112e9f47"
+  },
+  "data/research/stage15/step2_entry_conditions_v1/BTCUSDT/BTCUSDT_1m_entry_candidates.parquet": {
+    "size": 20655528,
+    "sha256": "0c82cdfcaccf3341d9ad8f1f12edde9a50bb7f507cf2b20ba1a7937f11eec59b"
+  },
+  "data/research/stage15/step2_entry_conditions_v1/BTCUSDT/BTCUSDT_3m_entry_candidates.parquet": {
+    "size": 11255280,
+    "sha256": "8f8e6d58afcf0575a4bbaaee6ee59d5c54ba67991a18df1dbbbd9b35af65fc28"
+  },
+  "data/research/stage15/step2_entry_conditions_v1/BTCUSDT/BTCUSDT_5m_entry_candidates.parquet": {
+    "size": 8005900,
+    "sha256": "22b5df9506b5192b974ad04cf645ac6437fd01cdb8e252452561d2e796171e2a"
+  },
+  "data/research/stage15/step2_entry_conditions_v1/ETHUSDT/ETHUSDT_1m_entry_candidates.parquet": {
+    "size": 21129326,
+    "sha256": "5398cdb1a5f307520176a65cbaa8388b9681bcec3a626622f9240185ab463cd3"
+  },
+  "data/research/stage15/step2_entry_conditions_v1/ETHUSDT/ETHUSDT_3m_entry_candidates.parquet": {
+    "size": 11115333,
+    "sha256": "24cf8c0797d4532834a50d4681f18f603af41097102230f1f717c79a52a2098f"
+  },
+  "data/research/stage15/step2_entry_conditions_v1/ETHUSDT/ETHUSDT_5m_entry_candidates.parquet": {
+    "size": 7987312,
+    "sha256": "6872e50d4ba0fe990b1384824ca2348d9b8c22d8372cb53e2babfd0d290650be"
+  },
+  "data/research/stage15/step2_entry_conditions_v1/SOLUSDT/SOLUSDT_1m_entry_candidates.parquet": {
+    "size": 21669326,
+    "sha256": "1c61b3368155c2387f8e4e71570855ab195efda0d31307cd8286802138ad3442"
+  },
+  "data/research/stage15/step2_entry_conditions_v1/SOLUSDT/SOLUSDT_3m_entry_candidates.parquet": {
+    "size": 11594127,
+    "sha256": "97e9ca7ac872784b280db1e5048d5d3ea93bf0b5699a4a62959604b5e0e0b40a"
+  },
+  "data/research/stage15/step2_entry_conditions_v1/SOLUSDT/SOLUSDT_5m_entry_candidates.parquet": {
+    "size": 8495748,
+    "sha256": "892bf4137cb6fc92ed7752b1caa6ee6ce34cff0a35ab84943b7b257226d0eb90"
+  },
+  "data/research/stage15/step3_market_conditions_v1/BTCUSDT/BTCUSDT_1m_market_candidates.parquet": {
+    "size": 7954623,
+    "sha256": "e2fb17757f956e239dd0c7b3b975f3cd0b7d26259d65700509e231a0b437ed3a"
+  },
+  "data/research/stage15/step3_market_conditions_v1/BTCUSDT/BTCUSDT_3m_market_candidates.parquet": {
+    "size": 4657090,
+    "sha256": "61d0aa10a234490375190a444d8b0e0dea00e419116e6fdbd1823d889ad51c5d"
+  },
+  "data/research/stage15/step3_market_conditions_v1/BTCUSDT/BTCUSDT_5m_market_candidates.parquet": {
+    "size": 3562613,
+    "sha256": "d35b28c7519299230b8364a2fbd2012d27470d8b5dcc2657080f0c8887d1484e"
+  },
+  "data/research/stage15/step3_market_conditions_v1/ETHUSDT/ETHUSDT_1m_market_candidates.parquet": {
+    "size": 8019412,
+    "sha256": "ad21a046c6c137681207ab5bc0fd823274560d7aeab33be7d2c3e2dc351f7903"
+  },
+  "data/research/stage15/step3_market_conditions_v1/ETHUSDT/ETHUSDT_3m_market_candidates.parquet": {
+    "size": 4593075,
+    "sha256": "fc6bfb75a2fb6b1488240e748b4a5efbb6f82b1e2c9e3c65596cd0dad8cf3a58"
+  },
+  "data/research/stage15/step3_market_conditions_v1/ETHUSDT/ETHUSDT_5m_market_candidates.parquet": {
+    "size": 3536283,
+    "sha256": "12930c8ec8ddc1affa28393eced19f26924efe90e96be0accb538bfc3344e782"
+  },
+  "data/research/stage15/step3_market_conditions_v1/SOLUSDT/SOLUSDT_1m_market_candidates.parquet": {
+    "size": 7714030,
+    "sha256": "df079d2fc9d6d39d2272e0b1464f0dcbe29d86604b852d919b0fdeb73a8f0de7"
+  },
+  "data/research/stage15/step3_market_conditions_v1/SOLUSDT/SOLUSDT_3m_market_candidates.parquet": {
+    "size": 4536405,
+    "sha256": "81f2c6a3bb87011b205770eaf71a0f7ff13bb41c6918cf8e1b4f4e67abab1241"
+  },
+  "data/research/stage15/step3_market_conditions_v1/SOLUSDT/SOLUSDT_5m_market_candidates.parquet": {
+    "size": 3493784,
+    "sha256": "6fd3da15c3ea3c6017ad210f217e5d6b66b89b7cfb86ebf252381695545cb57c"
+  },
+  "data/research/stage15/step4_downside_protection_v1/BTCUSDT/BTCUSDT_1m_downside_candidates.parquet": {
+    "size": 11984660,
+    "sha256": "e09e08c36b89b1e44ea27015a1e39c65604fc54c4af767caf4a10aead98e321c"
+  },
+  "data/research/stage15/step4_downside_protection_v1/BTCUSDT/BTCUSDT_3m_downside_candidates.parquet": {
+    "size": 7064512,
+    "sha256": "094b2506c0c4edd123e6e70de321821ffb879cf61dd788a5a35277cee2e3fa66"
+  },
+  "data/research/stage15/step4_downside_protection_v1/BTCUSDT/BTCUSDT_5m_downside_candidates.parquet": {
+    "size": 5435087,
+    "sha256": "60268b15ce116559a2c0289594f5f288df5fd05212f3cff99eda726963f78afc"
+  },
+  "data/research/stage15/step4_downside_protection_v1/ETHUSDT/ETHUSDT_1m_downside_candidates.parquet": {
+    "size": 12205414,
+    "sha256": "cea1720b752ed8c983fbaceb51d314cec03bfa454a5c6b2b735864f860c198b6"
+  },
+  "data/research/stage15/step4_downside_protection_v1/ETHUSDT/ETHUSDT_3m_downside_candidates.parquet": {
+    "size": 7054577,
+    "sha256": "2d59b7c8164e900379275c5b0d2762ae8a1121601a1015182c062cf60643103f"
+  },
+  "data/research/stage15/step4_downside_protection_v1/ETHUSDT/ETHUSDT_5m_downside_candidates.parquet": {
+    "size": 5462953,
+    "sha256": "6bcabbceaa1eb028d0307f19076c62c4265944d7a90a995a09193f346eb0c938"
+  },
+  "data/research/stage15/step4_downside_protection_v1/SOLUSDT/SOLUSDT_1m_downside_candidates.parquet": {
+    "size": 12005083,
+    "sha256": "d56c0bfbd58deb6654bb78815e6a4f8151ccce556c119e4482028cc6b3eb1446"
+  },
+  "data/research/stage15/step4_downside_protection_v1/SOLUSDT/SOLUSDT_3m_downside_candidates.parquet": {
+    "size": 7078692,
+    "sha256": "f4a67c17634df9879c791cff4332dda2d74136178deb4bdbd1bd64fb847f8ccd"
+  },
+  "data/research/stage15/step4_downside_protection_v1/SOLUSDT/SOLUSDT_5m_downside_candidates.parquet": {
+    "size": 5478440,
+    "sha256": "39798eeb1e65fc769a51d3e132c93c8a11f8f849f79d83c37836a552a57e6941"
+  },
+  "data/research/stage15/step5_exits_v1/BTCUSDT/BTCUSDT_1m_exit_candidates.parquet": {
+    "size": 25354434,
+    "sha256": "8d5f1a7daf045075b1bcfecb8d0b6f18aae04f1c94572edd9d739000afa3a51a"
+  },
+  "data/research/stage15/step5_exits_v1/BTCUSDT/BTCUSDT_3m_exit_candidates.parquet": {
+    "size": 14950042,
+    "sha256": "d18523712d2307fb21644a48710fca7dc2ea28e88491c644fb2cceaf40b6c10b"
+  },
+  "data/research/stage15/step5_exits_v1/BTCUSDT/BTCUSDT_5m_exit_candidates.parquet": {
+    "size": 11501694,
+    "sha256": "2db733d237dcdee50582c810dcaa346471e24960067f1016d67a3910160ef79d"
+  },
+  "data/research/stage15/step5_exits_v1/ETHUSDT/ETHUSDT_1m_exit_candidates.parquet": {
+    "size": 25110644,
+    "sha256": "451a7341119f0cba12d47063ae6c7ec080d1ea541ee8b4cfa75c5dd96c0c7052"
+  },
+  "data/research/stage15/step5_exits_v1/ETHUSDT/ETHUSDT_3m_exit_candidates.parquet": {
+    "size": 14547724,
+    "sha256": "ad09666ce07b94da244dd53adc8bf2bf5e5175bb47b42e6e9d930fc2498802df"
+  },
+  "data/research/stage15/step5_exits_v1/ETHUSDT/ETHUSDT_5m_exit_candidates.parquet": {
+    "size": 11270651,
+    "sha256": "5bf743e728e22618bb86f7350bcefbf76f71bd78d2cd8a91d36941af0c90d77e"
+  },
+  "data/research/stage15/step5_exits_v1/SOLUSDT/SOLUSDT_1m_exit_candidates.parquet": {
+    "size": 24570108,
+    "sha256": "338b13b192d9a40c57e809d3cd1619461f849c2664d70cd3ec0ab24697b957b3"
+  },
+  "data/research/stage15/step5_exits_v1/SOLUSDT/SOLUSDT_3m_exit_candidates.parquet": {
+    "size": 14495593,
+    "sha256": "418d0707e7d5c5d09c984d994ac4b206ff9711ac84effdaa8cedf1888f64e3b6"
+  },
+  "data/research/stage15/step5_exits_v1/SOLUSDT/SOLUSDT_5m_exit_candidates.parquet": {
+    "size": 11240486,
+    "sha256": "c3bfadb9d657eec29a97bd348e5761d84ba4aa065fc50633d0781e63f38d65f8"
+  },
+  "data/research/stage15/step6_robustness_selection_v1/selected_candidate_events.parquet": {
+    "size": 71100,
+    "sha256": "d48bf64acaaf11663fd5ce3a48f6a8cd7a2bb8f1319dd65551567d651ac88b56"
+  },
+  "data/research/stage15_v2/step1_bounce_entries_v1/BTCUSDT/BTCUSDT_1m_bounce_candidates.parquet": {
+    "size": 498121,
+    "sha256": "2da2e7f2d3a0fc1ce1ae151676faea45ed34386aa7a02ce64ff37e5b4c96acfa"
+  },
+  "data/research/stage15_v2/step1_bounce_entries_v1/BTCUSDT/BTCUSDT_3m_bounce_candidates.parquet": {
+    "size": 300698,
+    "sha256": "09acf7133fd68296eba1292c9a3875261e620e0a209ff4972df11752f50751bc"
+  },
+  "data/research/stage15_v2/step1_bounce_entries_v1/BTCUSDT/BTCUSDT_5m_bounce_candidates.parquet": {
+    "size": 234426,
+    "sha256": "066054bf7818f184f89017d70ca04d991f49f900d969d478282c39b8d9f2a47d"
+  },
+  "data/research/stage15_v2/step1_bounce_entries_v1/ETHUSDT/ETHUSDT_1m_bounce_candidates.parquet": {
+    "size": 524239,
+    "sha256": "34e3e77db440d843b1848c60be06a4a4424ca47251763175b40b736214b0f733"
+  },
+  "data/research/stage15_v2/step1_bounce_entries_v1/ETHUSDT/ETHUSDT_3m_bounce_candidates.parquet": {
+    "size": 307806,
+    "sha256": "529111236694795e91f07db6435e9ee4fc306634abd2c9330af1b457ce8b586d"
+  },
+  "data/research/stage15_v2/step1_bounce_entries_v1/ETHUSDT/ETHUSDT_5m_bounce_candidates.parquet": {
+    "size": 243894,
+    "sha256": "9b0ccad23b8621642488183debb8d4ea882053b891a0c335b9fc76e631081ea4"
+  },
+  "data/research/stage15_v2/step1_bounce_entries_v1/SOLUSDT/SOLUSDT_1m_bounce_candidates.parquet": {
+    "size": 529982,
+    "sha256": "90dc86bfd821a17a557b53538d7c2206a9e360b3b71a8cce0eb0ac57e62247e6"
+  },
+  "data/research/stage15_v2/step1_bounce_entries_v1/SOLUSDT/SOLUSDT_3m_bounce_candidates.parquet": {
+    "size": 322552,
+    "sha256": "ff3b30a6efaaeb9561bde1eafe32ae9149a11a4560432af6daa3b1337349327f"
+  },
+  "data/research/stage15_v2/step1_bounce_entries_v1/SOLUSDT/SOLUSDT_5m_bounce_candidates.parquet": {
+    "size": 254774,
+    "sha256": "3c63b05d421b5288e6e979320288016598b66373b8f163eec2f53a7c5ce5bc1f"
+  },
+  "data/research/stage15_v2/step1_bounce_entries_v1/reference_nonoverlap_events.parquet": {
+    "size": 13098,
+    "sha256": "6ced0cb9a2fa46b4a61173bae0aae403037b07d45b911394202a70cdc4b5a8fd"
+  },
+  "experiments/experiment_001/config.yaml": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "experiments/experiment_001/notes.md": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "experiments/experiment_002/config.yaml": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "experiments/experiment_002/notes.md": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "results/charts/.gitkeep": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "results/reports/.gitkeep": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "results/reports/asset_comparison_validation.csv": {
+    "size": 1791,
+    "sha256": "b2898becd3afce5a69ce709fde0002a266325c393b6a193121399e9c6ff561f4"
+  },
+  "results/reports/attached_averages_validation.csv": {
+    "size": 894,
+    "sha256": "3d1f73a8e0b10b136114384f33bae093b9ac83f98461a512ca19a4d147277fe1"
+  },
+  "results/reports/average_comparison_master_validation.csv": {
+    "size": 2276,
+    "sha256": "0f0d47a37b841d00067fd28a22a158444528238b25c0b4c052219c8ec028e926"
+  },
+  "results/reports/daily_data_validation.csv": {
+    "size": 551,
+    "sha256": "2e5ea1140344b1b7223ffff309a2eafd0ee949f8fc6e04cd253b0258783c7fae"
+  },
+  "results/reports/distance_validation.csv": {
+    "size": 1312,
+    "sha256": "6ad9ad431579d41a0f25648c9480472922f7c1e6e4e1dd23ceb8d3a43af093b5"
+  },
+  "results/reports/experiment_grid_validation.csv": {
+    "size": 463,
+    "sha256": "0fbc4a30a4343228738a4e609581dc4c49de3387c28b16b28f4ccb5785c1033d"
+  },
+  "results/reports/forward_returns_validation.csv": {
+    "size": 6425,
+    "sha256": "3dc4bbbf628d7ab0e28b403b5a38a392eb2d572a4f690ddbf3077af291d0c499"
+  },
+  "results/reports/market_regime_validation.csv": {
+    "size": 4284,
+    "sha256": "7a54d2082ebd84b380bb2f0c944d37cac0a6a2a5f5b4caf0222700f7a47d8e95"
+  },
+  "results/reports/maximum_downside_validation.csv": {
+    "size": 2871,
+    "sha256": "17d82ac8c334433e2c7adb30113632ad4295254313e54e30d2e10a8618080bf1"
+  },
+  "results/reports/maximum_upside_validation.csv": {
+    "size": 2866,
+    "sha256": "c9d70c72968bcd0c2faa590dd9a9af25832c4e55bd3fa47d0a066cdc5845692f"
+  },
+  "results/reports/post_activation_validation.csv": {
+    "size": 4054,
+    "sha256": "81f357f30b124b778c681a0a4c8ac3d5e47966530a22eec9dd2733a7d346160c"
+  },
+  "results/reports/profit_level_reach_validation.csv": {
+    "size": 6346,
+    "sha256": "865d3a110145654d7f2c7bfdf6b9508a2a4a63c973691352a6ef02360844d183"
+  },
+  "results/reports/raw_data_validation.csv": {
+    "size": 636,
+    "sha256": "fd192019125e2ad0ab7112348415ad45824a4cc4fb5dcafba29451483d9e0e40"
+  },
+  "results/reports/raw_data_validation.md": {
+    "size": 5087,
+    "sha256": "8558b619048dc38b633cf0bd9ae96230e8620862c1ac40f5f8498686902e14c0"
+  },
+  "results/reports/regime_outcome_validation.csv": {
+    "size": 7447,
+    "sha256": "a028089010d79829c7c429899db96634aba54d3edbe56cb8a48ef9f82dbe75d8"
+  },
+  "results/reports/resampled_data_validation.md": {
+    "size": 5502,
+    "sha256": "418bb918a7d7da64a28d97c84e76cf2628f9c7cb3bb04c7dfdfaa5755fff7699"
+  },
+  "results/reports/stage1_report_final_validation.csv": {
+    "size": 4351,
+    "sha256": "34894c6652cab63655fc897061fc305aa6d77306cb7af6a872856cf65e111c58"
+  },
+  "results/reports/stage1_report_validation.csv": {
+    "size": 2175,
+    "sha256": "aa791f505b923094eabe252ec8464de8cea43d69dd6b50b782b18bc9aa9e3149"
+  },
+  "results/reports/stage1_research_report.md": {
+    "size": 8850,
+    "sha256": "0f9432bedd4a235d54c9a3edeebe243cba1124e2b4f0800f28bc7e92426dda98"
+  },
+  "results/reports/timeframe_comparison_validation.csv": {
+    "size": 1620,
+    "sha256": "bbdd17e4b7279cb3e029a813c4d48ed0963334fbb3459294bd28ef26aa6c74cf"
+  },
+  "results/reports/touch_detection_validation.csv": {
+    "size": 821,
+    "sha256": "a069e0f336f323b436ffbcf5dc2b8980060738fcae08efe682f6291ccea8f24a"
+  },
+  "results/reports/touch_event_validation.csv": {
+    "size": 1618,
+    "sha256": "28b1b491258cd59db909f5c7981f3bcae64455b40b28930ce0181285fe750f94"
+  },
+  "results/stage15/step1_consecutive_touch_first_v1/SUCCESS.json": {
+    "size": 193,
+    "sha256": "90a0dc915e0ec3f44157beb5078e1177d4b58128613cc1342b7e8046b5525cc6"
+  },
+  "results/stage15/step1_consecutive_touch_first_v1/comparison.csv": {
+    "size": 1351930,
+    "sha256": "06007daf6110666b426e460f55b942409582638b467c3d51b7d8a0c5e0b79788"
+  },
+  "results/stage15/step1_consecutive_touch_first_v1/deduplicated_regime_summary.csv": {
+    "size": 621307,
+    "sha256": "f7ea3e64486e5886e5fd3592dfbebc411846b33cb1163a230de2ae9292d77017"
+  },
+  "results/stage15/step1_consecutive_touch_first_v1/deduplicated_summary.csv": {
+    "size": 181453,
+    "sha256": "f87d07f07978f3f38ed87174070301a37919b00772b406812cc18ff2ba4cb4b6"
+  },
+  "results/stage15/step1_consecutive_touch_first_v1/episode_counts.csv": {
+    "size": 5951,
+    "sha256": "f7d17fdbee15846db5fa1aa1aac34b0c02d52ebf8a871701e90238e5cc6eef4f"
+  },
+  "results/stage15/step1_consecutive_touch_first_v1/experiment.json": {
+    "size": 780,
+    "sha256": "d19f55c79e7d52f75777e66d853224082d43c4c200ce9447ed97ece552bc8a35"
+  },
+  "results/stage15/step1_consecutive_touch_first_v1/implementation_provenance.json": {
+    "size": 1053,
+    "sha256": "1b52629f88aedbcecdf9d8e91bcffa202b87208f63e54cf4e8c86f8e2b20ad15"
+  },
+  "results/stage15/step1_consecutive_touch_first_v1/regime_comparison.csv": {
+    "size": 5352134,
+    "sha256": "5e7221d144e638d5163d663b53f68272d912168350a0c15384bb238b9868c014"
+  },
+  "results/stage15/step1_consecutive_touch_first_v1/source_manifest_after.json": {
+    "size": 43573,
+    "sha256": "5297abe98fe602f54791de7c7dcdb61a487cf9497a6707e18fc3b4cd8241f10e"
+  },
+  "results/stage15/step1_consecutive_touch_first_v1/source_manifest_before.json": {
+    "size": 43573,
+    "sha256": "5297abe98fe602f54791de7c7dcdb61a487cf9497a6707e18fc3b4cd8241f10e"
+  },
+  "results/stage15/step1_consecutive_touch_first_v1/stage1_recomputed_summary.csv": {
+    "size": 192011,
+    "sha256": "a428035dd0fdc3a0d072be27f03e65f968e915974f57bce3454d6be17fccfb83"
+  },
+  "results/stage15/step1_consecutive_touch_first_v1/stage1_regime_summary.csv": {
+    "size": 664621,
+    "sha256": "2fc24347b685e0e9d70390b17446f94b5969d5e456db4e70db65b3384b8e85e0"
+  },
+  "results/stage15/step1_consecutive_touch_first_v1/step1_report.md": {
+    "size": 5907,
+    "sha256": "1c281765bbe6b726e55b2966f40b013e449aacec953954ba76131404b322d628"
+  },
+  "results/stage15/step1_consecutive_touch_first_v1/validation.csv": {
+    "size": 981,
+    "sha256": "de635c012c2792750136d2201ffa370f705c4b786a10d6fc76c6672757e83b78"
+  },
+  "results/stage15/step2_entry_conditions_v1/SUCCESS.json": {
+    "size": 183,
+    "sha256": "a02a09ca50c9f9fb1a7c3801a3c069506bc3cf1445f14bad54f0350d1a1cdfd2"
+  },
+  "results/stage15/step2_entry_conditions_v1/all_candidates_return_downside.png": {
+    "size": 119962,
+    "sha256": "a8e342fd467b7794cbf5621de1e9d3908fc589b74d9d628b10271a69a485c3fc"
+  },
+  "results/stage15/step2_entry_conditions_v1/comparisons.csv": {
+    "size": 5131634,
+    "sha256": "34f9baa518a2327215e5d5ce6213c5e40b794eb75504550e4631f2a07c7ff3c2"
+  },
+  "results/stage15/step2_entry_conditions_v1/entry_report.md": {
+    "size": 11310,
+    "sha256": "592f0b6e43a7604b2b9af5ee132dc387680b2967f07b1201b8b6a0eb81a9e61d"
+  },
+  "results/stage15/step2_entry_conditions_v1/exclusions.csv": {
+    "size": 938,
+    "sha256": "dab2730ba362d04bdabf42960cbca723d7a187fa4df4101e9603f28a019afcb8"
+  },
+  "results/stage15/step2_entry_conditions_v1/experiment.json": {
+    "size": 1558,
+    "sha256": "40455f5fcdafa825c9a381468ceadcde57cfcc865cde038f26bed03616f8ceef"
+  },
+  "results/stage15/step2_entry_conditions_v1/leaderboard.csv": {
+    "size": 1073273,
+    "sha256": "484a94fff159df8cb57c92fe0e5d8fa8d6b56516de1d556ae0415424c59526a2"
+  },
+  "results/stage15/step2_entry_conditions_v1/monthly.csv": {
+    "size": 1568873,
+    "sha256": "3e04e9b83c24188f4232be5797436665994b317c37d6bbd40ebddf1404a00618"
+  },
+  "results/stage15/step2_entry_conditions_v1/reference_entry_comparison.png": {
+    "size": 73212,
+    "sha256": "8ba4e4aaf19cc5ace2edf5f04bee15a5b84e99c731c57259c2c58702c8d5eff4"
+  },
+  "results/stage15/step2_entry_conditions_v1/rule_effects.csv": {
+    "size": 5826,
+    "sha256": "f2835f0a5805d3d7d880fb3032b637a6524b0a6efaa62d846b441eb56306fe71"
+  },
+  "results/stage15/step2_entry_conditions_v1/segments.csv": {
+    "size": 8536036,
+    "sha256": "a8b1ba6d55bc0e1f90129bf85da441d28edaf196aa0a476baff19cd0033e8ccf"
+  },
+  "results/stage15/step2_entry_conditions_v1/source_manifest_after.json": {
+    "size": 52692,
+    "sha256": "d9fd1abb7aec7309715353558a0072578b2ca234bc2dcd66ba072311122e1673"
+  },
+  "results/stage15/step2_entry_conditions_v1/source_manifest_before.json": {
+    "size": 52692,
+    "sha256": "d9fd1abb7aec7309715353558a0072578b2ca234bc2dcd66ba072311122e1673"
+  },
+  "results/stage15/step2_entry_conditions_v1/step1_baseline_bridge.csv": {
+    "size": 12709,
+    "sha256": "0c79d53997938f8ffd1eb1a3503ef3c5e644704235d334bc2c36293e5e607c95"
+  },
+  "results/stage15/step2_entry_conditions_v1/summary.csv": {
+    "size": 4404921,
+    "sha256": "3de080abe9e6c20a7b449fa2dea7c37bb43985f7f21d39a8a365dfddf429c5c0"
+  },
+  "results/stage15/step2_entry_conditions_v1/validation.csv": {
+    "size": 486,
+    "sha256": "c992e70245fa4d9a1cdb3abf6be39f127818352dcee75c9dded3e16ae8700e0b"
+  },
+  "results/stage15/step3_market_conditions_v1/.matplotlib/fontlist-v3.11.0.json": {
+    "size": 290596,
+    "sha256": "26e3c70cf6e441ea0e41a28392163dc8af05ea9b8f648b2f57c922a5c3790daa"
+  },
+  "results/stage15/step3_market_conditions_v1/SUCCESS.json": {
+    "size": 307,
+    "sha256": "3abf22af858e66fc422f4ddf8551ecd3f51577c816580849678d1491a7f9f1f9"
+  },
+  "results/stage15/step3_market_conditions_v1/condition_summary.csv": {
+    "size": 4401008,
+    "sha256": "62e16070d6becd735889b7c8521678eddca9364e3c70e815bc0eadd85e25cbcf"
+  },
+  "results/stage15/step3_market_conditions_v1/cross_grid_effects.csv": {
+    "size": 16969,
+    "sha256": "9d85fb4115a67adf44a1e53e8a205a6f4298a5948a26c6bef1841b1c5a70c6f0"
+  },
+  "results/stage15/step3_market_conditions_v1/experiment.json": {
+    "size": 1782,
+    "sha256": "15960f0b4c44114e7a79ec5bb86953645536799a1b919dfb49e86aceaca15e97"
+  },
+  "results/stage15/step3_market_conditions_v1/market_conditions_report.md": {
+    "size": 9904,
+    "sha256": "315bdceb27d24567e04a446513be67d20bd1a26f32809a0919b7713899996af9"
+  },
+  "results/stage15/step3_market_conditions_v1/market_context.csv": {
+    "size": 49578473,
+    "sha256": "38f92e04015c7dcd4b2124f917c5d69606b045d237ff05ae691b11b41e30d44b"
+  },
+  "results/stage15/step3_market_conditions_v1/reference_market_conditions.png": {
+    "size": 70774,
+    "sha256": "26fa24ea70fbcbf6258f2463325a9ef054cc4f0e380ed68e1668714102667067"
+  },
+  "results/stage15/step3_market_conditions_v1/source_manifest_after.json": {
+    "size": 58384,
+    "sha256": "3c8587676d75452db0ce762ac949f90227d06f06feb3b1a84d10f96dc52a4654"
+  },
+  "results/stage15/step3_market_conditions_v1/source_manifest_before.json": {
+    "size": 58384,
+    "sha256": "3c8587676d75452db0ce762ac949f90227d06f06feb3b1a84d10f96dc52a4654"
+  },
+  "results/stage15/step3_market_conditions_v1/stability_screen.csv": {
+    "size": 2604811,
+    "sha256": "d470796ae22993bc4f516d2fbd8b1e31bb312507e7c6b7696d2a753dbd0808c9"
+  },
+  "results/stage15/step3_market_conditions_v1/stable_condition_counts.png": {
+    "size": 92265,
+    "sha256": "26fbfc5a68484114b6e1e42bd81c6af06cc293cb64d67cf519800ee6a4ab4ab1"
+  },
+  "results/stage15/step3_market_conditions_v1/validation.csv": {
+    "size": 355,
+    "sha256": "04ed77855f22fa2c4cc2a894a62fcda54fcd7f9e3d5fbc0003ca2f72e216d788"
+  },
+  "results/stage15/step3_market_conditions_v1/volatility_thresholds.csv": {
+    "size": 218,
+    "sha256": "04bb2ce627882fdc9f39ddef65c7dd2095877a05ae7a1ada3142b65bf412fd62"
+  },
+  "results/stage15/step4_downside_protection_v1/.matplotlib/fontlist-v3.11.0.json": {
+    "size": 290596,
+    "sha256": "736e669b908ed41813b6289c28a52a58fff63c2681d1ac13f1bb3904c9102fbc"
+  },
+  "results/stage15/step4_downside_protection_v1/SUCCESS.json": {
+    "size": 431,
+    "sha256": "ccae296aa67fb4e0a04b7c79b3b8e87c5619f72263b0feca8e875ca4c8f275aa"
+  },
+  "results/stage15/step4_downside_protection_v1/cross_grid_effects.csv": {
+    "size": 14172,
+    "sha256": "50b284ea86f3e846e5750f36ab8d5c846db1bf3952c7aa796705819b59db273d"
+  },
+  "results/stage15/step4_downside_protection_v1/cross_grid_stop_consistency.png": {
+    "size": 39381,
+    "sha256": "e94e1a44ee22141f9e886771d85b302cc255e0e4bf0b406699dde91cb3d2b29b"
+  },
+  "results/stage15/step4_downside_protection_v1/downside_protection_report.md": {
+    "size": 11742,
+    "sha256": "34cefc5984218493ec8b29aed58ecca8366b57608335aa78e11264cdad030256"
+  },
+  "results/stage15/step4_downside_protection_v1/experiment.json": {
+    "size": 1412,
+    "sha256": "f209f930757823adc8b7b773f8100cc0441ba8439bb7c53b2ebd9620529ed4ac"
+  },
+  "results/stage15/step4_downside_protection_v1/protection_summary.csv": {
+    "size": 2770336,
+    "sha256": "2e0f91fdf6493175cfea59cabb8cf42ccb56375eeaf33f029c9490c41c2073ef"
+  },
+  "results/stage15/step4_downside_protection_v1/reference_downside_protection.png": {
+    "size": 107543,
+    "sha256": "b716e064d85693a6a5af6cfaa3e828c6b9bdd62dc1b00ff8320bd11c2f5a9842"
+  },
+  "results/stage15/step4_downside_protection_v1/source_manifest_after.json": {
+    "size": 64639,
+    "sha256": "282fd5b4448eefdf4a6722f98e10913e7b6e02b3cb5738eb2ef339d113bdced5"
+  },
+  "results/stage15/step4_downside_protection_v1/source_manifest_before.json": {
+    "size": 64639,
+    "sha256": "282fd5b4448eefdf4a6722f98e10913e7b6e02b3cb5738eb2ef339d113bdced5"
+  },
+  "results/stage15/step4_downside_protection_v1/stability_screen.csv": {
+    "size": 1646098,
+    "sha256": "ea44ab3ddce4c47579805d17b70e913e72cb0806f6a0264cdcd27e5501f720ec"
+  },
+  "results/stage15/step4_downside_protection_v1/validation.csv": {
+    "size": 352,
+    "sha256": "96e739ad46bb54621475acb2d58dd004d77c0601427c297dee2157e0c5fd4d85"
+  },
+  "results/stage15/step5_exits_v1/.matplotlib/fontlist-v3.11.0.json": {
+    "size": 290596,
+    "sha256": "476fa4b64c5bf2cb39221fea6e56224355e81848b6aeff2356b1baa5a4e41973"
+  },
+  "results/stage15/step5_exits_v1/SUCCESS.json": {
+    "size": 348,
+    "sha256": "de8e78bb83d0303e4305a12cd20b0060bcd3c381da559a722d9c9db9e71cebdf"
+  },
+  "results/stage15/step5_exits_v1/cross_grid_effects.csv": {
+    "size": 68007,
+    "sha256": "2f11486bd3a289f132522d878b795e0f5c6d98b4bd55bd2bbaf866738d55ee5f"
+  },
+  "results/stage15/step5_exits_v1/cross_grid_exit_consistency.png": {
+    "size": 64207,
+    "sha256": "7cbe1c28aa90956bbbb8e4aba715efa9795bf0244eef774dc12af3dc80584c52"
+  },
+  "results/stage15/step5_exits_v1/exit_holding_report.md": {
+    "size": 22310,
+    "sha256": "b72a7d4f2ff5657fb4056040182d05978b5b0c9699b7df14fb037daa02d0f204"
+  },
+  "results/stage15/step5_exits_v1/exit_summary.csv": {
+    "size": 13980146,
+    "sha256": "5e3d8045d4580ed248490afeb6b5b7aec7769a425e83cd71f2fca4cecb311840"
+  },
+  "results/stage15/step5_exits_v1/experiment.json": {
+    "size": 1806,
+    "sha256": "3bc97f0664cbd302fd46e97a5779cb8e76a32713e8d4d2ff05046ac3e1fb43e9"
+  },
+  "results/stage15/step5_exits_v1/reference_holding_times.png": {
+    "size": 95424,
+    "sha256": "fa428f1e980ee33413aadfbf6c11820619bbae2949545e159213f32015a8d623"
+  },
+  "results/stage15/step5_exits_v1/source_manifest_after.json": {
+    "size": 69799,
+    "sha256": "909bbc50ff7f4f03d46ad76def0cf9fd27a0306157b3fea7a90e91045a25ec46"
+  },
+  "results/stage15/step5_exits_v1/source_manifest_before.json": {
+    "size": 69799,
+    "sha256": "909bbc50ff7f4f03d46ad76def0cf9fd27a0306157b3fea7a90e91045a25ec46"
+  },
+  "results/stage15/step5_exits_v1/stability_screen.csv": {
+    "size": 8400026,
+    "sha256": "6fdaadb222ee31c2b7718c04867296654c49ae803f865a4cca4feff2f8b4ced4"
+  },
+  "results/stage15/step5_exits_v1/validation.csv": {
+    "size": 358,
+    "sha256": "3d1153c2408247f5fcb15105f471f368db27287b11f7d933e07045534fda350d"
+  },
+  "results/stage15/step6_robustness_selection_v1/.matplotlib/fontlist-v3.11.0.json": {
+    "size": 290596,
+    "sha256": "a495b464eb0bc1eb6f13982b04e021c2c8dd26e7b8f13056fea64ab62eac0e93"
+  },
+  "results/stage15/step6_robustness_selection_v1/SUCCESS.json": {
+    "size": 276,
+    "sha256": "ad6b8d8c4bbe2785d3da85c0301e51ea3bbde81fa85ab4f1c7285b97b0ffba0d"
+  },
+  "results/stage15/step6_robustness_selection_v1/experiment.json": {
+    "size": 1570,
+    "sha256": "24734fedb81bf4d4dfb2af5483f6f221ceb879a92cf48ade54afed71c8f81469"
+  },
+  "results/stage15/step6_robustness_selection_v1/provisional_candidate_comparison.png": {
+    "size": 94535,
+    "sha256": "4ba44c573e0dc59b50aecc0f1b18bd0af6345c67dedbdf8d02ff805f16965c7b"
+  },
+  "results/stage15/step6_robustness_selection_v1/provisional_shortlist.csv": {
+    "size": 19335,
+    "sha256": "7ed3bd766a772d61ff661b0a6606e657e62fd2c3a0ca69cded89ff147d21388c"
+  },
+  "results/stage15/step6_robustness_selection_v1/quarterly.csv": {
+    "size": 27435562,
+    "sha256": "e9e92d036eafc1c2e04ca481f3de91f74aeb12cd0d6b0e7acff44264e023416f"
+  },
+  "results/stage15/step6_robustness_selection_v1/robustness_selection_report.md": {
+    "size": 12723,
+    "sha256": "735ca61b613bf99316b194638c0e7519ab3021c6cd6e327fa9b878623633ed6b"
+  },
+  "results/stage15/step6_robustness_selection_v1/selection.csv": {
+    "size": 21323196,
+    "sha256": "e54fb5702b798df6a76ec3948c66c7861c73c4585da6dc4798390627eb0c61e9"
+  },
+  "results/stage15/step6_robustness_selection_v1/source_manifest_after.json": {
+    "size": 74588,
+    "sha256": "7730f377e40758bab07f5272e0be94150923055951027118ceb8a7964a50ee70"
+  },
+  "results/stage15/step6_robustness_selection_v1/source_manifest_before.json": {
+    "size": 74588,
+    "sha256": "7730f377e40758bab07f5272e0be94150923055951027118ceb8a7964a50ee70"
+  },
+  "results/stage15/step6_robustness_selection_v1/stage2_candidate_shortlist.csv": {
+    "size": 1044,
+    "sha256": "58b694287ee28828e3f1c8469b4f0eda3ba6a22d5d382c696b9107c151fe1503"
+  },
+  "results/stage15/step6_robustness_selection_v1/validation.csv": {
+    "size": 226,
+    "sha256": "c6a861417ab6ed8774487750085efb04384150d22965f87975a8a5222c6a15c2"
+  },
+  "results/stage15_v2/step1_bounce_entries_v1/SUCCESS.json": {
+    "size": 250,
+    "sha256": "6338e55bea603ec6bd3f6df19afacf42d014f47f0813c68f9223d5b3ee036561"
+  },
+  "results/stage15_v2/step1_bounce_entries_v1/baseline_comparison.csv": {
+    "size": 48146,
+    "sha256": "59297db1fba4986405c308be691fbfb92c44060226ce51163f32a8193e2577b1"
+  },
+  "results/stage15_v2/step1_bounce_entries_v1/bounce_entry_report.md": {
+    "size": 2842,
+    "sha256": "656de7c451746e83c9775160ec9b74a20e0c56e3f6818298416ea50537e5ddb2"
+  },
+  "results/stage15_v2/step1_bounce_entries_v1/experiment.json": {
+    "size": 1458,
+    "sha256": "b29139a81cbc75e4e299c9d1972dfb45f18b0f653043ba916c3eea3c9a3ba013"
+  },
+  "results/stage15_v2/step1_bounce_entries_v1/quarterly.csv": {
+    "size": 123967,
+    "sha256": "433fcd758bac49818a58af6bee0c93f9e9ed756b28210f40b2416550d4d23de1"
+  },
+  "results/stage15_v2/step1_bounce_entries_v1/reference_bounce_comparison.png": {
+    "size": 42029,
+    "sha256": "0e21e99bbb2bd2cb7ce60e4e28316daa71dcc512f7742116b8475feee7daaedf"
+  },
+  "results/stage15_v2/step1_bounce_entries_v1/source_manifest_after.json": {
+    "size": 79123,
+    "sha256": "aad965aef49ae43a3c3c3aeb4eb5403bc0ea71850cb96fa1cc9ab93f66b0b950"
+  },
+  "results/stage15_v2/step1_bounce_entries_v1/source_manifest_before.json": {
+    "size": 79123,
+    "sha256": "aad965aef49ae43a3c3c3aeb4eb5403bc0ea71850cb96fa1cc9ab93f66b0b950"
+  },
+  "results/stage15_v2/step1_bounce_entries_v1/summary.csv": {
+    "size": 146627,
+    "sha256": "556c5299b1462c29c00d15dc50b427be8e8e7d91e5f1877ca9fcc841f0f0df93"
+  },
+  "results/stage15_v2/step1_bounce_entries_v1/validation.csv": {
+    "size": 403,
+    "sha256": "df9e532b22b1f48c93f6c8a173681682de370793b45bafdf133d4c6b3676efb9"
+  },
+  "results/tables/.gitkeep": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "results/tables/asset_comparison_15d.csv": {
+    "size": 1041,
+    "sha256": "d6b940b2471984c9a0e6d64a0d1da04a9755599db7152b18a7dd589185e78616"
+  },
+  "results/tables/asset_comparison_15d_5m.csv": {
+    "size": 1036,
+    "sha256": "a7e5a26765e2519ebec927ab2594572a73dd9793087373983a28a75bfefd8847"
+  },
+  "results/tables/asset_comparison_overall.csv": {
+    "size": 1040,
+    "sha256": "84e58604cfcebeb1b11398a347a07d60c2ec2e3c64eda5bc2d5e41ef2bfba9ba"
+  },
+  "results/tables/asset_consistency.csv": {
+    "size": 3188,
+    "sha256": "9ffa323a19e0e98c07dbf492267ce341f4236b721ceec0177c8108200e7d959f"
+  },
+  "results/tables/average_comparison_master.csv": {
+    "size": 42256,
+    "sha256": "cb9e7afed515022490e691dcbea8dd65e343b7fc46146a79a5ab2c78b60a602b"
+  },
+  "results/tables/average_consistency_comparison.csv": {
+    "size": 2323,
+    "sha256": "2c8c5162b88a7b09a56f08ce131d20dff0b2d5a95f370e55c9e92e659aaed2a0"
+  },
+  "results/tables/average_overall_summary.csv": {
+    "size": 1035,
+    "sha256": "99aa32e01b065338f5f347c1f1e43bd3f49bb61a159c0ac93762c9a837941e98"
+  },
+  "results/tables/average_timeframe_consistency.csv": {
+    "size": 9818,
+    "sha256": "2f2b388b40c712c18c777f7fe5efae3a876229504882d992a2d2dc961cf177e7"
+  },
+  "results/tables/average_zone_consistency.csv": {
+    "size": 9679,
+    "sha256": "1ee99f8e7aed28d2ebbc9f7c67583dc6f4d43215b07cccb01fd96b14078e4f2e"
+  },
+  "results/tables/config_driven_research_results.csv": {
+    "size": 10182,
+    "sha256": "731980108834bd8c7d85d114fdb26d01858a051ad44639b70c148ed52c4609df"
+  },
+  "results/tables/downside_statistics.csv": {
+    "size": 48077,
+    "sha256": "cf065914592013b1050cff1cf3d08e6971fcf5fec4009c10626ef811ca88cae2"
+  },
+  "results/tables/experiment_grid.csv": {
+    "size": 3483,
+    "sha256": "0c18567094b2bf667c44cf89f2562a55caf82e4e5cffbcd6d2626b089fe28a04"
+  },
+  "results/tables/first_hit_statistics.csv": {
+    "size": 97609,
+    "sha256": "d28e63e4a2fbcbd95e216be02f213410f61ccd2e92220e5a52832012b50d9252"
+  },
+  "results/tables/forward_return_statistics.csv": {
+    "size": 24205,
+    "sha256": "d16a00cc79af36deabce8047ac57d1b0e2bde2d90e89b37a1bacea01f53c937a"
+  },
+  "results/tables/market_regime_event_counts.csv": {
+    "size": 1882,
+    "sha256": "d386fd90c0ab4a201e14d86564518f49246150e85392816d3ae0506a6fc4538f"
+  },
+  "results/tables/max_upside_downside_comparison.csv": {
+    "size": 28690,
+    "sha256": "a142ffb7a12890e884dc620355b3ece8d8bb526db68cf968c6786ec089b0214d"
+  },
+  "results/tables/post_activation_statistics.csv": {
+    "size": 96922,
+    "sha256": "26a029fb10799194ce60f69b8fbf5fd47c464e87f3afaf23a4d23ea3e1e5fa6a"
+  },
+  "results/tables/profit_reach_ranked_setups.csv": {
+    "size": 86972,
+    "sha256": "5422c6151acac2b704939728f5da23b562cb91135d143d86f87e8eb64907f81e"
+  },
+  "results/tables/profit_reach_statistics.csv": {
+    "size": 68232,
+    "sha256": "31b301a4fbaa6309297fcdd6244c0d9e62772818667cbd7c7874e5b3a2d44287"
+  },
+  "results/tables/profit_reach_top10_setups.csv": {
+    "size": 10790,
+    "sha256": "91fd3ba2c8a8c2daaadbdca87f50b54113d3a9f8819149b24e9bf8328bf7ee42"
+  },
+  "results/tables/regime_comparison_by_asset.csv": {
+    "size": 3801,
+    "sha256": "d2075521f741e2ab604282438dc6c2266e91791bf865f42e9f5018d448c59ec8"
+  },
+  "results/tables/regime_comparison_master.csv": {
+    "size": 183873,
+    "sha256": "c3fbaef7cf480b2b2a12501dcb58b520b47a079549c78af306f8e591400dd4be"
+  },
+  "results/tables/regime_overall_comparison.csv": {
+    "size": 1592,
+    "sha256": "d10ee352b6003ed5d0e3ae60389c5fcfcb15302aee06c713c2fc43b361865cae"
+  },
+  "results/tables/regime_primary_setup_comparison.csv": {
+    "size": 3603,
+    "sha256": "182d44818bb1c8ef22742cac98beca3889fe07b937566fd5c21b35e2c577b57d"
+  },
+  "results/tables/stage1_configuration_summary.csv": {
+    "size": 63122,
+    "sha256": "f2110d8d431d38bede3ee5856ea68cfd77f0a5dfc6c7b1712dd5a30bfc1c6779"
+  },
+  "results/tables/stage1_configuration_summary_pre_forward_returns.csv": {
+    "size": 42256,
+    "sha256": "cb9e7afed515022490e691dcbea8dd65e343b7fc46146a79a5ab2c78b60a602b"
+  },
+  "results/tables/timeframe_comparison_15d.csv": {
+    "size": 1038,
+    "sha256": "d5bbca43678e0922b17376bdcffb103e11ca864d01b66853317f03722e8a89a4"
+  },
+  "results/tables/timeframe_comparison_by_asset.csv": {
+    "size": 2233,
+    "sha256": "1d09093ff36bdfd2cf1461758bef45623b7d7e6ad2c29bc7b8f961cf04b88693"
+  },
+  "results/tables/timeframe_comparison_overall.csv": {
+    "size": 1025,
+    "sha256": "1caa564d24a7fcdd57a3d1e9fa7b8d7db19b1437e0ba8f9227bd53f730b9c16e"
+  },
+  "results/tables/timeframe_metric_spread.csv": {
+    "size": 934,
+    "sha256": "35ee192f005357ba513d52f46faf5195c2eeeaa5aa875c42a2354538e69f954d"
+  },
+  "results/tables/trailing_outcome_comparison.csv": {
+    "size": 114055,
+    "sha256": "9b36e71c46088f27347e316aa478c2601937c7c82592a7776d0334497e4b781d"
+  },
+  "results/tables/trailing_research_statistics.csv": {
+    "size": 64881,
+    "sha256": "5bfff156b4f476b1ae5fd86e607150bc1ae7662f096ad2595c01ce3cac27a75e"
+  },
+  "results/tables/upside_downside_comparison.csv": {
+    "size": 137213,
+    "sha256": "895cee725353d2ae64e0f6ef72c47d88b478c5e84b8e5e954406cc3c7fda8858"
+  },
+  "results/tables/upside_statistics.csv": {
+    "size": 46568,
+    "sha256": "ba6944ebb84c171501564a75b0965a7e9cc4f446c5ba4841716af8005dc65000"
+  },
+  "src/V1_Stage1_Part23_Visualizations.ipynb": {
+    "size": 62143,
+    "sha256": "52939dc67a3a9dfdaadf66bf5cb0ef2928a553227ebf7dd0dce3933398d55909"
+  },
+  "src/__init__.py": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "src/data/__init__.py": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "src/data/downloader.py": {
+    "size": 6631,
+    "sha256": "5ae5ce0a331fccf5bd3d15b0afda64c7ab9d7ae210695feb1fe30c2db6e75da7"
+  },
+  "src/data/loader.py": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "src/data/validate.py": {
+    "size": 7613,
+    "sha256": "b741851d9b30f1d44d0399bab305cb0bf79534e0c6f4162391a72182cd4b76fd"
+  },
+  "src/indicators/__init__.py": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "src/indicators/attach_averages.py": {
+    "size": 4841,
+    "sha256": "39bbc4fee872507c2174302f0c92739592779971dd9853573c7eb5ea45ed4467"
+  },
+  "src/indicators/available_closes.py": {
+    "size": 3322,
+    "sha256": "6abd1dcc0c653d9d1b06a0d601fd872ec991b7fdca8bf8cd09265f54318bebb7"
+  },
+  "src/indicators/averages.py": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "src/indicators/distance_from_average.py": {
+    "size": 2268,
+    "sha256": "8adead4b23e70c1acef91278284a2629a31f92069d2ae8d1ab1a90ae581791eb"
+  },
+  "src/indicators/validate_attached_averages.py": {
+    "size": 6573,
+    "sha256": "8f6d41b3c2fe18f6795a48f66401a39ef01deeaca0f951bdcfdbcab50c5c4cd2"
+  },
+  "src/indicators/validate_distances.py": {
+    "size": 6865,
+    "sha256": "5a8d7ebe1b6d03e7c0181ac2f0f2d5d7df0eff7fb25051fe3cdf22ca11485a6a"
+  },
+  "src/processing/__init__.py": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "src/processing/cleaning.py": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "src/processing/daily.py": {
+    "size": 2455,
+    "sha256": "c47172d5c84dbad5f08683a269b4d26e6e68ecc1ea269ea2d3c9ca14d49f0b34"
+  },
+  "src/processing/resampling.py": {
+    "size": 3388,
+    "sha256": "3c7be52c03999635d2e1f9c0ee2f5e0a8c7190019d60d46bac5a503330576f66"
+  },
+  "src/processing/validate_daily.py": {
+    "size": 5838,
+    "sha256": "f13cdf5ef0397f2f563d359d589356901270cd9a543b9b1e54e1fc466d822d29"
+  },
+  "src/processing/validate_resampled.py": {
+    "size": 8809,
+    "sha256": "1162395622c3a6ef58e3cc7e12f30a96f8d653bd846aae8f5d73046bf7d3cabf"
+  },
+  "src/research/__init__.py": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "src/research/asset_comparison_master.py": {
+    "size": 8420,
+    "sha256": "df9ce0490728e3e616477b4c3a1d61e46271d0cc77945cef0914787c4faaf902"
+  },
+  "src/research/attach_market_regime.py": {
+    "size": 7758,
+    "sha256": "b618bfe2416cd3a6208960ca9c99b37f68c4a764bcf941e6ac94bf4738ca6737"
+  },
+  "src/research/average_comparison_master.py": {
+    "size": 14117,
+    "sha256": "7dfbd24a2c7d4f1de518da42ae359414273cd6947854fc50ff75d88b672e5d52"
+  },
+  "src/research/average_consistancy_average.py": {
+    "size": 14445,
+    "sha256": "e5ed8bc55b48ee47cf6ff0ab806fefe161b8034fbc80ab799eb0331b2eab875e"
+  },
+  "src/research/config_driven_runner.py": {
+    "size": 5124,
+    "sha256": "acc03cc560614485950c870a4ef0f169af3239bd0e24fec9708c01f7f7fe2725"
+  },
+  "src/research/downside_statistics.py": {
+    "size": 5670,
+    "sha256": "55f32e9b4fcca1fa01e9c5822c06ed99f3e1be7059b58f9d343c6c374cf71ecf"
+  },
+  "src/research/experiment_grid.py": {
+    "size": 2360,
+    "sha256": "c7899e7ffcb75fa46e86329d9ff392cf6c14c900dc57a5911e3e87ea746ff5e5"
+  },
+  "src/research/first_hit_statistics.py": {
+    "size": 15274,
+    "sha256": "17f3bdc01546b703d8e09f3942dee98980145287a0c46613e3c85469a46fd149"
+  },
+  "src/research/forward_return_statics.py": {
+    "size": 4246,
+    "sha256": "fdfd3eea738d360a32f8e350c9e6274251df830ed8c912695d4cc9d25cb0cd85"
+  },
+  "src/research/forward_returns.py": {
+    "size": 5510,
+    "sha256": "2ae10b94e5bf6280d731175fbf25c06bc37e80698e93de64e6091c548a3c0fdc"
+  },
+  "src/research/generate_stage1_report.py": {
+    "size": 32221,
+    "sha256": "81e06b097e9962aa1ee1b43c53474f26d5ee99473d1608c1745badb559048222"
+  },
+  "src/research/max_upside_downside_comparison.py": {
+    "size": 4418,
+    "sha256": "be96227674c7dc78cb4b6c6e906591c29dd182c1f0a67baba69f8f2a94118353"
+  },
+  "src/research/maximum_downside.py": {
+    "size": 14951,
+    "sha256": "b64927c727bc2cfc3ddd44f48adde31f6ac6b3f8cd8e781eede07720a56721e0"
+  },
+  "src/research/maximum_upside.py": {
+    "size": 14275,
+    "sha256": "219289711357a5b12459a7aef9c109d48bedca814f0d8bfa28342b667bb758b0"
+  },
+  "src/research/merge_forward_returns_stage1.py": {
+    "size": 11346,
+    "sha256": "0ad1a9adbc61fefbb6a0c02277674147a1ca068943bc44e48054a44fa5575782"
+  },
+  "src/research/outcome_analysis.py": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "src/research/post_activation_behaviour.py": {
+    "size": 23861,
+    "sha256": "b954e4c7048bf7ad51f8a0b15cfa11513451b3d8cb6996eaacec914092636421"
+  },
+  "src/research/post_activation_statistics.py": {
+    "size": 14845,
+    "sha256": "39dde7791623e1d13c0776264773929287a0f850c4703659da2add3b6c44b707"
+  },
+  "src/research/profit_level_reach.py": {
+    "size": 14355,
+    "sha256": "14f2caf9e33013c379cddb9520bd064c57ad383dcf0c9ee1b976eb8eba4656c3"
+  },
+  "src/research/profit_reach_statistics.py": {
+    "size": 7209,
+    "sha256": "dea9bf607daff64ad8b95642e57144296315462897986afe86b86e429573512f"
+  },
+  "src/research/rank_profit_reach_setups.py": {
+    "size": 4053,
+    "sha256": "c9744c13e401c92bc85366e54f4650aa6cd025be30e7256f7883bb56d379d7ef"
+  },
+  "src/research/regime_outcome_comparison.py": {
+    "size": 20376,
+    "sha256": "428081e9b0e9a4a28d53e83b118243627ad23e1724f379fba89d8db2ada4c777"
+  },
+  "src/research/stage15/__init__.py": {
+    "size": 67,
+    "sha256": "9b2abae341c526a53f01c3f18076d7add9319b9ebb665807400bbd8e2ab89753"
+  },
+  "src/research/stage15/episodes.py": {
+    "size": 5677,
+    "sha256": "6f3b3ea5ffb68891880be862031046920cb0a9557daa540278ecc4f15ee945bb"
+  },
+  "src/research/stage15/metrics.py": {
+    "size": 6774,
+    "sha256": "67c08342d1a923f3919b5401f512eecf02710a942aa463a77155be6d1c0299ab"
+  },
+  "src/research/stage15/run_step1.py": {
+    "size": 19009,
+    "sha256": "ecf590a2ab2fbe19a7a68a735af7cfb3cf342ab7971af4e6f0d1ad4181765440"
+  },
+  "src/research/stage15/validation.py": {
+    "size": 3797,
+    "sha256": "4520920bd9bbadd2155561c2962f12ea1fce027f037c69ed3a808b6a07cb2175"
+  },
+  "src/research/stage15_entry/__init__.py": {
+    "size": 62,
+    "sha256": "ea747984c2bb30e0e712fe386235ad23c6d40ca8295502511823d2b512f0c921"
+  },
+  "src/research/stage15_entry/outcomes.py": {
+    "size": 5378,
+    "sha256": "39470df8ef5093af236ac5c77c95a91fc22e704540aea86a580e3cd4ca8250df"
+  },
+  "src/research/stage15_entry/reporting.py": {
+    "size": 12477,
+    "sha256": "888186132cd56361df25e175f679fa0145280090916ae16ae5f6603d543ede79"
+  },
+  "src/research/stage15_entry/run.py": {
+    "size": 12933,
+    "sha256": "71c6ecb09e9edade1ebbaa54a58756cfa9057f7fc28b75be011dff7deeb051ff"
+  },
+  "src/research/stage15_entry/signals.py": {
+    "size": 7377,
+    "sha256": "fda2c5e5711b4491c13c23a22081db02f8dfe5d3f3ede42c8b0e8d4c20249427"
+  },
+  "src/research/stage15_entry/statistics.py": {
+    "size": 6047,
+    "sha256": "16b43d39186bb681e365b546567b81973d4fa49b27183226c6fbdcb79be0c9a8"
+  },
+  "src/research/stage15_exit/__init__.py": {
+    "size": 55,
+    "sha256": "5ffb9946e29e891a1ba2ab1805abb61393f519d19c1dbb50f28cf9cd073608dd"
+  },
+  "src/research/stage15_exit/reporting.py": {
+    "size": 9382,
+    "sha256": "79987dd7a295804ef29e99408cebb4d854d3756f08956ba17f730f1cc88da095"
+  },
+  "src/research/stage15_exit/run.py": {
+    "size": 7796,
+    "sha256": "d1491c8273d9fe09168950cfcf8be02990c608fbf8a3b7e3a587b866459ce073"
+  },
+  "src/research/stage15_exit/simulator.py": {
+    "size": 15938,
+    "sha256": "2a1e4b66f618e93b415bdccd7124d99d5722f0e8a9e746436d0202ef198ab3f1"
+  },
+  "src/research/stage15_exit/statistics.py": {
+    "size": 8720,
+    "sha256": "8d9ccceba114b122f0d7a89734a8af19c8d09e779bc2e5a1c53876743350c637"
+  },
+  "src/research/stage15_market/__init__.py": {
+    "size": 58,
+    "sha256": "ca0676fa0818a93ffa15cd8c0801d4be2129058111bd18f38b9e252ea94759ac"
+  },
+  "src/research/stage15_market/context.py": {
+    "size": 7458,
+    "sha256": "2fff9840568cf7e18693f5752ec201c5636dca9ab298431df433d2d282d3986b"
+  },
+  "src/research/stage15_market/reporting.py": {
+    "size": 8998,
+    "sha256": "535d4836def5ff8d13136a1e517e2f5d5e865c84b29fefc80468c55abf29220e"
+  },
+  "src/research/stage15_market/run.py": {
+    "size": 8886,
+    "sha256": "f01ad49f49dca59e84c0c6e2ea6c5780fe05ae9ecbf613c8bda8b6bf00ce0d54"
+  },
+  "src/research/stage15_market/statistics.py": {
+    "size": 9419,
+    "sha256": "2b6530dfa2f7dabe905ea171c1d35565fed0dbe4d610bbaa61909d74169befa3"
+  },
+  "src/research/stage15_risk/__init__.py": {
+    "size": 53,
+    "sha256": "01cc335464296884a10d989766d68be5c8fdc2e5981b867294e48a7bb501314d"
+  },
+  "src/research/stage15_risk/reporting.py": {
+    "size": 10955,
+    "sha256": "27121cd1c67f77b908301f17e791038869c4dccc2f4fe06fd285c16259026daf"
+  },
+  "src/research/stage15_risk/run.py": {
+    "size": 8072,
+    "sha256": "7994761a8c67ac0eda2c2657f92a5ada290efd04618c0be72ad10628d57d6486"
+  },
+  "src/research/stage15_risk/simulator.py": {
+    "size": 7204,
+    "sha256": "adc1747d23774a33a592963dd72882280688c8354dacce5a39c12edd1e9bf248"
+  },
+  "src/research/stage15_risk/statistics.py": {
+    "size": 8525,
+    "sha256": "92f0b57f537b25c39184d90eeb581b0fdcd1e968e9f29e90b64a33c545b559fd"
+  },
+  "src/research/stage15_robustness/__init__.py": {
+    "size": 58,
+    "sha256": "e20cc7d2819757d1676bb148342783361f43028383038fdab41b5d1cb439080b"
+  },
+  "src/research/stage15_robustness/analysis.py": {
+    "size": 11406,
+    "sha256": "a747ee50b34556ed0c63ef5b157bf1cd678cee9576638bc1226a808b0c616fec"
+  },
+  "src/research/stage15_robustness/reporting.py": {
+    "size": 8235,
+    "sha256": "53edc04e9c98b66b09bfc20811db8ac8815418099a0e61b39b1a9396ad3baaf5"
+  },
+  "src/research/stage15_robustness/run.py": {
+    "size": 8940,
+    "sha256": "2ff1c12191bc5c27416aa9ebfed0804e1778c1162938ca5f71ea134e81ee2d9d"
+  },
+  "src/research/stage15_v2_bounce/__init__.py": {
+    "size": 53,
+    "sha256": "eea049420c4baa3da5e050aba5bc332df9a446a565459c7a18bfaf8c58871817"
+  },
+  "src/research/stage15_v2_bounce/analysis.py": {
+    "size": 6925,
+    "sha256": "18b9d5f8759bcb4c0c9c11f534820c07bdf739d5c61bd2c594ef1e43ee4701eb"
+  },
+  "src/research/stage15_v2_bounce/reporting.py": {
+    "size": 4091,
+    "sha256": "5e8e30717b039825433823c459192b7faae5ced82872087f4b5cfbec63144b60"
+  },
+  "src/research/stage15_v2_bounce/run.py": {
+    "size": 12701,
+    "sha256": "cb063d434420f325023c157a3df7d4332fe682e83ccd98b07e5e029b6f8dc89a"
+  },
+  "src/research/stage15_v2_bounce/signals.py": {
+    "size": 5302,
+    "sha256": "d19eada9eb212c30b85280d0851928e9f83929e9bfd43f30a8a33ca2e0678e00"
+  },
+  "src/research/stage15_v2_bounce/simulator.py": {
+    "size": 4410,
+    "sha256": "c5e3e21f6aa8fb5b46284df28aebdb7544c20777851e911242e84141992c10e7"
+  },
+  "src/research/stage15_v2_market/__init__.py": {
+    "size": 51,
+    "sha256": "7faceaf4160034c4bee504c16c77e3569bd8f9fe8dd5b4081be1dd291c6277d6"
+  },
+  "src/research/stage15_v2_market/analysis.py": {
+    "size": 8383,
+    "sha256": "d18c65c2604380a03ae524ecb8b61e8c4e953ef165e62f8ddece83eb3d4a922f"
+  },
+  "src/research/stage15_v2_market/context.py": {
+    "size": 3402,
+    "sha256": "2d39b04c1097222af78ba034e43848890a1059fb57cdb6d0d949d3cee398abf2"
+  },
+  "src/research/stage15_v2_market/reporting.py": {
+    "size": 4134,
+    "sha256": "16fecd47aac02896aa0b62a95f035d929f7eb7010a0c3a1fef2e1e3eab46d97c"
+  },
+  "src/research/stage15_v2_market/run.py": {
+    "size": 9135,
+    "sha256": "710bad7da0751378dca320f7bd82a10ff767374fa22166eb1d9d3d81f4921e34"
+  },
+  "src/research/statistics.py": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "src/research/tailing_research.py": {
+    "size": 29797,
+    "sha256": "148346f82c002539ddc864daf6f98df767fd47f24d713a55a367e5fbf7bf0a8d"
+  },
+  "src/research/target_vs_stop_first_hit.py": {
+    "size": 11396,
+    "sha256": "107bf7aa6bfe650c4aca9ffc19d5360bd8053bacfe57a6b135ac8b720fb1f24e"
+  },
+  "src/research/timeframe_comparison_master.py": {
+    "size": 11165,
+    "sha256": "a4d3373c639bf675b4282fee51a4ff6eb88e1de0e216f2913bd6b507fc33789d"
+  },
+  "src/research/touch_detection.py": {
+    "size": 3045,
+    "sha256": "65460c1de1ba00a3f7a277abe783a70e7f4f51ec33b46d44c014630d3a219895"
+  },
+  "src/research/touch_events.py": {
+    "size": 5751,
+    "sha256": "eba65339de316a2c9f819cde1bff5ee999ec254ddded8de3de87acd118a31afa"
+  },
+  "src/research/trailing_outcome_comparison.py": {
+    "size": 13372,
+    "sha256": "c14e2d815cef8fe1987741a86f811cf026bb3ee0395c869ee0efbb18352c5bbf"
+  },
+  "src/research/upside_downside_comparison.py": {
+    "size": 3848,
+    "sha256": "bc512e9685f7ec977841e4a8bdf565449708da170abc51e92dc41219ac0b9fa7"
+  },
+  "src/research/upside_statistics.py": {
+    "size": 5566,
+    "sha256": "834844a61e203921c6d81a0becd301703041c3cb2e0de36e803e3d775418dc9c"
+  },
+  "src/research/validate_asset_comparison.py": {
+    "size": 10058,
+    "sha256": "f27ea11d51c0bfea3901dec40c6a41be2f6521860294ad994dddd202ca290393"
+  },
+  "src/research/validate_average_comparison_master.py": {
+    "size": 16725,
+    "sha256": "fbcc760fdc9c79d5dc57168cf52735a0de03a84c69036e103264cb3d97267fe5"
+  },
+  "src/research/validate_experiment_grid.py": {
+    "size": 8932,
+    "sha256": "4b416c3be0fc1bf9c07bab46208d3d50f3de4cff4951342314911cdcc05fb09a"
+  },
+  "src/research/validate_forward_returns.py": {
+    "size": 12342,
+    "sha256": "c51c0839d5119b7ae8b46019e842606a4bc4469585021ec2b0181b32f4b9d21b"
+  },
+  "src/research/validate_market_regime.py": {
+    "size": 9287,
+    "sha256": "ecd292485797e92d410b4c6ed904e1a23deaf3e4febab1877649eb8af8ed0315"
+  },
+  "src/research/validate_maximum_downside.py": {
+    "size": 15409,
+    "sha256": "d958fe2a0d60483c4763db04f194b032fcc6f8e9d1a3b35808e52d29e895d067"
+  },
+  "src/research/validate_maximum_upside.py": {
+    "size": 15341,
+    "sha256": "a6325c8075d7d06a38ff0dad8d713a67c76491169be933bb229eb4f64d7651c7"
+  },
+  "src/research/validate_post_activation.py": {
+    "size": 26072,
+    "sha256": "4669363822ada932f4e3b2845257887ab6ddb9ebd84b0dc8ed7e4f65e02f2d16"
+  },
+  "src/research/validate_profit_level_reach.py": {
+    "size": 22444,
+    "sha256": "a2a014d62b03d730fe6b3dd9196aabdea7a142f891a23e1dbc75b5faba90adba"
+  },
+  "src/research/validate_regime_outcomes.py": {
+    "size": 23273,
+    "sha256": "4784c774c982b5c5950cc3ff4ea9842a22b681b16784ddefb2a2a80a50c6a04c"
+  },
+  "src/research/validate_stage1_report.py": {
+    "size": 17356,
+    "sha256": "7f27c39aa4841f2ce8fc0dbbd65ba1cf477e8bfc563bdfdc2a97cc83d84a2952"
+  },
+  "src/research/validate_stage1_report_final.py": {
+    "size": 26538,
+    "sha256": "2bc2274c03df4d037048ae3602258acebb41b3c51ab545ce7648c4bbecbe0ae4"
+  },
+  "src/research/validate_timeframe_comparison.py": {
+    "size": 14025,
+    "sha256": "4852237ef6dee0c76c9e6927aad85ca7b47aa5c7796781eee2e86d81b7f8912e"
+  },
+  "src/research/validate_touch_detection.py": {
+    "size": 6151,
+    "sha256": "9593a5ccce911003353bcefee71e9fae9153c4c88477cd70260433aadc185c0c"
+  },
+  "src/research/validate_touch_events.py": {
+    "size": 13059,
+    "sha256": "b368a6b8a3eeb7f34f65545f3bb63e554b1d9f745c04961ea2e8d7dec027d3e7"
+  },
+  "src/utils/__init__.py": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "src/utils/experiment_config.py": {
+    "size": 772,
+    "sha256": "dec05d06da6cbe5bd476d8fcb23899a793091ded2f1514ccfccd92a3e40e5807"
+  },
+  "src/utils/logger.py": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "tests/__init__.py": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "tests/test_averages.py": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "tests/test_data.py": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "tests/test_stage15_deduplication.py": {
+    "size": 7801,
+    "sha256": "d964aa5d928f41cf06b2c290fb5d0a8ea4019b5bd3132e365f68ec13e714ea8a"
+  },
+  "tests/test_stage15_downside_protection.py": {
+    "size": 4408,
+    "sha256": "dcd061feb72b1bd5df3852b8250ba847198099fdca509c8ea38d8ac30f7837b7"
+  },
+  "tests/test_stage15_entries.py": {
+    "size": 7576,
+    "sha256": "124e443605233cac09836c3be5daa3f54cf3605891846f40cc0d9963dce6fe1b"
+  },
+  "tests/test_stage15_exits.py": {
+    "size": 4618,
+    "sha256": "ccef8ef683f6333f61f89d1903fe68415e1225eaffb1f0a29459b30d46791492"
+  },
+  "tests/test_stage15_market_conditions.py": {
+    "size": 7526,
+    "sha256": "b53727acbf0fdef7a9db075ad5d8febc9bb72cce856956b65a4254d89c701ca9"
+  },
+  "tests/test_stage15_robustness.py": {
+    "size": 2475,
+    "sha256": "2266ec024e272b6b2baf8ec39b1888c5a6161c238168ca3b1f8a31fbc04d0ec3"
+  },
+  "tests/test_stage15_v2_bounce.py": {
+    "size": 3904,
+    "sha256": "562a6f88a7836d37d07a509bcacecd4dc445f9a24dec2ee9ad66bc16307bd901"
+  },
+  "tests/test_stage15_v2_market_filters.py": {
+    "size": 2699,
+    "sha256": "62dded109ff0d2215f2aa5e862c1dee68c012b411d684ef9e4b8cf5957333479"
+  },
+  "tests/test_touch_detection.py": {
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

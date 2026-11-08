@@ -1,0 +1,33 @@
+experiment:
+  name: stage15_v2_step5_strict_robustness_v1
+  scope: final_strict_historical_audit_before_selection
+source_candidates: data/research/stage15_v2/step4_realistic_execution_v1
+fixed_execution:
+  scenario: realistic
+  fee_bps_per_side: 10.0
+  slippage_bps_per_side: 2.0
+  maximum_open_positions: 1
+  direction: long_only_spot
+candidates:
+  - {name: refined_primary, timeframe: 3m, average_type: 15d, touch_zone: 0.5, market_filter: avoid_strong_bearish}
+  - {name: current_control, timeframe: 5m, average_type: 15d, touch_zone: 0.5, market_filter: all_market_conditions}
+  - {name: rising_average_secondary, timeframe: 5m, average_type: 15d, touch_zone: 0.5, market_filter: rising_15d}
+strict_requirements:
+  minimum_entries_per_period: 100
+  minimum_nonoverlap_trades_per_period: 40
+  positive_mean_and_median_both_periods: true
+  minimum_positive_quarters_pct: 60
+  expected_shortfall_10_floor_pct: -5.0
+  worst_trade_floor_pct: -5.0
+  maximum_drawdown_floor_pct: -20.0
+  minimum_adjacent_parameters: 2
+  majority_adjacent_parameters_positive_both_periods: true
+  positive_7day_block_bootstrap_ci_lower_bound_both_periods: true
+bootstrap:
+  block_days: 7
+  repetitions: 5000
+  seed: 1525
+limitations:
+  later_period_is_not_untouched_out_of_sample: true
+  drawdown_assumes_full_equal_notional_reinvestment: true
+

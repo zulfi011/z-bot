@@ -1,0 +1,9 @@
+{
+  "step": 2,
+  "scope": "entry_conditions_only",
+  "configurations": 81,
+  "policies": 19,
+  "candidate_rows": 2855947,
+  "protected_files_unchanged": 315,
+  "validation": "PASS"
+}

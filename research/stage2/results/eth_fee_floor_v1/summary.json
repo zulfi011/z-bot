@@ -1,0 +1,29 @@
+{
+  "original_baseline": {
+    "variant": "bnb_reserve_control",
+    "floor_pct": 0.19,
+    "actual_fee_bps": 7.5,
+    "actual_slippage_bps": 2.0,
+    "profit": 430.1634322398789,
+    "change_vs_original_baseline": 0.0,
+    "change_vs_same_cost_current_floor": NaN,
+    "trades": 459,
+    "win_rate_pct": 85.40305010893246,
+    "average_loss": -4.550529934749674,
+    "max_drawdown_pct": -9.66215811329656,
+    "walk_forward_profit": 410.1432061146667,
+    "walk_forward_change_vs_control": 0.0,
+    "walk_forward_change_vs_same_cost_current_floor": NaN,
+    "floor_exits": 49,
+    "floor_exit_profit": 0.9584293898960254,
+    "average_floor_exit": 0.019559783467265824,
+    "negative_floor_exits": 0,
+    "positive_floor_exits": 49,
+    "floor_exits_above_025pct": 0
+  },
+  "bnb_reserve": {
+    "bnb_fee_usd_per_100_round_trip": 0.15,
+    "minimum_bnb_value_usd": 0.75,
+    "recommended_bnb_value_usd": 1.5
+  }
+}

@@ -1,0 +1,16 @@
+check,pass
+grid_total_row_count_correct,True
+assets_match_config,True
+timeframes_match_config,True
+averages_match_config,True
+zones_match_config,True
+no_duplicate_configurations,True
+experiment_ids_unique,True
+experiment_ids_not_missing,True
+27_configurations_per_asset,True
+9_per_asset_timeframe,True
+9_per_asset_average,True
+9_per_asset_zone,True
+historical_master_has_81_rows,True
+config_grid_matches_historical_research,True
+experiment_ids_deterministic,True

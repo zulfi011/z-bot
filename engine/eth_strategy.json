@@ -1,0 +1,126 @@
+{
+  "schema_version": 2,
+  "strategy_id": "eth_7d_trend16h_breakout_pullback_v5",
+  "name": "ETH dip + consolidation + pullback · trend exit",
+  "status": "paper_trading",
+  "market": {
+    "symbol": "ETHUSDT",
+    "fee_symbol": "BNBUSDT",
+    "trading_mode": "spot",
+    "direction": "long_only",
+    "timezone": "UTC",
+    "execution_timeframe": "1m",
+    "signal_timeframe": "5m"
+  },
+  "averages": {
+    "type": "simple_moving_average",
+    "source": "completed_daily_closes_only",
+    "signal_average_days": 7,
+    "regime_periods_days": [
+      7,
+      15,
+      30
+    ]
+  },
+  "entry": {
+    "touch_zone_pct": 0.5,
+    "approach": "from_below",
+    "touch_condition": "high >= average_7d * 0.995 AND low <= average_7d * 1.005",
+    "prior_candle_condition": "prior_high < prior_average_7d * 0.995",
+    "deduplication": "first_candle_of_each_maximal_consecutive_touch_run",
+    "confirmation": {
+      "type": "bullish_candle",
+      "condition": "close > open",
+      "maximum_wait_minutes": 30
+    },
+    "market_filter": {
+      "type": "avoid_strong_bearish",
+      "reject_when": "average_7d < average_15d < average_30d"
+    },
+    "blocked_entry_hours_utc": {
+      "start": 6,
+      "end": 12
+    },
+    "fill_timing": "raw_1m_open_at_confirmation_5m_candle_close_boundary",
+    "consolidation_breakout": {
+      "description": "A second way in, for when ETH never comes back down to its average: buy the break out of a quiet band.",
+      "chart_minutes": 120,
+      "zone_bars": 12,
+      "maximum_zone_pct": 2.5,
+      "confirmation_wait_minutes": 30,
+      "condition": "The 12 bars before the current one sit inside a band no wider than 2.5% (highest high / lowest low - 1). The first bar to close above that band's top is the break; 30 minutes later the 1-minute close must still be above the top, and the buy lands on the next minute's open. Only the first break of each quiet stretch counts.",
+      "market_filter": "Only the blocked hours are shared with the dip rule. The downtrend filter is deliberately NOT applied: requiring the averages to be stacked upward before a break screens out exactly the breaks that start a new trend, and cost -$7.39 on ETH (-$16.24 on SOL) in the backtest.",
+      "exit": {
+        "protective_stop_pct_from_entry_fill": 3.5,
+        "activation_pct_from_entry_fill": 1.283,
+        "giveback_of_open_profit_pct": 22.0,
+        "note": "A break comes out of a tighter band than a dip buys into, so it carries its own stop and trail. The trend exit (Mode A) applies to these lots on the same terms as any other."
+      }
+    },
+    "pullback_to_trend": {
+      "description": "A third way in, for when ETH trends upward in a wide range: it never comes back to its 7-day average and never goes quiet enough for Mode C. Buy the end of a short pullback inside the uptrend.",
+      "ema_minutes": 1440,
+      "dwell_minutes": 180,
+      "requires_uptrend": true,
+      "condition": "The daily averages for that UTC day are stacked 7d > 15d > 30d. A run of at least 180 consecutive 1-minute closes below the 1440-minute EMA of 1-minute closes (pandas ewm span=1440, adjust=False) ends with the first close back above it; the buy lands on the next minute's open. Only the blocked hours are shared with the dip rule.",
+      "lots": "Shares the coin's lots with the dip and Mode C, first come first served. Separate pullback lots were built and then removed: they only pay once the core is full (5 lots), and below that the reserved slots sit idle while the dip waits.",
+      "exit": "The dip's exit: stop -4.5%, trail arms at +1.315%, and because it only buys in an uptrend it is a Mode A lot held against the 16-hour EMA."
+    },
+    "pyramid_add_removed": "ETH had a pyramid add-on: while a lot was winning, another lot was added at +1% steps above its fill, up to three. It is removed, not switched off. Measured over Oct 2024 - Jul 2026 on 5 x $100 shared lots it added $73 across 172 adds at a 54.1% win rate, while dropping the whole strategy's win rate from 85.4% to 76.6% and deepening the worst mark-to-market dip from -9.66% to -14.06% - and it took 28 lots the dip would otherwise have used. Not worth the money or the noise. SOL keeps its own add-on, which is a different rule (+0.5% steps, sold with its parent)."
+  },
+  "exit": {
+    "protective_stop_pct_from_entry_fill": 4.5,
+    "maximum_hold_minutes": null,
+    "trailing_stop": {
+      "activation_pct_from_entry_fill": 1.315,
+      "giveback_of_open_profit_pct": 30.0,
+      "activation_candle_can_trigger_trail": false,
+      "formula": "entry_fill + 0.70 * (prior_peak - entry_fill)"
+    },
+    "break_even_floor": {
+      "description": "The break-even floor. The moment a lot arms - reaches the trail activation - a lot that is being held against the trend line has its protective stop lifted from the -X% level to its own buy price plus the cost of a round trip, and the order parked on Binance is cancelled and re-placed at the new level. A lot that has proved itself and then comes all the way back exits level instead of slightly negative.",
+      "level": "entry_fill_price * (1 + break_even_floor_pct / 100)",
+      "break_even_floor_pct": "Derived, never hard-coded: (bnb_fee_bps_per_side + slippage_bps_per_side) * 2 / 100 from this file's execution_model. At 7.5bps fee and 2bps slippage that is 0.19%.",
+      "applies_to": "Mode A lots only - the ones opened in a clean uptrend and held against the line. Mode B lots keep the giveback trail and never get a floor.",
+      "requires_arming": "Yes. A lot that never reaches the trail activation keeps only its protective stop. Attaching the floor earlier - as soon as a lot has merely traded above its costs - was tested and is far worse: it turns a normal wobble on the way up into an exit (walk-forward $169 against $410, better in 0 of 6 windows).",
+      "exit_reason": "break_even",
+      "never_caps_a_winner": "A lot that trends does not return to its own buy price, so the floor is simply never reached and the line takes the lot out far above it.",
+      "evidence": "ETH, 5 x $100 shared, Oct 2024 - Jul 2026: losing lots 105 -> 67, win rate 77.1% -> 85.4%, profit $415.50 -> $430.16, better in 6 of 6 walk-forward windows. The two variants people reach for first were both rejected: a floor that rides 0.19% above the trend line instead of sitting at the buy price (walk-forward $325 against $410 - it is a moving level, so it sells the dips that trending lots recover from), and dropping the arming requirement. See stage2_backtesting/scripts/eth_line_gap.py and eth_floor_and_arm.py."
+    },
+    "same_candle_activation_and_stop": "stop_wins",
+    "gap_fill": "min(level, candle_open)",
+    "trend_exit": {
+      "ema_minutes": 960,
+      "requires_uptrend": true,
+      "condition": "Once the trail has armed, a lot opened while 7d > 15d > 30d ignores the giveback and is sold at the next minute's open after a 1-minute close below the 960-minute EMA of 1-minute closes (pandas ewm span=960, adjust=False). The protective stop stays active throughout. From the minute after it arms the protective stop sits at the break-even floor, not the original level, so the lot cannot finish negative while it waits for the line.",
+      "fallback": "Lots opened outside a clean uptrend keep the giveback trailing stop below."
+    }
+  },
+  "portfolio": {
+    "reference_capital_usd": 700.0,
+    "default_lot_size_usd": 100.0,
+    "default_lots": 5,
+    "minimum_lot_size_usd": 10.0,
+    "maximum_lot_size_usd": 100000.0,
+    "maximum_lots_per_coin": 20,
+    "sizing_rule": "Each coin gets lot size x lots from the free USDT in the Binance wallet, shared by every way in. A trade buys one full lot when the coin has a free slot and Binance has at least one lot of free USDT; when the pot holds less than a full lot, the buy uses what is left.",
+    "leverage_allowed": false,
+    "short_selling_allowed": false
+  },
+  "execution_model": {
+    "usdt_fee_bps_per_side": 10.0,
+    "bnb_fee_bps_per_side": 7.5,
+    "slippage_bps_per_side": 2.0,
+    "bnb_fee_fallback": "pay_usdt_fee_when_bnb_balance_is_insufficient"
+  },
+  "evaluation": {
+    "minimum_calendar_days": 180,
+    "minimum_completed_trades": 50,
+    "maximum_drawdown_review_pct": 15.0
+  },
+  "provenance": {
+    "research": "stage2_backtesting/results/eth_ema_exit_grid.parquet, eth_consolidation_full, eth_three_modes.py, eth_pullback.py, eth_sleeves.py, eth_core_lots.py, eth_sleeves_core5.py; parity: verify_pullback_parity.py",
+    "backtest_bnb_fees": "Oct 2024 - Aug 2026, BNB fees, one shared wallet. Core only (dip + Mode C): 1 x $100 +$107.54, 3 x $100 +$280.52, 5 x $100 +$412.54, all 6/6 walk-forward windows. With the pullback sharing the same lots: 1 lot +$74.24, 3 lots +$265.41, 5 lots +$414.01 (walk-forward +$393.81 against +$378.43). The pullback pays for its slot only once the core is full; below that it costs the dip trades it displaces. Pyramid adds (+1% steps, up to 3, always Mode A) with 3 lots of their own on top of core 5 + pullback 2: $782.28 against $519.24, walk-forward +$279.76, 243 adds at a 58.4% win rate.",
+    "caveats": "The pullback's measured gain (+$91.47 honest on top of a 5-lot core) was earned with lots RESERVED for it; sharing lots is worse at small sizes, so on a small account the pullback is close to free optionality and at 1 lot it cost about $33 over 22 months. Its edge is also lumpy: $76 of that $91 came from one strong uptrend (April 2025). The 24h / 180-minute setting was chosen on this same history. The pyramid's honest figure is much smaller than its backtest: choosing its rule in advance gave +$122.75 at 3 lots (4/6 windows), and almost all of that came from one window (April 2025). It is worth its lots only once the core is at 5 and the pullback near 4 - roughly $1,000 in ETH."
+  }
+}

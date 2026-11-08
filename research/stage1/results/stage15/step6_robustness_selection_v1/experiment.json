@@ -1,0 +1,61 @@
+{
+  "experiment": {
+    "name": "stage15_step6_robustness_selection_v1",
+    "scope": "final_stage15_robustness_and_candidate_selection"
+  },
+  "source_candidates": "data/research/stage15/step5_exits_v1",
+  "entry_policies": [
+    "first_touch_0m",
+    "bullish_candle_30m"
+  ],
+  "condition_variants": [
+    "all_entries",
+    "bullish_regime",
+    "from_below",
+    "rising_average"
+  ],
+  "execution_variants": {
+    "overlap_control": "one_position_per_configuration",
+    "round_trip_cost_pct": [
+      0.0,
+      0.1,
+      0.2
+    ]
+  },
+  "robustness": {
+    "periods": [
+      "earlier",
+      "later"
+    ],
+    "split_utc": "2025-09-01",
+    "quarterly_consistency": true,
+    "bootstrap_block_days": 7,
+    "bootstrap_repetitions": 2000,
+    "bootstrap_seed": 1506,
+    "parameter_neighbors": {
+      "timeframe_order": [
+        "1m",
+        "3m",
+        "5m"
+      ],
+      "touch_zone_order": [
+        0.5,
+        1.0,
+        1.5
+      ]
+    }
+  },
+  "selection": {
+    "minimum_entries_per_period": 100,
+    "minimum_nonoverlap_trades_per_period": 40,
+    "positive_mean_and_median_both_periods": true,
+    "positive_nonoverlap_mean_after_0_2_pct_cost_both_periods": true,
+    "minimum_positive_quarters_pct": 60,
+    "minimum_neighbor_count": 2,
+    "require_majority_positive_neighbors_both_periods": true,
+    "expected_shortfall_floor_pct": -5.0,
+    "robust_requires_positive_block_ci_both_periods": true,
+    "provisional_excludes_block_ci_requirement": true,
+    "note": "selection_is_historical_and_requires_stage2_forward_validation"
+  }
+}

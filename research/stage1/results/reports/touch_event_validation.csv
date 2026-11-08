@@ -1,0 +1,10 @@
+symbol,timeframe,event_file_exists,required_columns_present,asset_correct,timeframe_correct,average_types_valid,touch_zones_valid,timestamps_utc,timestamps_sorted,duplicate_event_ids,no_missing_values,positive_prices,ohlc_consistent,distance_calculation_correct,all_event_timestamps_found,average_values_correct,price_matches_source_close,high_matches_source,low_matches_source,all_events_are_real_touches,all_touch_counts_match,touch_group_ids_correct,event_ids_correct,overall_pass
+BTCUSDT,1m,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True
+BTCUSDT,3m,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True
+BTCUSDT,5m,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True
+ETHUSDT,1m,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True
+ETHUSDT,3m,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True
+ETHUSDT,5m,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True
+SOLUSDT,1m,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True
+SOLUSDT,3m,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True
+SOLUSDT,5m,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True

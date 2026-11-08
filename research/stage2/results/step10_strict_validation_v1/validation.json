@@ -1,0 +1,15 @@
+{
+  "step": "stage2_step10_strict_validation",
+  "status": "PASS",
+  "lookahead_probes_blocked": 20,
+  "independently_replayed_exits": 361,
+  "same_candle_policy_cases": 3,
+  "selection_and_overlap_records_checked": 361,
+  "maximum_positions_observed": 2,
+  "costed_trades_recalculated": 361,
+  "account_rows_reconciled": 2013120,
+  "maximum_balance_error_usd": 7.105427357601002e-14,
+  "raw_source_sha256": "895566d79dcad524dc71fe9ef1a90c1cf5adda251e15e360c042dac16eb53aaa",
+  "outcomes_source_sha256": "ecfba135005daf62f81f88669d471707c99d5a512b0507586a4b1adbbe361273",
+  "trades_source_sha256": "8a337fab41f61d82029e979d9e9a36995f3d35a91257cae2d7a78b0507836465"
+}

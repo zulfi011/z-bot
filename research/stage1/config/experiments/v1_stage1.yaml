@@ -1,0 +1,94 @@
+experiment:
+  name: "v1_stage1_research"
+  version: "1.0"
+  description: "V1 Stage 1 crypto average-touch research experiment"
+
+data:
+  exchange: "binance"
+  market: "spot"
+
+  assets:
+    - BTCUSDT
+    - ETHUSDT
+    - SOLUSDT
+
+  start_date: "2024-09-01"
+  requested_end_date: "2026-08-31"
+  available_end_date: "2026-07-31"
+
+  base_timeframe: "1m"
+
+research:
+  timeframes:
+    - "1m"
+    - "3m"
+    - "5m"
+
+  averages:
+    - "7d"
+    - "15d"
+    - "30d"
+
+  touch_zones_pct:
+    - 0.5
+    - 1.0
+    - 1.5
+
+  forward_return_horizons:
+    - "5m"
+    - "15m"
+    - "30m"
+    - "1h"
+    - "4h"
+    - "24h"
+
+  profit_targets_pct:
+    - 0.5
+    - 1.0
+    - 1.5
+    - 2.0
+    - 2.5
+    - 3.0
+    - 5.0
+
+  downside_windows:
+    - "1h"
+    - "4h"
+    - "24h"
+
+  upside_windows:
+    - "1h"
+    - "4h"
+    - "24h"
+
+  first_hit:
+    target_pct: 2.5
+
+    stop_levels_pct:
+      - 1.0
+      - 1.5
+      - 2.0
+      - 2.5
+      - 3.0
+
+  trailing:
+    activation_pct: 2.5
+
+    giveback_pct:
+      - 10
+      - 20
+      - 30
+      - 40
+      - 50
+
+  market_regimes:
+    enabled: true
+
+    bullish:
+      condition: "7d > 15d > 30d"
+
+    bearish:
+      condition: "7d < 15d < 30d"
+
+    neutral:
+      condition: "otherwise"

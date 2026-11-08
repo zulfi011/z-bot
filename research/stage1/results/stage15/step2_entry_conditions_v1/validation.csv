@@ -1,0 +1,10 @@
+dataset,pass,scalar_signal_replays,direct_raw_outcome_scans,candidate_rows,episodes,exact_parquet_roundtrip
+BTCUSDT_1m,True,760,160,451915,23785,True
+BTCUSDT_3m,True,760,160,270370,14230,True
+BTCUSDT_5m,True,760,160,210691,11089,True
+ETHUSDT_1m,True,760,160,462707,24353,True
+ETHUSDT_3m,True,760,160,273429,14391,True
+ETHUSDT_5m,True,760,160,214206,11274,True
+SOLUSDT_1m,True,760,160,471694,24826,True
+SOLUSDT_3m,True,760,160,280934,14786,True
+SOLUSDT_5m,True,760,160,220001,11579,True

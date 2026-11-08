@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "strategy_id": "btc_30d_touch_v1",
+  "status": "frozen_for_stage3_paper_trading",
+  "paper_trading_only": true,
+  "real_money_approved": false,
+  "rules_locked_during_forward_test": true,
+  "market": {
+    "symbol": "BTCUSDT",
+    "trading_mode": "spot",
+    "direction": "long_only",
+    "timezone": "UTC",
+    "execution_timeframe": "1m",
+    "signal_timeframe": "5m",
+    "daily_session": "UTC"
+  },
+  "averages": {
+    "type": "simple_moving_average",
+    "source": "completed_daily_closes_only",
+    "periods_days": [
+      7,
+      15,
+      30
+    ],
+    "signal_average_days": 30,
+    "minimum_observations_equal_period": true
+  },
+  "entry": {
+    "touch_zone_pct": 1.5,
+    "approach": "any",
+    "touch_condition": {
+      "high_gte": "average_30d * 0.985",
+      "low_lte": "average_30d * 1.015"
+    },
+    "deduplication": "first_candle_of_each_maximal_consecutive_touch_run",
+    "confirmation": {
+      "type": "bullish_candle",
+      "condition": "close > open",
+      "maximum_wait_minutes": 30,
+      "include_touch_candle": true,
+      "include_30_minute_boundary": true,
+      "include_first_non_touch_candle": true,
+      "cancel_after_first_non_touch_candle": true,
+      "reject_if_not_confirmed": true
+    },
+    "market_filter": {
+      "type": "bullish_only",
+      "require_when": "average_7d > average_15d > average_30d",
+      "evaluate_at": "first_touch_candle"
+    },
+    "fill_timing": "raw_1m_open_at_confirmation_5m_candle_close_boundary"
+  },
+  "exit": {
+    "protective_stop_pct_from_entry_fill": 4.0,
+    "maximum_hold_minutes": 1440,
+    "time_exit": "close_of_1440th_raw_1m_candle_including_entry_minute",
+    "monitoring_starts": "entry_minute",
+    "profit_trigger_pct_from_entry_fill": 4.0,
+    "profit_trigger_action": "activate_trailing_stop",
+    "trailing_stop": {
+      "enabled": true,
+      "activation_pct_from_entry_fill": 4.0,
+      "giveback_of_open_profit_pct": 10.0,
+      "activation_candle_can_trigger_trail": false,
+      "uses_peak_known_before_current_1m_candle": true,
+      "formula": "entry_fill + 0.90 * (prior_peak - entry_fill)"
+    },
+    "same_candle_activation_and_stop": "stop_wins",
+    "stop_gap_fill": "min(stop_price, candle_open)",
+    "trail_gap_fill": "min(trail_price, candle_open)"
+  },
+  "portfolio": {
+    "account_scope": "independent_BTC_account",
+    "initial_paper_equity_usd": 100.0,
+    "maximum_open_positions": 2,
+    "position_size_method": "current_marked_equity_fraction",
+    "equity_fraction_per_entry": 0.25,
+    "allocation_capped_at_available_cash": true,
+    "signals_when_slot_available": "open_new_independent_lot",
+    "signals_when_two_positions_open": "ignore",
+    "each_lot_managed_independently": true,
+    "same_boundary_order": "process_exits_before_entries",
+    "leverage_allowed": false,
+    "short_selling_allowed": false
+  },
+  "execution_model": {
+    "fee_bps_per_side": 10.0,
+    "slippage_bps_per_side": 2.0,
+    "entry_fill": "raw_open * (1 + slippage_bps / 10000)",
+    "exit_fill": "raw_exit * (1 - slippage_bps / 10000)",
+    "fees_apply_on": [
+      "entry",
+      "exit"
+    ],
+    "conservative_cost_ceiling_bps_round_trip": 40.0
+  },
+  "paper_evaluation": {
+    "minimum_calendar_days": 180,
+    "minimum_completed_trades": 50,
+    "net_pnl_must_be_positive": true,
+    "profit_factor_minimum": 1.0,
+    "maximum_drawdown_review_pct": 15.0,
+    "maximum_average_round_trip_cost_bps": 40.0,
+    "strategy_rule_mismatches_allowed": 0,
+    "rule_change_requires_new_forward_sample": true
+  },
+  "provenance": {
+    "historical_analysis": "../stage1_research/results/btc_stage15/btc_stage15_freeze_v1/BTC_STAGE15_FINAL_REPORT.md",
+    "historical_candidate_status": "PROSPECTIVE_PAPER_CANDIDATE_ONLY",
+    "user_directed_exit_override": "+4% trailing activation, -4% stop, 10% open-profit giveback, 24h maximum hold, 25% position size",
+    "note": "These requested exit and sizing rules replace the exploratory +1% target, -2% stop, and 10% sizing result. They require a new prospective paper sample and are not historically validated.",
+    "frozen_at_utc": "2026-09-09"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "experiment_id": "eth_allocation_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "simultaneous_priority": ["pullback", "dip", "breakout"],
+  "final_slot_reservation": {
+    "reserved_for": "pullback",
+    "only_when": "7d > 15d > 30d",
+    "does_not_close_existing_positions": true
+  },
+  "market_episode": {
+    "maximum_gap_minutes": 360,
+    "maximum_anchor_distance_pct": 1.0
+  },
+  "notes": "Priority and reservation are tested separately. No predictive score is introduced in this experiment."
+}

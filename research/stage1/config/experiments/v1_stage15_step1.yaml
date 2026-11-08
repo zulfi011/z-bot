@@ -1,0 +1,15 @@
+experiment:
+  name: v1_stage15_step1_touch_deduplication
+  scope: Step 1 only; no strategy entry, stop, regime filter, or exit optimization
+source_config: config/experiments/v1_stage1.yaml
+rule:
+  name: consecutive_touch_first_v1
+  group_by: [asset, timeframe, average_type, touch_zone]
+  representative: first_touch_candle
+  reset: one_complete_non_touch_candle
+  missing_intervals: reject
+  average_update: no_automatic_reset
+  boundary_runs: retain_and_mark_censored
+  outcomes: reuse_unchanged_stage1_event_id
+  timing: preserve_stage1_conventions
+  independence: distinct_contiguous_runs_not_statistically_independent_trades

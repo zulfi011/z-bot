@@ -1,0 +1,24 @@
+experiment:
+  id: stage2_step6_position_sizing_v1
+  initial_equity_usd: 100.0
+  trading_mode: long_only_spot
+  maximum_open_positions: 1
+  leverage_allowed: false
+
+sizing_variants:
+  fixed_capital_usd: [25.0, 50.0, 100.0]
+  equity_fraction_pct: [25.0, 50.0, 100.0]
+  account_risk_pct: [0.5, 1.0, 2.0]
+
+risk_sizing:
+  protective_stop_pct_from_entry_fill: 4.0
+  fee_bps_per_side: 10.0
+  exit_slippage_bps: 2.0
+  allocation_formula: equity_times_risk_fraction_divided_by_planned_net_stop_loss_fraction
+  allocation_cap: available_equity
+
+accounting:
+  allocation_includes_entry_fee: true
+  equity_updates_at: trade_exit
+  unrealized_mark_to_market_deferred_to_step7: true
+

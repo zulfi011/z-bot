@@ -1,0 +1,16 @@
+{
+  "experiment_id": "eth_equal_stop_risk_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "initial_capital_usd": 500.0,
+  "maximum_open_lots": 5,
+  "stop_pct": {"dip": 4.5, "pullback": 4.5, "breakout": 3.5},
+  "variants": [
+    {"name": "risk_3_50_cap_100", "risk_usd": 3.5, "maximum_order_usd": 100.0},
+    {"name": "risk_4_00_cap_115", "risk_usd": 4.0, "maximum_order_usd": 115.0},
+    {"name": "risk_4_50_cap_130", "risk_usd": 4.5, "maximum_order_usd": 130.0}
+  ],
+  "stress_extra_stop_gap_bps": [25.0, 50.0],
+  "constraints": ["same $500 cash account", "no leverage", "no borrowing", "five shared slots"],
+  "notes": "Three sizing schedules and two gap stresses frozen before results. Order size is min(risk dollars / stop fraction, cap); available wallet cash is a hard upper bound."
+}

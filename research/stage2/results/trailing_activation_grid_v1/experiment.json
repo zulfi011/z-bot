@@ -1,0 +1,22 @@
+{
+  "run_id": "trailing_activation_grid_v1",
+  "purpose": "decide whether trailing should replace the frozen fixed 4% profit target",
+  "activation_pct": [3.0, 3.5, 4.0],
+  "giveback_of_open_profit_pct": [10.0, 15.0, 20.0, 25.0, 30.0],
+  "baseline": "fixed +4% target",
+  "shared_rules": {
+    "hard_stop_pct": 4.0,
+    "maximum_hold_minutes": 1440,
+    "fee_bps_per_side": 10.0,
+    "slippage_bps_per_side": 2.0,
+    "maximum_open_positions": 1,
+    "direction": "long_only_spot",
+    "activation_candle_can_trigger_trail": false,
+    "activation_and_hard_stop_same_candle": "hard_stop_wins",
+    "trail_uses": "peak_known_before_current_1m_candle"
+  },
+  "strategies": {
+    "primary": "SOLUSDT 3m 15d +/-0.5%, from below, bullish candle within 30m, avoid strong bearish",
+    "control": "SOLUSDT 5m 15d +/-0.5%, from below, bullish candle within 30m, all markets"
+  }
+}

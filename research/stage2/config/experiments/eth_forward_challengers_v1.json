@@ -1,0 +1,59 @@
+{
+  "experiment_id": "eth_forward_challengers_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "freeze_timestamp": "2026-10-02T00:00:00Z",
+  "evaluation_start": "2026-10-01T00:00:00Z",
+  "minimum_complete_utc_months": 3,
+  "minimum_baseline_trades": 50,
+  "earliest_decision": "2027-01-01T00:00:00Z",
+  "challengers": [
+    {
+      "name": "strong_confirmation",
+      "rule": "close_above_previous_5m_high",
+      "historical_experiment": "eth_confirmation_quality_v1"
+    },
+    {
+      "name": "dip_failure_exit_12h",
+      "source": "dip",
+      "checkpoint_hours": 12,
+      "maximum_favorable_excursion_pct": 0.5,
+      "historical_experiment": "eth_failure_exit_v1"
+    },
+    {
+      "name": "equal_risk_4_50_cap_130",
+      "risk_usd": 4.5,
+      "maximum_order_usd": 130.0,
+      "historical_experiment": "eth_equal_stop_risk_v1"
+    },
+    {
+      "name": "volatility_high20_size70",
+      "normal_size_usd": 100.0,
+      "high_size_usd": 70.0,
+      "extreme_size_usd": 70.0,
+      "historical_experiment": "eth_volatility_sizing_v1"
+    }
+  ],
+  "acceptance": {
+    "net_profit_above_baseline": true,
+    "profit_factor_above_baseline": true,
+    "average_loss_not_worse": true,
+    "drawdown_not_worse": true
+  },
+  "data": {
+    "archive": "Binance official spot daily kline archive",
+    "download_start": "2026-09-11",
+    "download_end": "yesterday_utc",
+    "interval": "1m"
+  },
+  "unchanged": [
+    "ETH_only",
+    "500_usd_shared_wallet",
+    "five_slots",
+    "BNB_fee_assumption",
+    "two_bps_slippage_per_side",
+    "no_leverage",
+    "no_live_orders"
+  ],
+  "notes": "Candidates are frozen before forward results are viewed. Partial-month results are monitoring only. No candidate can pass before three complete UTC months and 50 baseline trades."
+}

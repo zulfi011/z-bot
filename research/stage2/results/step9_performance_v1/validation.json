@@ -1,0 +1,12 @@
+{
+  "step": "stage2_step9_performance",
+  "status": "PASS",
+  "strategies": [
+    "primary",
+    "control"
+  ],
+  "daily_curve_rows": 1400,
+  "minute_equity_source_reconciled": true,
+  "trade_ledger_source_reconciled": true,
+  "all_required_metrics_present": true
+}

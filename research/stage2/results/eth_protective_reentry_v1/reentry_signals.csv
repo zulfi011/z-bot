@@ -1,0 +1,2 @@
+variant,parent_id,setup_id,parent_entry,stop_index,stop_time,zone_top,confirmation_index,confirmation_time,entry,entry_time,minutes_after_stop,strong_bearish,blocked_hour,eligible
+reentry_48h,dip:2025-09-01T13:30:00+00:00:335,dip-touch:2025-09-01T13:25:00+00:00,526410.0,526901.0,2025-09-01 21:41:00+00:00,4468.006028571428,529364.0,2025-09-03 14:44:00+00:00,529365.0,2025-09-03 14:45:00+00:00,2464.0,False,False,True

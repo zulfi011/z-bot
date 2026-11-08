@@ -1,0 +1,33 @@
+{
+  "experiment_id": "sol_15d_confirmed_a2_g10_stop_grid_v1",
+  "status": "historical_grid_not_deployed",
+  "entry": {
+    "touch_zone_pct": 0.2,
+    "approach": "from_below",
+    "confirmation": "bullish 3m candle within 30 minutes",
+    "market_filter": "reject 7d < 15d < 30d"
+  },
+  "trailing": {
+    "activation_pct": 2.0,
+    "giveback_pct": 10.0
+  },
+  "protective_stop_pct_grid": [
+    1.0,
+    1.5,
+    2.0,
+    2.5,
+    3.0,
+    3.5,
+    4.0
+  ],
+  "maximum_hold": null,
+  "portfolio": {
+    "initial_equity_usd": 100,
+    "positions": 1,
+    "allocation_pct": 100
+  },
+  "costs": {
+    "fee_bps_per_side": 10,
+    "slippage_bps_per_side": 2
+  }
+}

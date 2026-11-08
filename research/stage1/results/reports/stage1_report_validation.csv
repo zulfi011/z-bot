@@ -1,0 +1,54 @@
+check,pass
+report_file_exists,True
+configuration_summary_exists,True
+configuration_summary_has_81_rows,True
+master_has_81_rows,True
+experiment_grid_has_81_rows,True
+configuration_summary_columns_match_master,True
+configuration_summary_matches_master,True
+configuration_summary_matches_experiment_grid,True
+section_present_# V1 Stage 1 Research Report,True
+section_present_## 1. Research Objective,True
+section_present_## 2. Experiment Scope,True
+section_present_## 3. Metrics Evaluated,True
+section_present_## 4. Average Comparison,True
+section_present_## 5. Timeframe Comparison,True
+section_present_## 6. Asset Comparison,True
+section_present_## 7. Leading Stage 1 Setup,True
+section_present_## 8. Market Regime Findings,True
+section_present_## 9. +2.5% Activation and Trailing Research,True
+section_present_## 10. Stage 2 Candidates,True
+section_present_## 11. Important Limitations,True
+section_present_## 12. Stage 1 Conclusion,True
+report_mentions_BTC,True
+report_mentions_ETH,True
+report_mentions_SOL,True
+report_mentions_81_configurations,True
+report_mentions_27_per_asset,True
+best_average_is_15d,True
+report_identifies_15d_as_primary_average,True
+all_timeframes_present_in_source,True
+report_identifies_5m_as_primary_timeframe,True
+best_asset_is_SOL,True
+report_identifies_SOL_as_primary_asset,True
+primary_setup_exists_once,True
+report_primary_setup_mentions_SOL,True
+report_primary_setup_mentions_15D,True
+report_primary_setup_mentions_5m,True
+report_primary_setup_mentions_0_5_zone,True
+primary_has_three_regimes,True
+neutral_best_mfe_mae_ratio,True
+neutral_best_target_first_decisive,True
+neutral_best_post_activation_upside,True
+bearish_highest_reach_probability,True
+bullish_lowest_mfe_mae_ratio,True
+report_identifies_neutral_as_preferred_regime,True
+report_identifies_bearish_as_higher_risk,True
+report_identifies_2_5_activation,True
+report_identifies_30pct_trailing,True
+limitation_present_Touch events overlap,True
+limitation_present_Consecutive candles,True
+limitation_present_Wider touch zones are nested,True
+limitation_present_same-candle ambiguity,True
+"limitation_present_fees, slippage",True
+limitation_present_not yet a live trading strategy,True

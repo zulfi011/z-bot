@@ -1,0 +1,14 @@
+{
+  "step": "stage2_step7_account_tracking",
+  "status": "PASS",
+  "account_rows_per_strategy": 1006560,
+  "total_account_rows": 2013120,
+  "maximum_open_positions": 2,
+  "equity_fraction_per_entry": 0.25,
+  "initial_equity_usd": 100.0,
+  "leverage_used": false,
+  "account_identity": "cash + open_position_value = initial_equity + realized_pnl + unrealized_pnl",
+  "valuation_time": "each raw one-minute candle close",
+  "outcome_source_sha256": "ecfba135005daf62f81f88669d471707c99d5a512b0507586a4b1adbbe361273",
+  "raw_source_sha256": "895566d79dcad524dc71fe9ef1a90c1cf5adda251e15e360c042dac16eb53aaa"
+}

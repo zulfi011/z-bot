@@ -1,0 +1,39 @@
+{
+  "baseline": {
+    "profit": 430.1634322398789,
+    "win_rate_pct": 85.40305010893246,
+    "average_win": 1.875124841500273,
+    "average_loss": -4.550529934749674,
+    "max_drawdown_pct": -9.66215811329656,
+    "walk_forward_profit": 410.1432061146667,
+    "post_selection_profit": 15.518625852006494
+  },
+  "best_by_full_profit": {
+    "variant": "dip_12h",
+    "source": "dip",
+    "checkpoint_hours": 12,
+    "profit": 439.10583101280747,
+    "profit_change": 8.942398772928584,
+    "trades": 481,
+    "win_rate_pct": 80.24948024948024,
+    "average_win": 1.9084746210092238,
+    "average_loss": -3.1322670810184503,
+    "profit_factor": 2.4756617244584365,
+    "max_drawdown_pct": -7.907623821876841,
+    "walk_forward_profit": 410.3315410630015,
+    "walk_forward_change": 0.18833494833479847,
+    "wf_windows_improved": 3,
+    "post_selection_profit": -0.08970846476121608,
+    "post_selection_change": -15.60833431676771,
+    "early_exit_candidates": 94,
+    "early_exits_taken": 43,
+    "baseline_recoveries_cut": 27,
+    "direct_trade_change": -27.58447685596842,
+    "loss_avoided": 45.14153052561804,
+    "recovery_cost": 72.72600738158646,
+    "replacement_trades": 22,
+    "replacement_pnl": 28.779546949863445,
+    "displaced_trades": 0,
+    "displaced_baseline_pnl": 0.0
+  }
+}

@@ -1,0 +1,10 @@
+dataset,candidate_rows,from_below_episodes,confirmed_signal_checks,pass,direct_exit_replays
+BTCUSDT_1m,36393,12131,1167,True,
+BTCUSDT_3m,21735,7245,675,True,
+BTCUSDT_5m,16851,5617,473,True,120.0
+ETHUSDT_1m,36948,12316,1985,True,
+ETHUSDT_3m,21618,7206,978,True,
+ETHUSDT_5m,16950,5650,862,True,120.0
+SOLUSDT_1m,36516,12172,2535,True,
+SOLUSDT_3m,22014,7338,1381,True,
+SOLUSDT_5m,17295,5765,1065,True,120.0

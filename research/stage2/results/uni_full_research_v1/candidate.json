@@ -1,0 +1,21 @@
+{
+  "rules": "3m, 10-day avg, \u00b10.5%, stop \u22123.5%, trail +1.276%/20%, only above 30-day avg, skip 06\u201312 UTC",
+  "trail_mode": "plus_1pct",
+  "activation_pct": 1.276,
+  "giveback_pct": 20.0,
+  "be_trigger": null,
+  "stop_pct": 3.5,
+  "signal_minutes": 3,
+  "average_days": 10,
+  "zone_pct": 0.5,
+  "trend": "above_30d",
+  "skip_06_12": true,
+  "summary": {
+    "combinations": 475200,
+    "profitable_full": 3858,
+    "profitable_both_periods": 1309
+  },
+  "walk_forward_total_usd": -23.581761598587036,
+  "candidate_in_wf_windows_usd": 47.43413019180298,
+  "earlier_only_pick": "5m, 9-day avg, \u00b10.1%, stop \u22123.5%, trail +1.276%/20%, only above 30-day avg, skip 06\u201312 UTC"
+}

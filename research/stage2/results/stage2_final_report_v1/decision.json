@@ -1,0 +1,22 @@
+{
+  "stage": "V1 Stage 2",
+  "status": "complete",
+  "paper_trading_decision": "GO_WITH_GUARDRAILS",
+  "real_money_decision": "NO_GO",
+  "selected_strategy": "primary",
+  "control_strategy": "control",
+  "decision_date_utc": "2026-09-08",
+  "reason": "Primary is positive in both periods under conservative costs, beats the control in all matched comparisons, and passed strict mechanical validation. The small edge and material drawdown still require forward paper validation.",
+  "paper_starting_equity_usd": 100.0,
+  "maximum_open_positions": 2,
+  "equity_fraction_per_entry": 0.25,
+  "review_thresholds": {
+    "minimum_calendar_days": 180,
+    "minimum_completed_trades": 50,
+    "net_pnl_must_be_positive": true,
+    "profit_factor_minimum": 1.0,
+    "maximum_drawdown_review_pct": 15.0,
+    "maximum_average_round_trip_cost_bps": 40.0,
+    "strategy_rule_mismatches_allowed": 0
+  }
+}

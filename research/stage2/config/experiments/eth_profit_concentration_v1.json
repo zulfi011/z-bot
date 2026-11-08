@@ -1,0 +1,14 @@
+{
+  "experiment_id": "eth_profit_concentration_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "month_attribution": "exit_time",
+  "excluded_month": "2025-05",
+  "winning_episode_counts": [1, 5],
+  "market_episode": {
+    "maximum_gap_minutes": 360,
+    "maximum_anchor_distance_pct": 1.0,
+    "description": "Signals no more than six hours apart and no more than 1% from the episode anchor share a market episode."
+  },
+  "notes": "Exclusions are concentration diagnostics, not tradable backtests. No profit target or scale-out is introduced."
+}

@@ -1,0 +1,14 @@
+{
+  "experiment_id": "eth_execution_calibration_v1",
+  "symbol": "ETHUSDT",
+  "observations_csv": "data/live_execution_observations_eth.csv",
+  "minimum_observed_fills": 30,
+  "provisional_sensitivity": [
+    {"name": "current_bnb_model", "fee_bps_per_side": 7.5, "slippage_bps_per_side": 2.0},
+    {"name": "usdt_fee_current_slippage", "fee_bps_per_side": 10.0, "slippage_bps_per_side": 2.0},
+    {"name": "provisional_5bps_slippage", "fee_bps_per_side": 7.5, "slippage_bps_per_side": 5.0},
+    {"name": "provisional_10bps_slippage_usdt_fee", "fee_bps_per_side": 10.0, "slippage_bps_per_side": 10.0},
+    {"name": "provisional_20bps_slippage_usdt_fee", "fee_bps_per_side": 10.0, "slippage_bps_per_side": 20.0}
+  ],
+  "notes": "Sensitivity cases are explicitly provisional, not observed. Median/p90/worst are generated only from real filled ETH observations after at least 30 fills. Every scenario rebuilds the break-even floor from its own round-trip costs."
+}

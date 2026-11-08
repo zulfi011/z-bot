@@ -1,0 +1,27 @@
+coin,rule,full,trades,win_rate,drawdown,earlier,later,unseen
+SOL,"A: ±1% for 8h, stop −3.5%, trail 28%, above 30-day",14.08,39,82.1,-4.8,6.29,5.01,12.84
+SOL,"B: ±0.5% for 4h, stop −1.5%, trail 24%, no trend filter",13.47,38,73.7,-3.3,0.78,12.69,-1.74
+ETH,"A: ±1% for 8h, stop −3.5%, trail 28%, above 30-day",-1.51,65,78.5,-8.7,-8.05,3.59,-5.99
+ETH,"B: ±0.5% for 4h, stop −1.5%, trail 24%, no trend filter",26.18,117,70.9,-3.7,4.5,16.28,-0.24
+BTC,"A: ±1% for 8h, stop −3.5%, trail 28%, above 30-day",-51.44,194,72.2,-20.7,-13.41,-39.87,-8.84
+BTC,"B: ±0.5% for 4h, stop −1.5%, trail 24%, no trend filter",-60.61,273,53.8,-23.3,-41.02,-22.62,6.32
+TRX,"A: ±1% for 8h, stop −3.5%, trail 28%, above 30-day",34.24,248,77.4,-14.2,13.59,19.02,5.39
+TRX,"B: ±0.5% for 4h, stop −1.5%, trail 24%, no trend filter",21.64,454,61.5,-21.6,43.37,-19.12,9.11
+AAVE,"A: ±1% for 8h, stop −3.5%, trail 28%, above 30-day",3.98,3,100.0,0.0,0.0,3.98,0.0
+AAVE,"B: ±0.5% for 4h, stop −1.5%, trail 24%, no trend filter",-6.34,5,20.0,-2.3,0.0,-6.34,0.99
+LINK,"A: ±1% for 8h, stop −3.5%, trail 28%, above 30-day",-5.6,19,73.7,-4.9,1.61,-7.21,4.81
+LINK,"B: ±0.5% for 4h, stop −1.5%, trail 24%, no trend filter",0.4,7,57.1,-1.1,0.0,0.4,-5.15
+ADA,"A: ±1% for 8h, stop −3.5%, trail 28%, above 30-day",-7.55,16,68.8,-3.8,0.0,-7.55,-5.91
+ADA,"B: ±0.5% for 4h, stop −1.5%, trail 24%, no trend filter",-0.95,2,50.0,-0.6,0.76,-1.72,-1.72
+BCH,"A: ±1% for 8h, stop −3.5%, trail 28%, above 30-day",-5.09,28,67.9,-6.4,-10.91,0.38,3.64
+BCH,"B: ±0.5% for 4h, stop −1.5%, trail 24%, no trend filter",-23.69,40,35.0,-9.2,-5.1,-18.58,2.74
+UNI,"A: ±1% for 8h, stop −3.5%, trail 28%, above 30-day",6.88,7,100.0,-0.0,0.0,6.88,0.0
+UNI,"B: ±0.5% for 4h, stop −1.5%, trail 24%, no trend filter",-0.94,2,50.0,-0.6,0.0,-0.94,0.0
+INJ,"A: ±1% for 8h, stop −3.5%, trail 28%, above 30-day",0.0,0,,0.0,0.0,0.0,0.0
+ATOM,"A: ±1% for 8h, stop −3.5%, trail 28%, above 30-day",-2.19,3,66.7,-1.2,0.73,-2.92,1.63
+ATOM,"B: ±0.5% for 4h, stop −1.5%, trail 24%, no trend filter",2.59,2,100.0,0.0,1.4,1.19,0.91
+PAXG,"A: ±1% for 8h, stop −3.5%, trail 28%, above 30-day",35.09,258,78.7,-13.2,3.95,32.44,-3.13
+PAXG,"B: ±0.5% for 4h, stop −1.5%, trail 24%, no trend filter",-21.54,460,59.8,-21.0,-11.86,-2.77,-5.05
+CAKE,"A: ±1% for 8h, stop −3.5%, trail 28%, above 30-day",0.81,18,77.8,-2.4,-3.71,5.37,4.64
+CAKE,"B: ±0.5% for 4h, stop −1.5%, trail 24%, no trend filter",-1.04,11,54.5,-1.7,0.0,-1.04,1.33
+FET,"A: ±1% for 8h, stop −3.5%, trail 28%, above 30-day",0.0,0,,0.0,0.0,0.0,0.0
