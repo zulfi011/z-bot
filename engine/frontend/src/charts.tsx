@@ -69,7 +69,7 @@ export function PriceChart({ coin, points, markers, zonePct, averageDays, mode, 
       if (runStart != null) found.push([runStart, points.length - 1]);
       return found.filter(([a, b]) => b >= view.from - 1 && a <= view.to + 1);
     };
-    // The Mode C band, drawn only where the price really was consolidating.
+    // The quiet band, drawn only where the price really was consolidating.
     const quiet = runs(point => point.zone_top != null).map(([a, b]) => {
       const part = points.slice(a, b + 1);
       const top = Math.min(...part.map(point => y(n(point.zone_top))));
@@ -182,7 +182,7 @@ export function PriceChart({ coin, points, markers, zonePct, averageDays, mode, 
       <div className="legend"><span><i className="lg-price" />{coin}</span><span><i className="lg-avg" />{averageDays}-day average</span>
         <span><i className="lg-zone" />±{zonePct}% entry zone</span>
         {chart.trend && <span><i className="lg-trend" />{trendHours}-hour trend line</span>}
-        {chart.quiet.length > 0 && <span><i className="lg-quiet" />{zoneHours}-hour quiet band (Mode C)</span>}
+        {chart.quiet.length > 0 && <span><i className="lg-quiet" />{zoneHours}-hour quiet band</span>}
         {chart.pullback && <span><i className="lg-pull" />{pullbackHours}-hour pullback line</span>}
         {chart.armed.length > 0 && <span><i className="lg-armed" />pullback armed{pullbackDwell ? ` (${pullbackDwell / 60}h+ below the line)` : ""}</span>}</div>
     </div>

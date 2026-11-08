@@ -81,7 +81,7 @@ const REASONS: Record<string, string> = {
   coin_pause: "Pause trading", coin_resume: "Resume trading", ignored_retired_strategy: "Skipped · old strategy", allocation: "Coin money",
   deposit: "Add funds", initial_deposit: "Starting capital", withdrawal: "Withdraw", bnb_purchase: "Buy BNB",
   manual_buy: "Buy now", close_position: "Close position", parent_exit: "Sold with its lot",
-  break_even: "Break even", trend_exit: "Trend line",
+  break_even: "Break-even floor", trend_exit: "Trend ride",
 };
 
 export const label = (value: string | null | undefined) => (value ? REASONS[value] ?? value.replaceAll("_", " ") : "—");

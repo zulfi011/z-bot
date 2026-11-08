@@ -1,5 +1,5 @@
 export type Num = string | number;
-/** Who opened a lot: the dip, a Mode C break, the pullback entry, or you. */
+/** Who opened a lot: the dip, a quiet-band breakout, a pullback, an add-on, or you (Buy now). */
 export type EntrySource = "signal" | "breakout" | "pullback" | "pyramid" | "manual";
 /** An extra way in is simply on or off - every way in shares the coin's lots. */
 export type EntryModule = { supported: boolean; enabled: boolean; open_lots: number };
@@ -27,7 +27,7 @@ export type Position = {
   quantity: Num; allocation_usd: Num; entry_fee_usd: Num; entry_fee_asset: string; bars_held: number; trailing_active: boolean;
   peak_price: Num | null; current_price: Num | null; market_value_usd: Num | null; unrealized_pnl_usd: Num | null;
   unrealized_pct: Num | null; stop_price: Num; activation_price: Num; trail_price: Num | null;
-  /** "trend" rides the moving-average line (Mode A); "giveback" hands back a share of the peak gain (Mode B). */
+  /** "trend" rides the moving-average line (Trend ride); "giveback" hands back a share of the peak gain (Trailing stop). */
   exit_mode: "trend" | "giveback"; trend_exit_pending: boolean; trend_ema_minutes: number | null;
   parent_position_id?: string | null;
   distance_to_stop_pct: Num | null; distance_to_activation_pct: Num | null; activation_progress_pct: Num;
@@ -60,9 +60,9 @@ export type Alert = { alert_key: string; severity: string; status: string; title
 export type LogEntry = { id: number; timestamp: string; level: string; component: string; event_type: string; details: Record<string, unknown> };
 export type ChartPoint = {
   open_time: string; open: Num; high: Num; low: Num; close: Num; signal_average: Num | null;
-  /** The Mode A trend line, on charts slow enough to need it and fast enough to draw it. */
+  /** The trend-ride line, on charts slow enough to need it and fast enough to draw it. */
   trend_line?: Num | null;
-  /** The Mode C band, on buckets where the price really was consolidating. */
+  /** The quiet band, on buckets where the price really was consolidating. */
   zone_top?: Num | null; zone_bottom?: Num | null;
   /** The pullback entry's line, and whether a pullback was armed (a close above the line would buy). */
   pullback_line?: Num | null; pullback_armed?: boolean;
@@ -136,7 +136,7 @@ export type CoinView = {
     regime: string; trend_allows_entries: boolean; entry_window_open: boolean; entry_window_changes_at: string | null;
     pending_episode_since: string | null; signal_engine: string; activation_at: string | null;
   };
-  /** Mode C: the quiet band being watched, and any break waiting out its confirmation. */
+  /** Quiet-band breakout: the band being watched, and any break waiting out its confirmation. */
   consolidation: {
     chart_minutes: number; zone_bars: number; zone_hours: number; maximum_zone_pct: Num;
     confirmation_wait_minutes: number; stop_pct: Num; trail_activation_pct: Num; trail_giveback_pct: Num;

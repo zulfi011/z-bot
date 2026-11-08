@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { coinLabel, type CoinMoney, type CoinView, type ControlRequest, type Dashboard, type LotSlot, type Num, type Position, type Trade } from "./api";
 import { EXPLAIN, useControls } from "./controls";
 import { ago, amount, bnbAmount, duration, label, n, pct, price, signedUsd, time, tone, usd } from "./format";
-import { sourceOf } from "./sources";
+import { EXIT, sourceOf } from "./sources";
 import { Card, CoinToken, Empty, Info, ScrollList, Stat, Tip, Toggle } from "./ui";
 
 export function BnbCard({ data, compact = false }: { data: Dashboard; compact?: boolean }) {
@@ -103,8 +103,8 @@ export function TradingModeCard({ data }: { data: Dashboard }) {
 }
 
 const SOURCE_NOTE: Record<string, string> = {
-  signal: "the dip into the average", breakout: "a Mode C break out of a quiet band",
-  pullback: "the pullback entry", pyramid: "an add to a lot that was already winning", manual: "you",
+  signal: "the dip into the average", breakout: "a breakout from a quiet band",
+  pullback: "a pullback in an uptrend", pyramid: "an add-on to a lot that was already winning", manual: "you (Buy now)",
 };
 
 /** One lot of the coin: what is in it, how it is being held, and where it stands. */
@@ -153,8 +153,8 @@ export function LotsCard({ data, coin }: { data: Dashboard; coin: CoinView }) {
           <i className={`src-swatch ${source.cls}`}>{source.letter}</i>{source.name}{held ? ` · ${held}` : ""}</span>;
       })}
       <span className="spacer" />
-      <span><em className="slot-mode rides">rides the line</em> Mode A</span>
-      <span><em className="slot-mode trails">trailing</em> Mode B</span>
+      <span><em className="slot-mode rides">rides the line</em> {EXIT.trend.name}</span>
+      <span><em className="slot-mode trails">trailing</em> {EXIT.giveback.name}</span>
     </div>
     {!coin.trading_enabled && <p className="card-note warn"><b>{name} is switched off.</b> Its signals are skipped, so the pot's lots go to the other coins. Open {name} lots keep their stop orders on Binance.</p>}
     <p className="card-note">
@@ -189,7 +189,7 @@ export function LotCard({ position, data }: { position: Position; data: Dashboar
     <header>
       <span className="coin-badge"><CoinToken symbol={position.symbol} />{position.coin}</span>
       <span className="lot-badge">Lot {position.lot_number}</span>
-      <span className={`tag source ${source.cls}`} title={`Bought by ${source.long}`}>{position.entry_source === "manual" ? "by you" : source.name}</span>
+      <span className={`tag source ${source.cls}`} title={source.tip}>{source.name}</span>
     </header>
     <div className="lot-pnl">
       <b className={tone(position.unrealized_pnl_usd)}>{signedUsd(position.unrealized_pnl_usd)}</b>
@@ -239,13 +239,13 @@ export function PositionCard({ position, data, expanded = true, showCoin = false
     </div>
     {position.trailing_active && position.exit_mode === "trend"
       ? <p className={`position-state ${position.trend_exit_pending ? "warn" : "up"}`}>
-        <span className="mode-chip mode-a">Mode A</span>
+        <span className="mode-chip mode-a">{EXIT.trend.name}</span>
         {position.trend_exit_pending
           ? ` Selling next minute — ${coin} closed below the ${n(position.trend_ema_minutes) / 60}-hour trend line.`
           : ` Riding the trend — peak ${price(position.peak_price)}. It keeps running while ${coin} closes above the ${n(position.trend_ema_minutes) / 60}-hour trend line, and its stop has moved up to ${price(position.stop_price)} — break even after fees, so this lot can no longer finish negative.`}
         <Info text={`This lot was bought while the market was in a clean uptrend (7-day above 15-day above 30-day average), so it ignores the ${n(position.trail_giveback_pct)}% give-back rule. It sells at the next minute's open after the first minute that closes below the ${n(position.trend_ema_minutes) / 60}-hour average line, which lets a big move run instead of capping it at about +1%.`} /></p>
       : position.trailing_active
-      ? <p className="position-state up"><span className="mode-chip mode-b">Mode B</span> Trailing active — peak {price(position.peak_price)}. It sells if {coin} falls to {price(position.trail_price)} (keeps {keep}% of the peak profit).<Info text={`After ${coin} rises ${n(position.trail_activation_pct)}% above your buy price, a trailing stop follows the highest price. It sells if the price gives back ${n(position.trail_giveback_pct)}% of the best profit reached, locking in the rest.`} /></p>
+      ? <p className="position-state up"><span className="mode-chip mode-b">{EXIT.giveback.name}</span> Trailing active — peak {price(position.peak_price)}. It sells if {coin} falls to {price(position.trail_price)} (keeps {keep}% of the peak profit).<Info text={`After ${coin} rises ${n(position.trail_activation_pct)}% above your buy price, a trailing stop follows the highest price. It sells if the price gives back ${n(position.trail_giveback_pct)}% of the best profit reached, locking in the rest.`} /></p>
       : <div className="progress-wrap">
         <div className="progress-label"><span>Progress to trailing start</span><b>{pct(position.activation_progress_pct, 0, false)}</b>
           <Info text={`How far ${coin} has moved from your buy price toward +${n(position.trail_activation_pct)}%, where the trailing stop switches on. Until then only the −${n(position.stop_pct)}% stop can close the lot.`} /></div>
@@ -268,7 +268,7 @@ export function TradeList({ trades, limit, showCoin = false }: { trades: Trade[]
     return <li key={trade.trade_id}>
       <div className="trade-story">
         <b>{showCoin && <span className="coin-inline">{coinLabel(trade.symbol)}</span>}
-          <i className={`src-swatch ${source.cls}`}>{source.letter}</i>{" "}
+          <i className={`src-swatch ${source.cls}`} title={source.tip}>{source.letter}</i>{" "}
           {trade.entry_source === "manual" ? "Buy now" : source.name} <span className="arrow">→</span> {label(trade.exit_reason)}</b>
         <small>{price(trade.entry_fill_price)} → {price(trade.exit_fill_price)} · {time(trade.exit_time, true)} · held {duration(trade.duration_minutes)}</small>
       </div>

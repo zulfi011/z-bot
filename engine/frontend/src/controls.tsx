@@ -37,7 +37,7 @@ export const EXPLAIN = {
   money: "All money stays in your Binance spot wallet. This app only decides when to buy and sell. Add or withdraw funds in Binance itself.",
   growth: "Growth plan: 3 × $100 at $300. Each further $100 adds a lot until there are 5, then $20 more on every lot ($1,000 → 5 × $200). Below $300 it is 3 equal lots. The pot follows it for your starting amount until you set the pot yourself; after that only you change it.",
   buyNow: "Buys one full lot at the market price right now, without waiting for a strategy signal, and parks the same stop on Binance. Use sparingly — it is outside the strategy.",
-  entryModule: "Switches an extra way in off, lets it share the coin's lots, or gives it lots of its own. Its own lots are extra money from your pot that only this way in may spend — the core (the dip and Mode C) can never take them, and it can never take the core's.",
+  entryModule: "Switches an extra way in off, lets it share the coin's lots, or gives it lots of its own. Its own lots are extra money from your pot that only this way in may spend — the core (the dip and the quiet-band breakout) can never take them, and it can never take the core's.",
   pot: "One set of lots shared by every coin you switch on. Whichever coin signals first takes the next free lot; no coin has money of its own, so nothing sits idle. If losses leave less than a full lot, the last buy uses what is left. Nothing moves in Binance. Open lots keep their size; new lots use the new size.",
   close: "Sells this whole lot on Binance at the market price and cancels its stop order. In shadow mode it is only recorded, not sold.",
   pause: "Switches this coin off: its signals and Buy now are skipped, so the shared lots go to the other coins. Its signals keep being tracked so you can see what it would have done.",
@@ -181,10 +181,10 @@ const MODULE_TEXT = {
   pullback: {
     title: "Pullback",
     what: "In an uptrend, after at least 3 hours below the 24-hour line, the first close back above it buys.",
-    tested: "Backtest: it pays for its slot on ETH. It shares the coin's lots with the dip and Mode C.",
+    tested: "Backtest: it pays for its slot on ETH. It shares the coin's lots with the dip and the quiet-band breakout.",
   },
   pyramid: {
-    title: "Pyramid adds",
+    title: "Add-ons",
     what: "While a lot is winning, another lot is added every +1% above its buy price (up to 3), as long as price is above the 16-hour line. Adds are always held against that line.",
     tested: "Backtest: sharing the lots earns more than reserving lots for it, and lifts ETH from $80 to $100 of profit per $100 - at a deeper drawdown.",
   },

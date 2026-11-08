@@ -4,7 +4,7 @@ import { PriceChart } from "./charts";
 import { ago, amount, duration, label, n, pct, price, signedUsd, time, tone, until, usd } from "./format";
 import { useControls } from "./controls";
 import { BnbCard, LotsCard, PositionCard, TradeList } from "./panels";
-import { SOURCE, sourceOf } from "./sources";
+import { EXIT, SOURCE, sourceOf } from "./sources";
 import { Card, CoinToken, Empty, Info, ScrollList, Stat, Tabs, Tip } from "./ui";
 
 const INTERVALS: { value: Interval; label: string }[] = [
@@ -86,7 +86,7 @@ function RightNow({ coin }: { coin: CoinView }) {
       {coin.consolidation && <Check
         ok={coin.consolidation.state === "breaking" || coin.consolidation.pending_break != null ? true
           : coin.consolidation.state === "quiet" ? null : false}
-        title={`Quiet band (Mode C)`}
+        title={`Quiet-band breakout`}
         text={coin.consolidation.pending_break
           ? `Broke out at ${time(coin.consolidation.pending_break.broke_at)}. If ${name} is still above ${price(coin.consolidation.pending_break.zone_top)} at ${time(coin.consolidation.pending_break.confirm_at)}, it buys.`
           : coin.consolidation.state === "breaking"
@@ -94,9 +94,9 @@ function RightNow({ coin }: { coin: CoinView }) {
             : coin.consolidation.state === "quiet"
               ? `${name} has been quiet for ${coin.consolidation.zone_hours} hours, inside ${price(coin.consolidation.zone_bottom)}–${price(coin.consolidation.zone_top)} (${pct(coin.consolidation.zone_width_pct, 2, false)} wide). A close above the top is the signal.`
               : coin.consolidation.state === "too_wide"
-                ? `Not quiet enough: the last ${coin.consolidation.zone_hours} hours span ${pct(coin.consolidation.zone_width_pct, 2, false)}, and Mode C needs ${pct(coin.consolidation.maximum_zone_pct, 1, false)} or tighter.`
+                ? `Not quiet enough: the last ${coin.consolidation.zone_hours} hours span ${pct(coin.consolidation.zone_width_pct, 2, false)}, and a breakout needs ${pct(coin.consolidation.maximum_zone_pct, 1, false)} or tighter.`
                 : "Waiting for enough price history to measure the band."}
-        info={`Mode C is the second way in, for when ${name} never comes back down to its average. When the last ${coin.consolidation.zone_bars} bars of the ${coin.consolidation.chart_minutes / 60}-hour chart (${coin.consolidation.zone_hours} hours) all sit inside a band no wider than ${pct(coin.consolidation.maximum_zone_pct, 1, false)}, a close above that band's top starts a ${coin.consolidation.confirmation_wait_minutes}-minute wait. If the price is still above the top when the wait ends, the next minute buys. These lots use a tighter −${n(coin.consolidation.stop_pct)}% stop.`} />}
+        info={`The quiet-band breakout is the second way in, for when ${name} never comes back down to its average. When the last ${coin.consolidation.zone_bars} bars of the ${coin.consolidation.chart_minutes / 60}-hour chart (${coin.consolidation.zone_hours} hours) all sit inside a band no wider than ${pct(coin.consolidation.maximum_zone_pct, 1, false)}, a close above that band's top starts a ${coin.consolidation.confirmation_wait_minutes}-minute wait. If the price is still above the top when the wait ends, the next minute buys. These lots use a tighter −${n(coin.consolidation.stop_pct)}% stop.`} />}
       {coin.pullback && <PullbackCheck coin={coin} />}
       {setup.pending_episode_since && <Check ok={null} title="Waiting for confirmation"
         text={`Touch at ${time(setup.pending_episode_since)}. A green ${candle} candle before ${time(new Date(new Date(setup.pending_episode_since).getTime() + strategy.confirmation_wait_minutes * 60000).toISOString())} triggers the buy.`}
@@ -123,16 +123,16 @@ function WaysIn({ coin }: { coin: CoinView }) {
   const pyramid = coin.pyramid;
   const nextAdd = pyramid?.parents.find(parent => parent.adds_left > 0 && parent.next_add_price != null);
   return <Card title="Ways in" className="ways-in"
-    info={`Which ways in are switched on for ${name}. They all draw on the same lots, first come first served — the core (the dip and Mode C) is always on.`}>
+    info={`Which ways in are switched on for ${name}. They all draw on the same lots, first come first served — the core (the dip and the quiet-band breakout) is always on.`}>
     <ul className="ways">
       <li>
-        <div><b><span className="src-swatch src-dip">D</span><span className="src-swatch src-breakout">C</span> Core · dip + Mode C</b>
+        <div><b><span className="src-swatch src-dip">D</span><span className="src-swatch src-breakout">Q</span> Core · dip + quiet-band breakout</b>
           <small>{lots.open_lots}/{lots.max_lots} lot{lots.max_lots === 1 ? "" : "s"} open · always on</small></div>
         <span className="tag applied">Always on</span>
       </li>
       {modules.map(key => <li key={key}>
         <div><b><span className={`src-swatch ${sourceOf(key).cls}`}>{sourceOf(key).letter}</span>{" "}
-          {key === "pullback" ? "Pullback" : "Pyramid adds"}</b>
+          {key === "pullback" ? "Pullback" : "Add-ons"}</b>
           <small>{used(key)}
             {key === "pyramid" && nextAdd && entries.pyramid?.enabled
               ? ` · next add at ${price(nextAdd.next_add_price)} (${pct(nextAdd.distance_to_add_pct, 2, false)} away)`
@@ -161,7 +161,7 @@ function PullbackCheck({ coin }: { coin: CoinView }) {
   const name = coin.label;
   const hours = p.ema_hours;
   const dwell = span(p.dwell_minutes);
-  // It buys from the coin's one set of lots, like the dip and Mode C.
+  // It buys from the coin's one set of lots, like the dip and the quiet-band breakout.
   const lots = coin.lots.next_lot_usd == null ? " No free lot right now, so a signal would be skipped." : "";
   const text = p.state === "warming_up" ? `Warming up the ${hours}-hour line from stored prices.`
     : p.state === "no_uptrend" ? `Waiting for an uptrend: the 7-, 15- and 30-day averages must be stacked upward. The pullback entry only buys pauses inside a climb.`
@@ -170,7 +170,7 @@ function PullbackCheck({ coin }: { coin: CoinView }) {
           : `Armed: under the ${hours}-hour line for ${duration(p.below_minutes)}. The next minute that closes above ${price(p.line)} buys at the following minute's open.`;
   return <Check ok={p.state === "armed" ? true : p.state === "no_uptrend" ? false : null}
     title="Pullback in the uptrend" text={text + (p.state === "warming_up" ? "" : lots)}
-    info={`The third way in, for when ${name} trends up in a wide range and never comes back to its ${coin.strategy.signal_average_days}-day average or goes quiet enough for Mode C. In an uptrend, when ${name} spends at least ${dwell} under its ${hours}-hour average line, the first minute that closes back above it buys. It takes a lot from the same set the dip and Mode C use, first come first served, and because it is always bought in an uptrend the lot rides the trend line (Mode A).`} />;
+    info={`The third way in, for when ${name} trends up in a wide range and never comes back to its ${coin.strategy.signal_average_days}-day average or goes quiet enough for a breakout. In an uptrend, when ${name} spends at least ${dwell} under its ${hours}-hour average line, the first minute that closes back above it buys. It takes a lot from the same set the dip and the breakout use, first come first served, and because it is always bought in an uptrend the lot rides the trend line (trend ride).`} />;
 }
 
 /** Which of the two profit-taking modes a lot bought right now would use, and why. */
@@ -188,21 +188,21 @@ function ExitMode({ coin }: { coin: CoinView }) {
     ({ ...count, [position.entry_source]: (count[position.entry_source] ?? 0) + 1 }), {} as Record<string, number>);
   return <Card title="How a win would be taken" className="exit-mode"
     info={hours
-      ? `Both ways in — the dip and Mode C — end the same way. Every lot keeps its stop and starts trailing once it is up. What happens after that depends on the trend at the moment of buying: in a clean uptrend the lot is held against the ${hours}-hour average line (Mode A), otherwise it hands back a share of its best profit (Mode B). The mode is fixed when the lot opens and never changes, so two lots open at once can be in different modes.`
+      ? `Both ways in — the dip and the quiet-band breakout — end the same way. Every lot keeps its stop and starts trailing once it is up. What happens after that depends on the trend at the moment of buying: in a clean uptrend the lot is held against the ${hours}-hour average line (trend ride), otherwise it hands back a share of its best profit (trailing stop). The mode is fixed when the lot opens and never changes, so two lots open at once can be in different modes.`
       : `Every ${name} lot takes profit the same way: once it is up ${n(plan.activation_pct)}%, a trailing stop follows the peak and sells after giving back ${n(plan.giveback_pct)}% of it. A trend-riding exit was tested on ${name} and left out — on paper it added money, but a walk-forward test showed the gain could not have been found in advance, and ${name} wins small and often, which is what this exit is for.`}>
     <div className={`mode-now ${hours ? (riding ? "mode-a" : "mode-b") : "mode-b"}`}>
-      <span className="mode-chip">{hours ? (riding ? "Mode A" : "Mode B") : "Mode B"}</span>
+      <span className={`mode-chip ${hours && riding ? "mode-a" : "mode-b"}`}>{hours && riding ? EXIT.trend.name : EXIT.giveback.name}</span>
       <div>
         <b>{riding && hours ? `Ride the trend line` : `Give back ${n(plan.giveback_pct)}% of the gain`}</b>
         <small>{!hours
-          ? `Every ${name} lot keeps ${100 - n(plan.giveback_pct)}% of its best profit — both the dip and Mode C, every time. ${name} wins small and often, so nothing is held for a bigger move.`
+          ? `Every ${name} lot keeps ${100 - n(plan.giveback_pct)}% of its best profit — both the dip and the quiet-band breakout, every time. ${name} wins small and often, so nothing is held for a bigger move.`
           : riding
             ? `The market is in a clean uptrend, so the next ${name} lot would be held until a minute closes below the ${hours}-hour line — letting a big move run instead of capping it near +1%.`
             : `The 7-, 15- and 30-day averages are not stacked upward, so the next ${name} lot would use the ordinary trailing stop and keep ${100 - n(plan.giveback_pct)}% of its best profit.`}</small>
       </div>
     </div>
     <dl className="mode-facts">
-      {hours && <div><dt>Trend line now<Info text={`The ${hours}-hour exponential average of ${name}'s 1-minute closes. A Mode A lot is sold at the next minute's open once a minute closes below this line.`} /></dt>
+      {hours && <div><dt>Trend line now<Info text={`The ${hours}-hour exponential average of ${name}'s 1-minute closes. A trend-ride lot is sold at the next minute's open once a minute closes below this line.`} /></dt>
         <dd>{plan.trend_line == null ? "—" : price(plan.trend_line)}</dd></div>}
       {hours && <div><dt>Price vs line</dt>
         <dd className={plan.trend_line == null || coin.market.price == null ? "" : n(coin.market.price) >= n(plan.trend_line) ? "up" : "down"}>
@@ -214,7 +214,7 @@ function ExitMode({ coin }: { coin: CoinView }) {
         <dd>{!coin.positions.length ? "none" : hours
           ? `${openModes.trend ?? 0} riding · ${openModes.giveback ?? 0} giving back`
           : `${coin.positions.length} open`}</dd></div>
-      {coin.consolidation && <div><dt>Bought by<Info text={`Which way in each open lot came through: the dip into the average, a Mode C break out of a quiet band${coin.pullback ? ", or the pullback entry" : ""}.`} /></dt>
+      {coin.consolidation && <div><dt>Bought by<Info text={`Which way in each open lot came through: the dip into the average, a quiet-band break out of a quiet band${coin.pullback ? ", or the pullback entry" : ""}.`} /></dt>
         <dd>{coin.positions.length
           ? (Object.keys(SOURCE) as (keyof typeof SOURCE)[]).filter(key => bySource[key] || (key !== "manual" && (key !== "pullback" || coin.pullback)
               && (key !== "pyramid" || coin.pyramid)))
@@ -234,7 +234,7 @@ function Activity({ coin }: { coin: CoinView }) {
     {tab === "signals" && (coin.signals.length ? <>
       <div className="mini-stats"><span>Touches <b>{counts.touches}</b></span><span>Bought <b>{counts.confirmed}</b></span>
         <span>06–12 skips <b>{counts.skipped_time_window}</b></span><span>Trend skips <b>{counts.rejected_trend}</b></span>
-        {coin.consolidation && <span>Mode C breaks <b>{counts.breakouts}</b></span>}
+        {coin.consolidation && <span>Breakouts <b>{counts.breakouts}</b></span>}
         {coin.pullback && <span>Pullbacks <b>{counts.pullbacks}</b> · bought <b>{counts.pullbacks_confirmed}</b></span>}</div>
       <ScrollList visible={5}><ul className="rows">{coin.signals.map(signal => {
         const status = signal.status ?? signal.episode_status;
@@ -243,7 +243,7 @@ function Activity({ coin }: { coin: CoinView }) {
         const what = kind === "pullback"
           ? `Pullback · ${duration(Number(signal.details.below_minutes ?? 0))} under the line · back above ${time(signal.touch_time, true)}`
           : kind === "consolidation"
-            ? `Mode C break ${time(signal.touch_time, true)} · band top ${price(signal.average_value)}`
+            ? `Breakout ${time(signal.touch_time, true)} · band top ${price(signal.average_value)}`
             : `Touch ${time(signal.touch_time, true)} · avg ${price(signal.average_value)}`;
         return <li key={signal.episode_id}>
           <div><b><span className={`src-swatch ${source.cls}`}>{source.letter}</span> {label(status)}</b><small>{what}</small></div>
@@ -271,7 +271,7 @@ function Rules({ coin }: { coin: CoinView }) {
   const c = coin.consolidation;
   const pb = coin.pullback;
   const hours = coin.exit_plan.has_trend_exit ? n(coin.exit_plan.ema_minutes) / 60 : null;
-  // The ways in are numbered in the order they are listed: dip, Mode C, pullback, adds.
+  // The ways in are numbered in the order they are listed: dip, quiet-band breakout, pullback, add-ons.
   const count = 1 + (c ? 1 : 0) + (pb ? 1 : 0) + (coin.pyramid ? 1 : 0);
   const COUNTS = ["", "One", "Two", "Three", "Four"];
   const ways = count > 1 ? `${COUNTS[count]} ways in` : "How it buys";
@@ -285,7 +285,7 @@ function Rules({ coin }: { coin: CoinView }) {
         {name} falls to its {s.signal_average_days}-day average, touching ±{s.touch_zone_pct}% of it{" "}
         <b>from below</b>, then a green {s.signal_timeframe} candle within {s.confirmation_wait_minutes} minutes.
       </Rule>
-      {c && <Rule label="2 · The quiet band (Mode C)">
+      {c && <Rule label="2 · Quiet-band breakout">
         {name} spends {c.zone_hours} hours inside a band no wider than {pct(c.maximum_zone_pct, 1, false)}, then
         closes above the top of it.{" "}
         {c.confirmation_wait_minutes > 0
@@ -300,7 +300,7 @@ function Rules({ coin }: { coin: CoinView }) {
         The 7-, 15- and 30-day averages are stacked downward{s.requires_close_above_30d ? `, or the confirming candle closes at or below the 30-day average${s.maximum_above_30d_pct != null ? ` or more than ${n(s.maximum_above_30d_pct)}% above it` : ""}` : ""}
         {block ? `, or the clock is between ${hh(block.start)} and ${hh(block.end)} UTC` : ""}.
       </Rule>
-      {c && <Rule label={block ? "Mode C never buys when" : "Mode C's filters"}>
+      {c && <Rule label={block ? "The breakout never buys when" : "The breakout's filters"}>
         {block
           ? <>The clock is between {hh(block.start)} and {hh(block.end)} UTC — its only timing rule.{" "}</>
           : <>None on timing: {name} has no blocked hours, so a break is taken whenever one happens.{" "}</>}
@@ -308,7 +308,7 @@ function Rules({ coin }: { coin: CoinView }) {
         demanding one screens out exactly the breaks that start a new trend, and cost money on every coin it
         was tested on.
       </Rule>}
-      {coin.pyramid && <Rule label={`${count} \u00b7 Adds (pyramid)`}>
+      {coin.pyramid && <Rule label={`${count} \u00b7 Add-ons`}>
         While a {name} lot is winning, another lot is added every +{n(coin.pyramid.step_pct)}% above its buy price
         (up to {coin.pyramid.maximum_adds}), as long as price is above the {hours}-hour line. {coin.pyramid.add_exit === "with_parent"
           ? <>An add has no exit of its own: it carries the <b>same protective stop</b> as the lot it was added to, and
@@ -325,16 +325,16 @@ function Rules({ coin }: { coin: CoinView }) {
     <h4 className="rule-group">How it sells</h4>
     <dl className="rules">
       <Rule label="Stop">
-        Sell if {name} falls {n(s.stop_pct)}% below the buy price{c ? `, or ${n(c.stop_pct)}% for a Mode C lot` : ""}{pb ? " (a pullback lot uses the dip's stop)" : ""}.
+        Sell if {name} falls {n(s.stop_pct)}% below the buy price{c ? `, or ${n(c.stop_pct)}% for a breakout lot` : ""}{pb ? " (a pullback lot uses the dip's stop)" : ""}.
         {" "}The stop sits on Binance, so it works even if this app is off.
       </Rule>
       {hours ? <>
-        <Rule label="Mode A · in an uptrend">
+        <Rule label="Trend ride · in an uptrend">
           Once up +{n(s.trail_activation_pct)}%, hold while {name} keeps closing above the {hours}-hour trend
           line. The first minute that closes below it sells at the next minute's open. Wins can run far past +1%.
-          {pb ? " Every pullback lot is a Mode A lot, since it is only ever bought in an uptrend." : ""}
+          {pb ? " Every pullback lot rides the trend, since it is only ever bought in an uptrend." : ""}
         </Rule>
-        <Rule label="Mode B · any other time">
+        <Rule label="Trailing stop · any other time">
           Once up +{n(s.trail_activation_pct)}%, a trailing stop follows the peak and sells after giving back{" "}
           {n(s.trail_giveback_pct)}% of the best profit — usually around +1%.
         </Rule>
@@ -342,7 +342,7 @@ function Rules({ coin }: { coin: CoinView }) {
         At +{n(s.trail_activation_pct)}% a trailing stop starts; it sells after a {n(s.trail_giveback_pct)}% giveback
         of the peak profit.{c && (n(c.trail_activation_pct) !== n(s.trail_activation_pct)
           || n(c.trail_giveback_pct) !== n(s.trail_giveback_pct))
-          ? <> A Mode C lot uses its own numbers: the trail starts at +{n(c.trail_activation_pct)}% and gives
+          ? <> A breakout lot uses its own numbers: the trail starts at +{n(c.trail_activation_pct)}% and gives
             back {n(c.trail_giveback_pct)}%.</>
           : ""}
       </Rule>}
@@ -390,8 +390,8 @@ export function CoinPage({ data, coin, interval, onInterval, chartMode, onChartM
       options={[{ value: "line", label: "Line" }, { value: "candles", label: "Candles" }]} />}
       info={`The shaded band is the entry zone around the average. Each trade is coloured by the entry that bought it: a solid line when it opened, a short line where the trailing stop started, and a dashed line when it closed, with a green or red dot at the sale.${
         coin.exit_plan.has_trend_exit ? ` The orange line is the ${n(coin.exit_plan.ema_minutes) / 60}-hour trend line: lots marked "rides" are held against it, and it is only drawn on the 3m, 15m and 1h charts.` : ""}${
-        coin.consolidation ? ` The green boxes are stretches where ${name} was quiet enough for Mode C — a close above a box's top is what Mode C buys.` : ""}${
-        coin.pullback ? ` The violet line is the ${coin.pullback.ema_hours}-hour pullback line and the violet shading marks where a pullback was armed: in an uptrend and under the line for ${span(coin.pullback.dwell_minutes)} or more — a close back above the line there buys a pullback lot. It is drawn on charts up to 4h.` : ""} Each buy carries a badge saying who bought it: D the dip, C Mode C${coin.pullback ? ", P the pullback" : ""}, M you — with the trade's number.`}>
+        coin.consolidation ? ` The green boxes are stretches where ${name} was quiet enough for a breakout — a close above a box's top is what the breakout buys.` : ""}${
+        coin.pullback ? ` The violet line is the ${coin.pullback.ema_hours}-hour pullback line and the violet shading marks where a pullback was armed: in an uptrend and under the line for ${span(coin.pullback.dwell_minutes)} or more — a close back above the line there buys a pullback lot. It is drawn on charts up to 4h.` : ""} Each buy carries a badge saying who bought it: D the dip, Q the quiet-band breakout${coin.pullback ? ", P the pullback" : ""}, B Buy now — with the trade's number.`}>
       <Tabs label="Candle size" value={interval} onChange={onInterval} options={INTERVALS} />
       <PriceChart coin={name} points={coin.chart} markers={coin.markers} zonePct={coin.strategy.touch_zone_pct}
         averageDays={days} mode={chartMode}
