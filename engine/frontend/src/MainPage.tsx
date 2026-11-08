@@ -109,11 +109,11 @@ export function MainPage({ data, onOpenCoin }: { data: Dashboard; onOpenCoin: (s
     {attached && <BnbCard data={data} />}
     <EquityCard />
 
-    <Card title="Recent trades" info="Closed trades on every coin, newest first, after all fees.">
+    <Card className="trades-card" title="Recent trades">
       <TradeList trades={data.trades} showCoin />
     </Card>
 
-    <Card title="Your requests" info="Buy, close and pause actions you asked for, and what happened to them.">
+    <Card className="requests-card" title="Your requests">
       <RequestList requests={data.requests} />
     </Card>
 

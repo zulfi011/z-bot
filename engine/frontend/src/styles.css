@@ -21,7 +21,7 @@ code { font-size: 12px; background: var(--panel-2); padding: 1px 5px; border-rad
 .up { color: var(--up); } .down { color: var(--down); } .warn { color: var(--warn); } .muted { color: var(--muted); } .small { font-size: 12px; }
 
 .app { min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); }
-.topbar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+.topbar { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 10px;
   padding: 10px 14px; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
 .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .brand strong { display: block; font-size: 15px; } .brand small { color: var(--muted); font-size: 11px; white-space: nowrap; }
@@ -403,8 +403,8 @@ button.link { border: 0; background: none; color: var(--accent); padding: 4px; f
   background: color-mix(in srgb, var(--warn) 10%, var(--panel)); }
 .unlock-bar p { margin: 0; font-size: 14px; }
 /* Page rail: sticky under the header, swipes sideways when the coins do not fit. */
-.page-rail { position: sticky; top: 59px; z-index: 19; display: flex; gap: 6px; overflow-x: auto; scroll-snap-type: x proximity;
-  padding: 8px 12px; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(12px);
+.page-rail { position: relative; display: flex; gap: 6px; overflow-x: auto; scroll-snap-type: x proximity;
+  padding: 10px 12px; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--line); scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .page-rail::-webkit-scrollbar { display: none; }
 .rail-chip { position: relative; flex: none; scroll-margin: 0 12px; display: inline-flex; align-items: center; gap: 6px; scroll-snap-align: start;
@@ -416,7 +416,7 @@ button.link { border: 0; background: none; color: var(--accent); padding: 4px; f
 .rail-home { display: inline-grid; place-items: center; width: 22px; height: 22px; font-size: 15px; }
 .rail-dot { position: absolute; top: 3px; right: 4px; width: 7px; height: 7px; border-radius: 50%; background: var(--up);
   box-shadow: 0 0 0 2px var(--panel); }
-@media (min-width: 980px) { .page-rail { justify-content: center; padding: 8px 18px; } }
+@media (min-width: 980px) { .page-rail { justify-content: center; padding: 10px 18px; } }
 
 /* Lists that show a few rows and scroll the rest. */
 .scroll-list { overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
@@ -605,3 +605,11 @@ button.link.inline { padding: 0; font-size: inherit; }
   .equity-chart .equity-line, .equity-chart .equity-area, .equity-dot.live, .equity-dot.live::after, .equity-empty svg path { animation: none; }
 }
 .equity-chart .chart-zoom { top: auto; right: auto; bottom: 6px; left: 6px; }
+
+/* One sticky header holding both bars. Scrolling down slides it up by the top bar's height, leaving the coin bar
+   at the top of the screen; scrolling up brings the top bar back. */
+.masthead { position: sticky; top: 0; z-index: 20; transition: transform .3s cubic-bezier(.2, .8, .2, 1); will-change: transform; }
+.masthead.bar-hidden { transform: translateY(calc(-1 * var(--topbar-h, 60px))); }
+.masthead .topbar { transition: opacity .25s ease; }
+.masthead.bar-hidden .topbar { opacity: 0; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .masthead, .masthead .topbar { transition: none; } }

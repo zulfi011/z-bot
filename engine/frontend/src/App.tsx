@@ -28,6 +28,42 @@ function BinanceButton() {
   return <AttachBinanceButton credentials={binance} onOpen={() => open({ kind: "binance" })} />;
 }
 
+/** Hides the top bar while scrolling down and brings it back on the way up; the coin bar stays. */
+function useHideOnScroll() {
+  const [hidden, setHidden] = useState(false);
+  useEffect(() => {
+    let last = window.scrollY, ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY, delta = y - last;
+        if (y < 80) { setHidden(false); last = y; }
+        else if (Math.abs(delta) > 8) { setHidden(delta > 0); last = y; }
+        ticking = false;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return hidden;
+}
+
+/** Keeps --topbar-h on the header equal to the top bar's real height, so it slides away exactly. */
+function useBarHeight() {
+  const header = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const element = header.current, bar = element?.querySelector<HTMLElement>(".topbar");
+    if (!element || !bar) return;
+    const update = () => element.style.setProperty("--topbar-h", `${bar.offsetHeight}px`);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(bar);
+    return () => observer.disconnect();
+  }, []);
+  return header;
+}
+
 function Flash() {
   const { flash, dismissFlash } = useControls();
   return flash ? <div className="flash" role="status"><span>{flash}</span>
@@ -102,10 +138,13 @@ export default function App() {
     window.scrollTo({ top: 0 });
   }, [page]);
 
+  const barHidden = useHideOnScroll();
+  const masthead = useBarHeight();
   const live = data && !error && (data.health.market_age_seconds ?? 999) < 180;
   const coins = data?.coin_order ?? COIN_ORDER;
   return <ControlsProvider data={data} refresh={load}>
     <div className="app">
+      <div ref={masthead} className={`masthead ${barHidden ? "bar-hidden" : ""}`}>
       <header className="topbar">
         <div className="brand"><div>
           <strong className="wordmark" aria-label="Z-Bot"><img className="logo-z on-dark" src="/zbot-z-dark.svg" alt="" /><img className="logo-z on-light" src="/zbot-z-light.svg" alt="" />-Bot</strong>
@@ -122,6 +161,7 @@ export default function App() {
         </div>
       </header>
       <PageRail page={page} coins={coins} data={data} onSelect={setPage} />
+      </div>
 
       <main>
         {error && <div className="banners"><div className="banner critical"><p><b>Can't reach the server.</b> {error}. Retrying automatically.</p></div></div>}

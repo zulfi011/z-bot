@@ -265,34 +265,28 @@ export function TradeList({ trades, limit, showCoin = false }: { trades: Trade[]
   if (!trades.length) return <Empty title="No completed trades yet">Trades appear here when the stop or trailing stop sells a lot.</Empty>;
   return <ScrollList visible={5}><ul className="rows trade-rows">{trades.slice(0, limit).map(trade => {
     const source = sourceOf(trade.entry_source);
-    const rides = trade.exit_mode === "trend";
     return <li key={trade.trade_id}>
       <div className="trade-story">
         <b>{showCoin && <span className="coin-inline">{coinLabel(trade.symbol)}</span>}
           <i className={`src-swatch ${source.cls}`}>{source.letter}</i>{" "}
-          {trade.entry_source === "manual" ? "You bought" : `${source.name} bought`} at {price(trade.entry_fill_price)}
-          {" "}<span className="arrow">→</span> {label(trade.exit_reason)} at {price(trade.exit_fill_price)}</b>
-        <small>
-          {trade.exit_mode && <em className={`slot-mode ${rides ? "rides" : "trails"}`}>{rides ? "Mode A" : "Mode B"}</em>}
-          {time(trade.exit_time, true)} · held {duration(trade.duration_minutes)} · fees {usd(n(trade.entry_fee_usd) + n(trade.exit_fee_usd), 2)}
-        </small>
+          {trade.entry_source === "manual" ? "Buy now" : source.name} <span className="arrow">→</span> {label(trade.exit_reason)}</b>
+        <small>{price(trade.entry_fill_price)} → {price(trade.exit_fill_price)} · {time(trade.exit_time, true)} · held {duration(trade.duration_minutes)}</small>
       </div>
       <div className="right"><b className={tone(trade.net_pnl_usd)}>{signedUsd(trade.net_pnl_usd)}</b>
-        <small className={tone(trade.net_return_pct)}>{pct(trade.net_return_pct)} on {usd(trade.allocation_usd, 0)}</small></div>
+        <small className={tone(trade.net_return_pct)}>{pct(trade.net_return_pct)}</small></div>
     </li>;
   })}</ul></ScrollList>;
 }
 
 export function RequestList({ requests }: { requests: ControlRequest[] }) {
   const { open } = useControls();
-  const visible = requests.filter(request => request.kind !== "initial_deposit" || requests.length < 3);
-  if (!visible.length) return <Empty title="No requests yet">Deposits, withdrawals, BNB purchases and your buy/close requests are listed here.</Empty>;
-  return <ScrollList visible={5}><ul className="rows">{visible.map(request => <li key={request.request_id}>
+  if (!requests.length) return <Empty title="No requests yet">When you press Buy now or Close, it shows here with what happened.</Empty>;
+  return <ScrollList visible={5}><ul className="rows">{requests.map(request => <li key={request.request_id}>
     <div><b>{request.symbol && <span className="coin-inline">{coinLabel(request.symbol)}</span>}{label(request.kind)}{request.amount_usd != null ? ` · ${usd(request.amount_usd)}` : ""}</b>
       <small>{ago(request.requested_at)}{request.reason ? ` · ${request.reason}` : ""}</small></div>
     <div className="right">
       <span className={`tag ${request.status}`}>{request.status === "applied" ? "done" : request.status === "pending" ? "waiting" : request.reason === "Cancelled by you" ? "cancelled" : "rejected"}</span>
-      {request.status === "pending" && request.kind !== "initial_deposit" &&
+      {request.status === "pending" &&
         <button className="link" onClick={() => open({ kind: "cancel", requestId: request.request_id, what: label(request.kind) })}>cancel</button>}
     </div>
   </li>)}</ul></ScrollList>;
