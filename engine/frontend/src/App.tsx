@@ -170,9 +170,11 @@ export default function App() {
         {!data ? <div className="loading">{error ? "Waiting for the server…" : "Loading your account…"}</div>
           : page !== "main" && data.coins[page] ? <CoinPage key={page} data={data} coin={data.coins[page]} interval={interval} onInterval={setInterval} chartMode={chartMode} onChartMode={setChartMode} />
             : <MainPage data={data} onOpenCoin={setPage} />}
-        <footer>All times UTC · {data?.trading.mode === "live" ? "Live — the bot places real orders on your Binance account."
-          : data?.trading.mode === "off" ? "Stopped — no new lots are opened."
-            : "Shadow — orders are worked out and recorded, but nothing is sent to Binance."}</footer>
+        <footer className="app-footer">
+          <p><b>Z-Bot</b> is open-source software · <a href="https://github.com/zulfi011/z-bot" target="_blank" rel="noreferrer">GitHub</a>
+            {" "}· <a href="https://zulfi011.github.io/z-bot/" target="_blank" rel="noreferrer">Live results</a></p>
+          <p>Not financial advice. Crypto trading can lose money, and past results don't promise future ones. All times are UTC.</p>
+        </footer>
       </main>
 
     </div>

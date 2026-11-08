@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ChartPoint, EquityPoint, Marker } from "./api";
 import { n, pct, price, signedUsd, time, usd } from "./format";
 import { SOURCE, sourceOf } from "./sources";
@@ -206,9 +206,27 @@ function ChartZoom({ zoomed, onZoom, onReset }:
   </div>;
 }
 
+/** True once the element has scrolled into view (and stays true), so an entrance animation plays where it is seen. */
+function useSeen<T extends Element>() {
+  const ref = useRef<T>(null);
+  const [seen, setSeen] = useState(false);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || seen) return;
+    if (typeof IntersectionObserver === "undefined") { setSeen(true); return; }
+    const observer = new IntersectionObserver(entries => {
+      if (entries.some(entry => entry.isIntersecting)) { setSeen(true); observer.disconnect(); }
+    }, { threshold: 0.35 });
+    observer.observe(element);
+    return () => observer.disconnect();
+  });
+  return [ref, seen] as const;
+}
+
 export function EquityChart({ points, view, start, end, height = 200 }:
   { points: EquityPoint[]; view: "value" | "performance"; start?: string; end?: string; height?: number }) {
   const [hover, setHover] = useState<number | null>(null);
+  const [frame, seen] = useSeen<HTMLDivElement>();
   const { ref, view: window, zoomed, reset, handlers, zoomAt } = useChartView(points.length, fraction =>
     setHover(fraction == null ? null
       : Math.round(Math.min(Math.max(window.from + fraction * (window.to - window.from), 0), points.length - 1))));
@@ -246,11 +264,9 @@ export function EquityChart({ points, view, start, end, height = 200 }:
     ? new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", hour: "2-digit", minute: "2-digit", hour12: false }).format(at)
     : new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", day: "numeric", month: "short" }).format(at);
   const tone = rising ? "up" : "down";
-  const lastIndex = points.length - 1;
   // Dots are drawn in HTML over the stretched SVG so they stay round; positions are in % of the width.
   const dot = (index: number) => ({ left: `${x(index) / W * 100}%`, top: `${y(series[index])}px` });
-  const showLast = lastIndex >= first && lastIndex <= last;
-  return <div className="chart equity-chart">
+  return <div ref={frame} className={`chart equity-chart ${seen ? "in-view" : "waiting"}`}>
     <div className="chart-stage" style={{ height }}>
       {/* A new key on view or range change replays the draw-in animation; the minute refresh does not. */}
       <svg key={`${view}-${start ?? ""}`} ref={ref} viewBox={`0 0 ${W} ${height}`} preserveAspectRatio="none" style={{ height }} {...handlers}
@@ -268,7 +284,6 @@ export function EquityChart({ points, view, start, end, height = 200 }:
         <polyline points={line} pathLength={1} className={`equity-line ${tone}`} />
         {hover != null && <line className="crosshair" x1={x(hover)} x2={x(hover)} y1={0} y2={height} />}
       </svg>
-      {showLast && hover == null && <span className={`equity-dot live ${tone}`} style={dot(lastIndex)} aria-hidden="true" />}
       {hover != null && <span className={`equity-dot ${tone}`} style={dot(hover)} aria-hidden="true" />}
       <ChartZoom zoomed={zoomed} onZoom={zoomAt} onReset={reset} />
     </div>

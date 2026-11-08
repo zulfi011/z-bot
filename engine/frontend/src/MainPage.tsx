@@ -3,9 +3,9 @@ import { getJson, type Dashboard, type EquityHistory, type Period, type Reachabi
 import { LeaderboardCard } from "./Leaderboard";
 import { EquityChart } from "./charts";
 import { useControls } from "./controls";
-import { ago, n, pct, signedUsd, tone, usd } from "./format";
+import { ago, pct, signedUsd, tone, usd } from "./format";
 import { BnbCard, LotCard, MoneyCard, RequestList, TradeList, TradingModeCard } from "./panels";
-import { Card, Empty, Info, ScrollList, Stat, Tabs } from "./ui";
+import { Card, Empty, Info, Tabs } from "./ui";
 
 const PERIODS: { value: Period; label: string }[] = [
   { value: "1d", label: "1D" }, { value: "7d", label: "7D" }, { value: "1m", label: "1M" },
@@ -22,7 +22,7 @@ function EquityCard() {
     .catch(reason => setError(reason instanceof Error ? reason.message : "Unavailable")), [period]);
   useEffect(() => { load(); const timer = window.setInterval(() => document.visibilityState === "visible" && load(), 60_000); return () => window.clearInterval(timer); }, [load]);
   useEffect(() => { try { localStorage.setItem("sol-desk-period", period); } catch { /* ignore */ } }, [period]);
-  return <Card title="Wallet over time"
+  return <Card className="equity-card" title="Wallet over time"
     action={<Tabs label="Chart view" value={view} onChange={setView}
       options={[{ value: "value", label: "Wallet value" }, { value: "performance", label: "Trading only" }]} />}>
     <Tabs label="Time range" value={period} onChange={setPeriod} options={PERIODS} />
@@ -35,7 +35,14 @@ function EquityCard() {
   </Card>;
 }
 
-function BinanceReach() {
+type Health = "ok" | "warn" | "bad" | "off";
+
+function HealthRow({ state, label, value }: { state: Health; label: string; value: string }) {
+  return <li className={`health-row ${state}`}><i aria-hidden="true" /><span>{label}</span><b>{value}</b></li>;
+}
+
+/** Five plain status lines: is the bot getting prices, are its signals ready, can it reach Binance. */
+function HealthCard({ data, attached }: { data: Dashboard; attached: boolean }) {
   const [reach, setReach] = useState<Reachability | null>(null);
   useEffect(() => {
     const load = () => getJson<Reachability>("/api/v1/binance/reachability").then(setReach).catch(() => setReach(null));
@@ -43,17 +50,31 @@ function BinanceReach() {
     const timer = window.setInterval(() => document.visibilityState === "visible" && load(), 300_000);
     return () => window.clearInterval(timer);
   }, []);
-  if (!reach) return <span className="warn">Binance trading API: checking…</span>;
-  const ok = reach.state === "reachable";
-  return <span className={ok ? "ok" : "bad"} title={reach.message}>
-    Binance trading API {ok ? "reachable" : reach.state === "blocked" ? "blocked here (451)" : reach.state}
-    {reach.public_ip ? ` · IP ${reach.public_ip}` : ""}</span>;
+  const coins = data.coin_order.map(symbol => data.coins[symbol]).filter(Boolean);
+  const stale = coins.filter(coin => coin.health.market_age_seconds == null || coin.health.market_age_seconds >= 180);
+  const warming = coins.filter(coin => coin.health.signal_engine !== "ready");
+  const names = (list: typeof coins) => list.map(coin => coin.label).join(", ");
+  const mode = data.trading.mode;
+  const reachable = reach?.state === "reachable";
+  return <Card className="health-card" title="System health">
+    <ul className="health-list">
+      <HealthRow state={stale.length ? "warn" : "ok"} label="Prices"
+        value={stale.length ? `Waiting for ${names(stale)}` : `Live for all ${coins.length} coins`} />
+      <HealthRow state={warming.length ? "warn" : "ok"} label="Signals"
+        value={warming.length ? `Warming up: ${names(warming)}` : "Ready"} />
+      <HealthRow state={!attached ? "off" : data.binance.connected ? "ok" : "bad"} label="Binance account"
+        value={!attached ? "Not attached" : data.binance.connected ? "Connected" : "Can't connect"} />
+      <HealthRow state={!reach ? "off" : reachable ? "ok" : "bad"} label="Binance trading API"
+        value={!reach ? "Checking…" : reachable ? "Reachable from here" : reach.state === "blocked" ? "Blocked in this region" : "Not reachable"} />
+      <HealthRow state={mode === "live" ? "ok" : mode === "off" ? "bad" : "warn"} label="Trading"
+        value={mode === "live" ? "Live" : mode === "off" ? "Stopped" : "Shadow (nothing sent)"} />
+    </ul>
+  </Card>;
 }
 
 export function MainPage({ data, onOpenCoin }: { data: Dashboard; onOpenCoin: (symbol: string) => void }) {
   const account = data.account;
   const stats = data.stats;
-  const coins = data.coin_order.map(symbol => data.coins[symbol]).filter(Boolean);
   const walletValue = account?.wallet_value_usd ?? data.binance.wallet_value_usdt ?? 0;
   const mode = data.trading.mode;
   // Outside live mode the bot trades pretend money: a starting amount the user sets, never a Binance balance.
@@ -117,19 +138,6 @@ export function MainPage({ data, onOpenCoin }: { data: Dashboard; onOpenCoin: (s
       <RequestList requests={data.requests} />
     </Card>
 
-    <Card className="health-card" title="System health" info="These checks confirm the bot is receiving prices for every coin and that Binance accepts its requests.">
-      <div className="health">
-        {coins.map(coin => <span key={coin.symbol} className={coin.health.market_age_seconds != null && coin.health.market_age_seconds < 180 ? "ok" : "bad"}>
-          {coin.label} prices {coin.health.market_age_seconds == null ? "waiting" : `${Math.round(coin.health.market_age_seconds)}s old`}</span>)}
-        {coins.map(coin => <span key={`${coin.symbol}-signals`} className={coin.health.signal_engine === "ready" ? "ok" : "warn"}>
-          {coin.label} signals {coin.health.signal_engine === "ready" ? "ready" : "warming up"}</span>)}
-        <span className={data.binance.connected ? "ok" : attached ? "bad" : "warn"}>Binance {data.binance.connected ? "connected" : attached ? "not connected" : "account not attached"}</span>
-        <span className={mode === "live" ? "ok" : "warn"}>Mode {mode}</span>
-        <BinanceReach />
-      </div>
-      <ScrollList visible={5}><div className="strategy-notes">
-        {coins.map(coin => <p key={coin.symbol} className="card-note"><b>{coin.label}</b> · <code>{coin.strategy.strategy_id}</code> · {coin.strategy.backtest}</p>)}
-      </div></ScrollList>
-    </Card>
+    <HealthCard data={data} attached={attached} />
   </div>;
 }
