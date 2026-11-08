@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { COIN_ORDER, coinLabel, getJson, type Dashboard, type Interval } from "./api";
 import { ControlsProvider, useControls, DeviceLockButton } from "./controls";
-import { AttachBinanceButton } from "./binance";
-import { ago, pct, tone } from "./format";
+import { AttachBinanceButton, LiveResultsLink } from "./binance";
+import { ago } from "./format";
 import { MainPage } from "./MainPage";
 import { CoinPage } from "./CoinPage";
 import { AlertBanner } from "./panels";
@@ -48,17 +48,15 @@ function PageRail({ page, coins, data, onSelect }:
     const left = chip.offsetLeft - (element.clientWidth - chip.offsetWidth) / 2;
     element.scrollTo({ left: Math.max(0, left), behavior: first.current ? "auto" : "smooth" });
     first.current = false;
-  }, [page, coins.length, data != null]);  // chips widen once prices arrive, so centre again then
+  }, [page, coins.length]);
   return <nav className="page-rail" aria-label="Pages" ref={rail}>
     <button className={`rail-chip ${page === "main" ? "active" : ""}`} aria-current={page === "main" ? "page" : undefined}
       onClick={() => onSelect("main")}><span className="rail-home" aria-hidden>⌂</span>Main</button>
     {coins.map(symbol => {
       const coin = data?.coins[symbol];
-      const change = coin?.market.change_24h_pct;
       return <button key={symbol} className={`rail-chip ${page === symbol ? "active" : ""}`}
         aria-current={page === symbol ? "page" : undefined} onClick={() => onSelect(symbol)}>
         <CoinToken symbol={symbol} />{coinLabel(symbol)}
-        {change != null && <small className={tone(change)}>{pct(change, 1)}</small>}
         {coin && coin.positions.length > 0 && <i className="rail-dot" title={`${coin.positions.length} open lot${coin.positions.length === 1 ? "" : "s"}`} />}
       </button>;
     })}
@@ -113,13 +111,14 @@ export default function App() {
           <strong className="wordmark" aria-label="Z-Bot"><img className="logo-z on-dark" src="/zbot-z-dark.svg" alt="" /><img className="logo-z on-light" src="/zbot-z-light.svg" alt="" />-Bot</strong>
           <small>{coins.length} coins</small></div></div>
         <div className="top-actions">
-          <BinanceButton />
           <span className={`live ${live ? "on" : "off"}`} title={data ? `Updated ${ago(data.generated_at)}` : "Connecting"}>
-            <i />{live ? "Live" : error ? "Offline" : "Waiting"}</span>
+            <i /><span className="live-text">{live ? "Live" : error ? "Offline" : "Waiting"}</span></span>
           <DeviceLockButton />
-          <button className="icon-button" aria-label="Refresh" onClick={load} disabled={loading}><span className={loading ? "spin" : ""}>↻</span></button>
+          <button className="icon-button refresh-button" aria-label="Refresh" onClick={load} disabled={loading}><span className={loading ? "spin" : ""}>↻</span></button>
           <button className="icon-button" aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>{theme === "dark" ? "☀" : "☾"}</button>
+          <LiveResultsLink />
+          <BinanceButton />
         </div>
       </header>
       <PageRail page={page} coins={coins} data={data} onSelect={setPage} />

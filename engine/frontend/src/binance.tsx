@@ -1,5 +1,16 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { attachBinance, detachBinance, reachability, type BinanceCredentials, type Reachability } from "./api";
+import { Tip } from "./ui";
+
+const LIVE_RESULTS = "https://zulfi011.github.io/z-bot/";
+const CHART_ICON = <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M2 13.5h12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><path d="M2.5 10.5l3.5-3.5 2.5 2.5 5-5.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+
+/** Top-bar link to the public page with Z-Bot's own live track record. */
+export function LiveResultsLink() {
+  return <Tip text="Live results: see how Z-Bot trades on a real Binance account. Every trade, after fees, updated daily. Opens in a new tab.">
+    <a className="icon-button" href={LIVE_RESULTS} target="_blank" rel="noreferrer" aria-label="Live results (opens in a new tab)">{CHART_ICON}</a>
+  </Tip>;
+}
 
 const API_MANAGEMENT = "https://www.binance.com/en/my/settings/api-management";
 const KEY_PATTERN = /^[A-Za-z0-9]{16,128}$/;
@@ -60,7 +71,7 @@ function AttachForm({ where, reach, onAttached, onCancel }:
     <ol className="steps">
       <Step n={1} title="Create an API key on Binance">
         Open <a href={API_MANAGEMENT} target="_blank" rel="noreferrer">API Management</a> (Profile → API Management),
-        choose <b>Create API</b> → <b>System generated</b>, name it <code>Z-Bot</code> and finish the security check.
+        choose <b>Create API</b> → <b>System generated</b>, give the key a name and finish the security check.
       </Step>
       <Step n={2} title="Give it trading rights only">
         Tick <b>Enable Reading</b> and <b>Enable Spot &amp; Margin Trading</b>. Leave <b>Enable Withdrawals</b> off:
