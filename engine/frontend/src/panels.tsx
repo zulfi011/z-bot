@@ -55,7 +55,7 @@ export function MoneyCard({ data }: { data: Dashboard }) {
       <Stat label="Next buy" value={pot.next_lot_usd == null ? "—" : usd(pot.next_lot_usd, short ? 2 : 0)} valueClass={short ? "warn" : undefined}
         sub={pot.next_lot_usd == null ? (pot.free_lots ? "no free USDT" : "waiting for a free lot") : short ? `of ${lotLabel} · pot is short` : "any coin's next signal"}
         info="What the next signal from any coin that is on would spend. After losses the last lot uses whatever USDT is left." />
-      <Stat label="Your money" value={usd(money.budget_usd)} sub={data.binance.connected ? `${usd(money.usdt_free)} free + ${usd(money.in_trades_usd)} in lots` : "not connected"}
+      <Stat label="Your money" value={usd(money.budget_usd)} sub={data.shadow ? "shadow wallet" : data.binance.connected ? `${usd(money.usdt_free)} free + ${usd(money.in_trades_usd)} in lots` : "no Binance account attached"}
         info="Free USDT on Binance plus what the open lots cost." />
     </div>
     {differs && n(money.budget_usd) > 0 && <p className="card-note">Growth plan for {usd(money.budget_usd, 0)}: <b>{suggestion.lots} × {usd(suggestion.lot, 0)}</b>.
@@ -83,7 +83,7 @@ export function TradingModeCard({ data }: { data: Dashboard }) {
     info="Live sends real orders to Binance. Shadow works out every order and records it without sending, so you can watch the strategy safely. Stopped buys nothing; open lots keep their stop orders on Binance and can still be sold.">
     <div className="stat-grid three">
       <Stat label="Mode now" value={labels[mode]} valueClass={mode === "live" ? "up" : mode === "off" ? "down" : "warn"}
-        sub={data.binance.connected ? "Binance connected" : "Binance not connected"} />
+        sub={data.binance.connected ? "Binance connected" : "No Binance account attached"} />
       <Stat label="Daily loss limit" value={n(data.trading.daily_loss_limit_usd) ? usd(data.trading.daily_loss_limit_usd) : "off"}
         sub={<>new lots pause for the day · <button className="link inline" onClick={() => open({ kind: "amount", field: "daily_loss_limit_usd" })}>Edit</button></>}
         info="When today's closed trades add up to this loss, no new lot opens until tomorrow (UTC)." />

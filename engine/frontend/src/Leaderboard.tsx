@@ -108,7 +108,7 @@ export function LeaderboardCard({ data, onOpenCoin }: { data: Dashboard; onOpenC
           <span className="leader-bar" aria-hidden><i className={amount >= 0 ? "up" : "down"} style={{ width: `${width}%` }} /></span>
           <Sparkline points={entry.series.map(point => n(point.pnl_usd))} up={n(entry.pnl_usd) >= 0} />
           <span className="leader-meta">
-            <span>{coin.lots.open_lots} of {coin.lots.max_lots} shared lots</span>
+            <span>{coin.lots.open_lots ? `${coin.lots.open_lots} lot${coin.lots.open_lots === 1 ? "" : "s"} open` : "No lots open yet"}</span>
             <span>{entry.trades} trade{entry.trades === 1 ? "" : "s"}{winRate != null ? ` · ${winRate.toFixed(0)}% won` : ""}</span>
             <span className="leader-status">{status(coin)}</span>
           </span>

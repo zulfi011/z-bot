@@ -367,7 +367,7 @@ export function CoinPage({ data, coin, interval, onInterval, chartMode, onChartM
   const setup = coin.setup;
   const name = coin.label;
   const days = coin.strategy.signal_average_days;
-  const { open } = useControls();
+  const { open, binance } = useControls();
   return <div className="page">
     <section className={`hero ${name.toLowerCase()}`}>
       <span className="eyebrow"><CoinToken symbol={coin.symbol} />{name} / USDT · {ago(coin.market.open_time && new Date(new Date(coin.market.open_time).getTime() + 60_000).toISOString())}</span>
@@ -409,7 +409,7 @@ export function CoinPage({ data, coin, interval, onInterval, chartMode, onChartM
     </Card>
 
     <LotsCard data={data} coin={coin} />
-    <BnbCard data={data} compact />
+    {binance?.attached && <BnbCard data={data} compact />}
     <Activity coin={coin} />
 
     <Card title={`${name} performance`} info={`Results of closed ${name} trades, after all costs.`}>

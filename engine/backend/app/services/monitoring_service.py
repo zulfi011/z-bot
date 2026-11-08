@@ -155,9 +155,13 @@ class MonitoringService:
                     "message": f"{unprotected} open lot(s) are not protected by a stop order on Binance. The bot "
                                "still sells at its own stop, but a crash while it is offline would not be covered.",
                     "details": {"positions": unprotected}}
+            # BNB pays Binance's fees, so its warnings only matter once a Binance account is attached.
+            attached = credentials.attached()
+            # In shadow mode with a starting amount the snapshot is the pretend wallet (no BNB), not Binance's.
+            real_wallet = attached and not (mode != "live" and Decimal(str(settings.get("shadow_start_usd") or "0")) > 0)
             fee_market = markets.get(self.fee_symbol)
             fee_age = (now - fee_market["latest_open"]).total_seconds() if fee_market else None
-            if fee_age is None or fee_age > self.stale_after_seconds:
+            if attached and (fee_age is None or fee_age > self.stale_after_seconds):
                 conditions["bnb_price_stale"] = {
                     "severity": "warning", "title": "BNB price is stale",
                     "message": "Without a fresh BNB price, fees are paid in USDT at the standard 0.10%.",
@@ -167,13 +171,13 @@ class MonitoringService:
             round_trip = bnb_round_trip_usd(self.strategy, lot_size)
             if account and account["bnb_value_usd"] and round_trip:
                 trips_left = int(account["bnb_value_usd"] / round_trip)
-            if account is not None and account["bnb_free"] <= 0:
+            if real_wallet and account is not None and account["bnb_free"] <= 0:
                 conditions["bnb_empty"] = {
                     "severity": "warning", "title": "No BNB for fees",
                     "message": "Fees are being charged in USDT at 0.10% instead of 0.075%. Buy a little BNB on "
                                "Binance to get the discount.",
                     "details": {}}
-            elif trips_left is not None and trips_left < LOW_BNB_ROUND_TRIPS:
+            elif real_wallet and trips_left is not None and trips_left < LOW_BNB_ROUND_TRIPS:
                 conditions["bnb_low"] = {
                     "severity": "warning", "title": "BNB is running low",
                     "message": f"BNB covers about {trips_left} more buy+sell at your lot size. Top it up on Binance.",

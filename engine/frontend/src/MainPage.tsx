@@ -61,7 +61,8 @@ export function MainPage({ data, onOpenCoin }: { data: Dashboard; onOpenCoin: (s
   const shadow = mode !== "live";
   const pretend = data.shadow;
   const profit = shadow ? pretend?.pnl ?? 0 : account?.strategy_pnl_usd ?? 0;
-  const { session, open } = useControls();
+  const { session, open, binance } = useControls();
+  const attached = !!binance?.attached;
   const locked = !!session?.controls_enabled && !session.unlocked;
   return <div className="page">
     {locked && <div className="unlock-bar">
@@ -96,8 +97,8 @@ export function MainPage({ data, onOpenCoin }: { data: Dashboard; onOpenCoin: (s
     </section>
 
     <TradingModeCard data={data} />
-    <LeaderboardCard data={data} onOpenCoin={onOpenCoin} />
     <MoneyCard data={data} />
+    <LeaderboardCard data={data} onOpenCoin={onOpenCoin} />
 
     <Card title="Open lots" info="Every lot the bot holds right now, with its stop and trailing levels. Close sells it on Binance and shows the result first.">
       {data.positions.length
@@ -105,7 +106,7 @@ export function MainPage({ data, onOpenCoin }: { data: Dashboard; onOpenCoin: (s
         : <Empty title="No open lots">Each coin waits for its price to touch its average from below.</Empty>}
     </Card>
 
-    <BnbCard data={data} />
+    {attached && <BnbCard data={data} />}
     <EquityCard />
 
     <Card title="Recent trades" info="Closed trades on every coin, newest first, after all fees.">
@@ -122,7 +123,7 @@ export function MainPage({ data, onOpenCoin }: { data: Dashboard; onOpenCoin: (s
           {coin.label} prices {coin.health.market_age_seconds == null ? "waiting" : `${Math.round(coin.health.market_age_seconds)}s old`}</span>)}
         {coins.map(coin => <span key={`${coin.symbol}-signals`} className={coin.health.signal_engine === "ready" ? "ok" : "warn"}>
           {coin.label} signals {coin.health.signal_engine === "ready" ? "ready" : "warming up"}</span>)}
-        <span className={data.binance.connected ? "ok" : "bad"}>Binance {data.binance.connected ? "connected" : "not connected"}</span>
+        <span className={data.binance.connected ? "ok" : attached ? "bad" : "warn"}>Binance {data.binance.connected ? "connected" : attached ? "not connected" : "account not attached"}</span>
         <span className={mode === "live" ? "ok" : "warn"}>Mode {mode}</span>
         <BinanceReach />
       </div>

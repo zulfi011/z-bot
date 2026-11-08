@@ -573,3 +573,24 @@ def test_a_lag_that_lasts_is_reported_and_then_clears_itself(world):
     set_cursor(engine, now)                                    # caught up: nobody should have to dismiss anything
     monitor.synchronize()
     assert rows(engine, "SELECT status FROM monitoring_alerts WHERE alert_key='execution_lag'")[0]["status"] == "resolved"
+
+
+def test_bnb_warnings_only_once_a_binance_account_is_attached(world, monkeypatch):
+    """Someone trying shadow mode without Binance must not be told to buy BNB."""
+    from app.core import credentials
+    from app.services.monitoring_service import MonitoringService
+    execution, _, engine = world
+    execution._write_snapshot()
+    with engine.begin() as connection:
+        connection.execute(text("UPDATE account_snapshots SET bnb_free = 0, bnb_value_usd = 0"))
+    monitor = MonitoringService(engine, {SYMBOL: load_strategies()[SYMBOL]}, 180)
+
+    def active():
+        return {row["alert_key"] for row in rows(engine, "SELECT alert_key FROM monitoring_alerts WHERE status='active'")}
+
+    monkeypatch.setattr(credentials, "attached", lambda: False)
+    monitor.synchronize()
+    assert not {"bnb_empty", "bnb_low", "bnb_price_stale"} & active()
+    monkeypatch.setattr(credentials, "attached", lambda: True)
+    monitor.synchronize()
+    assert "bnb_empty" in active()
