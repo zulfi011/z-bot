@@ -18,6 +18,9 @@ To try the order flow against a pretend Binance wallet (real prices, fake money)
 FAKE_USDT=1000 FAKE_BNB=0.1 docker compose -f docker-compose.yml -f devtools/docker-compose.fake-binance.yml up -d --build
 ```
 
+Then press **Attach Binance account** and paste any made-up key and secret (16 or more letters and numbers): the pretend exchange
+accepts them, and nothing reaches the real Binance.
+
 ## Layout
 
 | Path | What it is |

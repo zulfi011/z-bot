@@ -1,6 +1,7 @@
 # Local only: run the whole app against a pretend Binance wallet (real prices, fake money).
 #   FAKE_USDT=1000 FAKE_BNB=0.1 docker compose -f docker-compose.yml -f devtools/docker-compose.fake-binance.yml up -d --build
 # FAKE_USDT / FAKE_BNB are the pretend balances (BNB pays the fees); pick any amounts.
+# Then use Attach Binance account in the dashboard with any made-up key and secret: the pretend exchange accepts them.
 # Never use this on the trading server.
 services:
   fake-binance:
@@ -15,16 +16,12 @@ services:
   api:
     environment:
       BINANCE_API_URL: http://fake-binance:9000
-      BINANCE_API_KEY: fake-key
-      BINANCE_API_SECRET: fake-secret
     depends_on:
       fake-binance:
         condition: service_started
   worker:
     environment:
       BINANCE_API_URL: http://fake-binance:9000
-      BINANCE_API_KEY: fake-key
-      BINANCE_API_SECRET: fake-secret
     depends_on:
       fake-binance:
         condition: service_started
