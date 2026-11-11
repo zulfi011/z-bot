@@ -81,11 +81,6 @@ nav { display: flex; justify-content: space-between; align-items: center; gap: 1
 .point span { color: var(--muted); font-size: 14px; }
 header#results { margin-top: 56px; padding-top: 8px; }
 .section-title { font-size: 26px; text-transform: none; letter-spacing: -.4px; color: var(--text); font-weight: 700; margin: 0; }
-.notify { margin-top: 48px; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 22px; }
-.notify p { margin: 8px 0 0; }
-.waitlist { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
-.waitlist input { flex: 1 1 240px; min-width: 0; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--line);
-  background: var(--bg); color: var(--text); font: inherit; }
 .small { font-size: 13px; }
 html { scroll-behavior: smooth; }
 [hidden] { display: none !important; }
@@ -113,7 +108,7 @@ tr.blank td { color: transparent; }
     <div class="word small" aria-label="Z-Bot"><img class="z-dark" src="zbot-z-dark.svg" alt=""><img class="z-light" src="zbot-z-light.svg" alt="">-Bot</div>
     <div class="links">
       <a href="https://github.com/zulfi011/z-bot">GitHub</a>
-      <a href="https://x.com/z_bot_dev">X</a>
+      <a href="https://www.linkedin.com/in/zulfi0">LinkedIn</a>
     </div>
   </nav>
 
@@ -122,7 +117,7 @@ tr.blank td { color: transparent; }
     <p class="lead">100+ strategy ideas tested. The survivors trade on a real Binance account, with every result
       published daily, red months included.</p>
     <div class="cta">
-      <a class="btn primary" href="#notify">Get notified at release</a>
+      <a class="btn primary" href="https://github.com/zulfi011/z-bot">Star on GitHub</a>
     </div>
   </section>
 
@@ -176,19 +171,6 @@ tr.blank td { color: transparent; }
     <div class="table-wrap scroll-20" id="trades-wrap"><table id="trades"></table></div>
   </section>
 
-  <section class="notify" id="notify">
-    <h2 class="section-title">Get notified at release</h2>
-    <p class="muted">One email when the code and research go public on GitHub, then only major updates.
-      Unsubscribe any time.</p>
-    <form id="waitlist" class="waitlist" method="post" target="popupwindow" hidden>
-      <input type="email" name="email" required placeholder="you@example.com" aria-label="Email address">
-      <button class="btn primary" type="submit">Notify me</button>
-    </form>
-    <p class="muted small" id="waitlist-off">Sign-up opens soon. Meanwhile, follow
-      <a href="https://x.com/z_bot_dev">@z_bot_dev</a> or watch the repo on
-      <a href="https://github.com/zulfi011/z-bot">GitHub</a>.</p>
-  </section>
-
   <footer>
     <p>Live trades only, after fees, updated daily. Raw data: <a href="stats.json">stats.json</a></p>
     <p>Not financial advice. These are past results from one account; they don't predict future returns, and
@@ -197,15 +179,6 @@ tr.blank td { color: transparent; }
 </div>
 
 <script>
-// Waitlist: set this to the Buttondown username and the sign-up form appears. Emails go to Buttondown only.
-const BUTTONDOWN_USER = "z-bot";
-if (BUTTONDOWN_USER) {
-  const form = document.getElementById("waitlist");
-  form.action = `https://buttondown.com/api/emails/embed-subscribe/${BUTTONDOWN_USER}`;
-  form.onsubmit = () => window.open(`https://buttondown.com/${BUTTONDOWN_USER}`, "popupwindow");
-  form.hidden = false;
-  document.getElementById("waitlist-off").hidden = true;
-}
 
 const COINS = { SOLUSDT: "SOL", ETHUSDT: "ETH", BTCUSDT: "BTC", AAVEUSDT: "AAVE", TRXUSDT: "TRX" };
 const ENTRIES = { signal: "Dip", touch: "Dip", dip: "Dip", breakout: "Breakout", pullback: "Pullback", pyramid: "Pyramid add",
