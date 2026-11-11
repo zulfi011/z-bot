@@ -1,6 +1,6 @@
 # Using the dashboard
 
-Open <http://localhost:3000>. There is a **Main** page and one page per coin; the coin bar under the top bar switches
+The dashboard has a **Main** page and one page per coin; the coin bar under the top bar switches
 between them. Every card has an **(i)**: hover or tap it for a one- or two-sentence explanation. Everything works on
 a phone too.
 

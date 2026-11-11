@@ -10,8 +10,7 @@ Docker Compose. For what it does and how to use it, start with the [main README]
 docker compose up -d --build
 ```
 
-Dashboard on <http://localhost:3000>. Without a Binance account everything runs in shadow mode. For the API docs
-(<http://localhost:8000/docs>) and direct database access, add `-f devtools/docker-compose.dev.yml`. `docker compose down` keeps the database; `docker compose down -v` deletes it.
+The dashboard is on port 3000. Without a Binance account everything runs in shadow mode. For the API docs (port 8000, `/docs`) and direct database access, add `-f devtools/docker-compose.dev.yml`. `docker compose down` keeps the database; `docker compose down -v` deletes it.
 
 To try the order flow against a pretend Binance wallet (real prices, fake money):
 

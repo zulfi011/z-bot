@@ -25,7 +25,7 @@ cd z-bot/engine
 docker compose up -d --build
 ```
 
-Open <http://localhost:3000>. The first start downloads a month of prices, so give it a few minutes. Then:
+Then open the dashboard in your browser (port 3000 on your computer). The first start downloads a month of prices, so give it a few minutes. Then:
 
 1. **Set starting amount** on the Shadow wallet card (pretend money, e.g. 1000).
 2. Switch a coin on in the **Shared pot** card.

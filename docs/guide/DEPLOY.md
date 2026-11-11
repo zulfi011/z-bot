@@ -24,8 +24,8 @@ where the bot runs, and the Attach Binance popup shows the server's public IP to
    `/opt/z-bot`, writes a private settings file with a random database password and a dashboard **control key**,
    and schedules nightly database backups.
 3. Start it: `cd /opt/z-bot/engine && docker compose up -d --build`.
-4. Reach the dashboard **privately**: an SSH tunnel (`ssh -L 3000:127.0.0.1:3000 you@server`, then open
-   <http://localhost:3000>) or a private network such as Tailscale. Never open the dashboard's port to the internet.
+4. Reach the dashboard **privately**: an SSH tunnel (`ssh -L 3000:127.0.0.1:3000 you@server`, then open the dashboard in
+   your browser) or a private network such as Tailscale. Never open the dashboard's port to the internet.
 5. Unlock the dashboard once with the control key the script printed.
 6. **Attach Binance account**, then press **Go live** when you are ready.
 

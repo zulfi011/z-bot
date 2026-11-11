@@ -45,6 +45,6 @@ up to 5 lots, then bigger lots as the money grows. You can change it at any time
 | Worker | Downloads prices, runs every coin's rules once a minute, places and manages orders |
 | API | Serves the dashboard and takes your actions (Buy now, Close, switches) |
 | Database | Keeps prices, signals, lots, trades and settings (PostgreSQL) |
-| Dashboard | The web page you use, on <http://localhost:3000> |
+| Dashboard | The web page you use to watch and control the bot |
 
 All four start together with `docker compose up`. Technical detail: [engine/ARCHITECTURE.md](../../engine/ARCHITECTURE.md).
