@@ -82,4 +82,8 @@ history; neither predicts what happens next. Run it in shadow mode first, and on
 
 Built by **Zulfi** · [LinkedIn](https://www.linkedin.com/in/zulfi0) · [GitHub](https://github.com/zulfi011)
 
-Licence: AGPL-3.0 (the `LICENSE` file is added before release).
+## Licence
+
+[AGPL-3.0](LICENSE). You can use, change and share Z-Bot freely. If you share a changed version, or run one as a
+service for other people, you must publish your source code under the same licence. The software comes with no
+warranty (sections 15 and 16 of the licence).
