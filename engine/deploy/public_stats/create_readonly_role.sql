@@ -2,7 +2,7 @@
 -- It can only SELECT four tables, every transaction is read-only, and every query stops after 20 seconds.
 -- It has no password, so it can only log in from inside the db container (local socket), never over the network.
 --
--- Run once on the server, from /opt/z-bot:
+-- Run once on the server, from /opt/z-bot/engine:
 --   docker compose exec -T db sh -c 'psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < deploy/public_stats/create_readonly_role.sql
 
 DO $$

@@ -65,7 +65,7 @@ ssh -i ~/.ssh/z-bot ubuntu@STATIC_IP "sudo bash /home/ubuntu/setup.sh git@github
 ```
 
 The script installs security updates and Docker, adds swap, creates a `bot` user with your key, turns off
-password logins, allows only SSH through the firewall, downloads the app to `/opt/z-bot`, writes a private
+password logins, allows only SSH through the firewall, downloads the app to `/opt/z-bot` (the bot runs from `/opt/z-bot/engine`), writes a private
 settings file with a random database password and dashboard control key, and schedules nightly backups.
 
 **The first run stops** and prints a line starting `ssh-ed25519 … z-bot-server` — a **read-only deploy key**
@@ -77,8 +77,8 @@ At the end it prints the server IP and your **dashboard control key** — save t
 ## 7. Start the bot
 
 ```bash
-ssh -i ~/.ssh/z-bot bot@STATIC_IP "cd /opt/z-bot && docker compose up -d --build"
-ssh -i ~/.ssh/z-bot bot@STATIC_IP "cd /opt/z-bot && docker compose ps"
+ssh -i ~/.ssh/z-bot bot@STATIC_IP "cd /opt/z-bot/engine && docker compose up -d --build"
+ssh -i ~/.ssh/z-bot bot@STATIC_IP "cd /opt/z-bot/engine && docker compose ps"
 ```
 
 Services should show `running`/`healthy` (`migrate` shows `exited (0)`, which is normal). The first start downloads
@@ -101,17 +101,13 @@ about 32 days of prices per coin, which takes a few minutes.
 
 ## 9. Binance API key
 
-1. Binance → **API Management → Create API → System generated**.
-2. Permissions: **Enable Reading** only for now. Spot trading is switched on later, after the read-only check.
-   **Withdrawals: never.**
+1. Binance → **API Management → Create API → System generated**, give it a name.
+2. Permissions: **Enable Reading** and **Enable Spot & Margin Trading**. **Withdrawals: never** — the bot refuses a
+   key that can withdraw.
 3. **Restrict access to trusted IPs only** → your static IP from step 4.
-4. Put the values on the server yourself (never in chat or GitHub):
-   ```bash
-   ssh -i ~/.ssh/z-bot bot@STATIC_IP
-   nano /opt/z-bot/.env
-   ```
-   Fill in `BINANCE_API_KEY=` and `BINANCE_API_SECRET=` (remove the leading `#`), save (Ctrl+O, Enter, Ctrl+X), then
-   `cd /opt/z-bot && docker compose up -d`.
+4. Open the dashboard (step 8) → **Attach Binance account** → paste the API key and secret. The bot checks the key
+   with Binance and keeps it only on the server, never in the database or in `.env`.
+5. Trading stays in **Shadow** until you press **Go live**.
 
 ---
 
@@ -119,10 +115,10 @@ about 32 days of prices per coin, which takes a few minutes.
 
 ```bash
 ssh -i ~/.ssh/z-bot bot@STATIC_IP                          # log in
-cd /opt/z-bot && docker compose logs -f worker               # watch the bot (Ctrl+C stops watching)
-cd /opt/z-bot && git pull && docker compose up -d --build    # install an update pushed to GitHub
-cd /opt/z-bot && docker compose restart worker               # restart only the bot
-ls /opt/z-bot/backups                                        # nightly database backups
+cd /opt/z-bot/engine && docker compose logs -f worker               # watch the bot (Ctrl+C stops watching)
+cd /opt/z-bot/engine && git pull && docker compose up -d --build    # install an update pushed to GitHub
+cd /opt/z-bot/engine && docker compose restart worker               # restart only the bot
+ls /opt/z-bot/engine/backups                                        # nightly database backups
 ```
 
 ## If something goes wrong

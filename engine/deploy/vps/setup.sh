@@ -6,6 +6,8 @@
 set -euo pipefail
 
 APP_DIR=/opt/z-bot
+# The repository is cloned to APP_DIR; the bot itself (docker-compose.yml, .env) lives in its engine/ folder.
+ENGINE_DIR="$APP_DIR/engine"
 REPO="${1:?Usage: bash setup.sh git@github.com:YOUR_USER/YOUR_REPO.git}"
 BOT_USER=bot
 # The SSH key you logged in with ('ubuntu' on Lightsail, root on most other providers).
@@ -61,8 +63,8 @@ if [ ! -d "$APP_DIR/.git" ] && ! sudo -u "$BOT_USER" git clone "$REPO" "$APP_DIR
   cat "$KEY.pub"
   exit 1
 fi
-if [ ! -f "$APP_DIR/.env" ]; then
-  cat > "$APP_DIR/.env" <<EOF
+if [ ! -f "$ENGINE_DIR/.env" ]; then
+  cat > "$ENGINE_DIR/.env" <<EOF
 POSTGRES_DB=papertrading
 POSTGRES_USER=paperbot
 POSTGRES_PASSWORD=$(openssl rand -hex 24)
@@ -71,18 +73,16 @@ STRATEGY_EDIT_TOKEN=$(openssl rand -hex 16)
 WEB_BIND_ADDRESS=127.0.0.1
 WEB_PORT=3000
 LOG_LEVEL=INFO
-# Binance keys are added later, by you, with:  nano /opt/z-bot/.env
-# BINANCE_API_KEY=
-# BINANCE_API_SECRET=
+# Attach your Binance key from the dashboard (Attach Binance account); it is never stored in this file.
 EOF
-  chown "$BOT_USER":"$BOT_USER" "$APP_DIR/.env"
-  chmod 600 "$APP_DIR/.env"
+  chown "$BOT_USER":"$BOT_USER" "$ENGINE_DIR/.env"
+  chmod 600 "$ENGINE_DIR/.env"
 fi
 
 echo "== 7/7 Nightly database backup (kept 14 days)"
-install -d -m 700 -o "$BOT_USER" -g "$BOT_USER" "$APP_DIR/backups"
+install -d -m 700 -o "$BOT_USER" -g "$BOT_USER" "$ENGINE_DIR/backups"
 cat > /etc/cron.d/z-bot-backup <<EOF
-15 3 * * * $BOT_USER cd $APP_DIR && docker compose exec -T db pg_dump -U paperbot papertrading | gzip > backups/db-\$(date +\%F).sql.gz && find backups -name 'db-*.sql.gz' -mtime +14 -delete
+15 3 * * * $BOT_USER cd $ENGINE_DIR && docker compose exec -T db pg_dump -U paperbot papertrading | gzip > backups/db-\$(date +\%F).sql.gz && find backups -name 'db-*.sql.gz' -mtime +14 -delete
 EOF
 
 echo
@@ -90,6 +90,6 @@ echo "Done. This server's fixed public IPv4 (use it in Binance → API → trust
 curl -4 -s https://ifconfig.me || true
 echo
 echo "Your dashboard control key (keep it private):"
-grep STRATEGY_EDIT_TOKEN "$APP_DIR/.env" | cut -d= -f2
+grep STRATEGY_EDIT_TOKEN "$ENGINE_DIR/.env" | cut -d= -f2
 echo
-echo "Next: follow deploy/vps/README.md step 5 (start the app) and step 6 (Tailscale)."
+echo "Next: follow engine/deploy/vps/README.md step 7 (start the app) and step 8 (Tailscale)."

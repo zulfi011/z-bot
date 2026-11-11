@@ -52,13 +52,13 @@ ssh -i ~/.ssh/z-bot bot@STATIC_IP
 Get the new files. This is a `git pull` only. Without `--build` nothing restarts:
 
 ```bash
-cd /opt/z-bot && git pull
+cd /opt/z-bot/engine && git pull
 ```
 
 Create the read-only database login:
 
 ```bash
-cd /opt/z-bot && docker compose exec -T db sh -c 'psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < deploy/public_stats/create_readonly_role.sql
+cd /opt/z-bot/engine && docker compose exec -T db sh -c 'psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < deploy/public_stats/create_readonly_role.sql
 ```
 
 Make a key that can push to the public repo only:
@@ -79,13 +79,13 @@ GIT_SSH_COMMAND="ssh -i ~/z-bot-stats/deploy_key -o IdentitiesOnly=yes -o Strict
 Run it once by hand:
 
 ```bash
-/opt/z-bot/deploy/public_stats/run_export.sh && tail -c 400 ~/z-bot-stats/repo/docs/stats.json
+/opt/z-bot/engine/deploy/public_stats/run_export.sh && tail -c 400 ~/z-bot-stats/repo/docs/stats.json
 ```
 
 Schedule it daily at 00:30 UTC:
 
 ```bash
-(crontab -l 2>/dev/null; echo '30 0 * * * /opt/z-bot/deploy/public_stats/run_export.sh >> $HOME/z-bot-stats/export.log 2>&1') | crontab -
+(crontab -l 2>/dev/null; echo '30 0 * * * /opt/z-bot/engine/deploy/public_stats/run_export.sh >> $HOME/z-bot-stats/export.log 2>&1') | crontab -
 ```
 
 ## Checking on it

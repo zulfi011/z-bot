@@ -36,8 +36,6 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-paperbot_local}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-paperbot} -d ${POSTGRES_DB:-papertrading}"]
       interval: 5s
@@ -62,8 +60,6 @@ services:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
-    ports:
-      - "127.0.0.1:${API_PORT:-8000}:8000"
     healthcheck:
       # Liveness, not readiness: readiness queries the database and loads five strategies, which on a shared
       # CPU can take longer than any sane probe timeout. Compose only needs to know the server is answering.

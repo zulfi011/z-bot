@@ -4,7 +4,7 @@
 # If anything here fails, trading is unaffected; the page just keeps yesterday's numbers.
 set -euo pipefail
 
-COMPOSE_DIR="${COMPOSE_DIR:-/opt/z-bot}"
+COMPOSE_DIR="${COMPOSE_DIR:-/opt/z-bot/engine}"
 STATS_HOME="${STATS_HOME:-$HOME/z-bot-stats}"
 REPO_DIR="$STATS_HOME/repo"
 KEY="$STATS_HOME/deploy_key"

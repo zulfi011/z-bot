@@ -8,7 +8,7 @@ Only live trades count: a lot is live when Binance returned an order id for its 
 Dollar amounts never leave the database: each trade's effect on the account is computed inside the query as
 profit / wallet value when the lot was bought, and only that percentage is exported.
 
-Usage (on the server):  python3 export_stats.py --compose-dir /opt/z-bot --out /path/to/docs/stats.json
+Usage (on the server):  python3 export_stats.py --compose-dir /opt/z-bot/engine --out /path/to/docs/stats.json
 Testing elsewhere:      python3 export_stats.py --psql "docker exec -i some-postgres psql -U zbot_stats -d papertrading" --out x.json
 """
 from __future__ import annotations
@@ -193,7 +193,7 @@ def check_keys(value, path="$"):
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--compose-dir", default="/opt/z-bot")
+    parser.add_argument("--compose-dir", default="/opt/z-bot/engine")
     parser.add_argument("--psql", help="psql command to use instead of docker compose (for testing)")
     parser.add_argument("--out", required=True)
     args = parser.parse_args()
