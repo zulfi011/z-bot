@@ -32,7 +32,8 @@ export function BnbCard({ data, compact = false }: { data: Dashboard; compact?: 
 /** The extra ways in a coin has switched on, for the one-line summary on the Main page. */
 const entriesOn = (coin: CoinMoney) => Object.entries(coin.entries ?? {})
   .filter(([, entry]) => entry.supported && entry.enabled)
-  .map(([name]) => name === "pullback" ? "pullback" : "adds").join(" · ");
+  .map(([name]) => ({ dip: "dip", breakout: "breakout", pullback: "pullback", pyramid: "add-ons" } as Record<string, string>)[name] ?? name)
+  .join(" · ");
 
 export function MoneyCard({ data }: { data: Dashboard }) {
   const { open } = useControls();

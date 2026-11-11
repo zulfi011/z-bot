@@ -15,6 +15,9 @@ updated daily, red months included.
 - **Your keys, your machine.** Attach your own Binance account when you are ready. The bot can trade but never
   withdraw, and every position has its stop-loss parked on Binance itself.
 
+<p align="center"><img src="docs/img/dashboard.gif" alt="The Z-Bot dashboard in shadow mode: setting a pretend starting amount, switching ETH on, the ETH page with what the strategy sees, the price chart, how it buys and sells, and the Attach Binance popup" width="800"></p>
+<p align="center"><sub>A fresh install in shadow mode: pretend money, real prices.</sub></p>
+
 ## Quickstart (5 minutes, no account needed)
 
 You need [Docker](https://docs.docker.com/get-docker/).
