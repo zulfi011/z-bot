@@ -138,7 +138,7 @@ def test_account_mark_values_each_coin_at_its_own_price() -> None:
     assert mark.total_value_usd == D("400") + mark.open_position_value_usd
 
 
-# --------------------------------------------------------------- trend exit (Mode A)
+# --------------------------------------------------------------- trend ride
 
 def trend_config(ema_minutes=960, requires_uptrend=True, stop="4.5") -> ExecutionConfig:
     return ExecutionConfig(
@@ -148,9 +148,9 @@ def trend_config(ema_minutes=960, requires_uptrend=True, stop="4.5") -> Executio
     )
 
 
-def trend_position(mode_a=True) -> Position:
+def trend_position(trend_ride=True) -> Position:
     lot = position()
-    lot.trend_exit_active = mode_a
+    lot.trend_exit_active = trend_ride
     return lot
 
 
@@ -163,7 +163,7 @@ def test_trend_exit_needs_both_the_strategy_and_an_uptrend_entry():
     assert uses_trend_exit(trend_position(False), trend_config(requires_uptrend=False))
 
 
-def test_mode_a_holds_above_the_ema_and_sells_on_the_next_open():
+def test_trend_ride_holds_above_the_ema_and_sells_on_the_next_open():
     lot = trend_position()
     # arms at +1.315% (fill 100 -> 101.315); the arming minute itself never exits
     assert evaluate_exit(lot, candle(0, "100", "102", "99.9", "101.9"), trend_config(), D("101")) is None
@@ -180,27 +180,27 @@ def test_mode_a_holds_above_the_ema_and_sells_on_the_next_open():
     assert (signal.reason, signal.raw_price) == ("trend_exit", D("104.1"))
 
 
-def test_mode_a_ignores_the_giveback_that_would_have_closed_mode_b():
-    # peak 102 after minute 0, so Mode B gives back 30% of (102 - 100) and exits at 101.4
+def test_trend_ride_ignores_the_giveback_that_would_have_closed_trailing():
+    # peak 102 after minute 0, so the trailing stop gives back 30% of (102 - 100) and exits at 101.4
     give_back_would_exit = candle(1, "105", "110", "101", "103")
-    mode_b = position()
-    assert evaluate_exit(mode_b, candle(0, "100", "102", "99.9", "101.9"), trend_config(), None) is None
-    assert evaluate_exit(mode_b, give_back_would_exit, trend_config(), D("90")).reason == "trailing_stop"
-    mode_a = trend_position()
-    assert evaluate_exit(mode_a, candle(0, "100", "102", "99.9", "101.9"), trend_config(), D("90")) is None
-    # same minute, same prices: Mode A stays in because the close is above the line
-    assert evaluate_exit(mode_a, give_back_would_exit, trend_config(), D("90")) is None
+    trailing = position()
+    assert evaluate_exit(trailing, candle(0, "100", "102", "99.9", "101.9"), trend_config(), None) is None
+    assert evaluate_exit(trailing, give_back_would_exit, trend_config(), D("90")).reason == "trailing_stop"
+    trend_ride = trend_position()
+    assert evaluate_exit(trend_ride, candle(0, "100", "102", "99.9", "101.9"), trend_config(), D("90")) is None
+    # same minute, same prices: the trend ride stays in because the close is above the line
+    assert evaluate_exit(trend_ride, give_back_would_exit, trend_config(), D("90")) is None
 
 
-def test_the_protective_stop_still_wins_in_mode_a_before_it_arms():
-    """An unarmed Mode A lot has only its -4.5% stop: the line is ignored until the trail arms."""
+def test_the_protective_stop_still_wins_in_trend_ride_before_it_arms():
+    """An unarmed trend-ride lot has only its -4.5% stop: the line is ignored until the trail arms."""
     lot = trend_position()
     # the high stays under the +1.315% arming level, so this lot has never armed
     signal = evaluate_exit(lot, candle(1, "101", "101.2", "95", "95.5"), trend_config(), D("101"))
     assert signal is not None and signal.reason == "protective_stop"
 
 
-def test_an_armed_mode_a_lot_cannot_finish_below_break_even():
+def test_an_armed_trend_ride_lot_cannot_finish_below_break_even():
     """Once armed the stop is lifted to the fill plus costs, so a round trip ends level, not negative."""
     lot = trend_position()
     assert evaluate_exit(lot, candle(0, "100", "102", "99.9", "101.9"), trend_config(), D("101")) is None
@@ -221,7 +221,7 @@ def test_a_pending_trend_exit_is_not_overridden_by_a_later_stop():
     assert (signal.reason, signal.raw_price) == ("trend_exit", D("101.5"))
 
 
-def test_without_an_ema_a_mode_a_lot_simply_holds():
+def test_without_an_ema_a_trend_ride_lot_simply_holds():
     """A missing trend line must never sell a lot by accident - it just cannot trigger the trend exit."""
     lot = trend_position()
     assert evaluate_exit(lot, candle(0, "100", "102", "99.9", "101.9"), trend_config(), None) is None
@@ -229,7 +229,7 @@ def test_without_an_ema_a_mode_a_lot_simply_holds():
     assert not lot.trend_exit_pending
 
 
-def test_mode_b_is_unchanged_when_the_strategy_has_a_trend_exit():
+def test_trailing_is_unchanged_when_the_strategy_has_a_trend_exit():
     lot = position()
     assert evaluate_exit(lot, candle(0, "100", "102", "99.9", "101.9"), trend_config(), D("101")) is None
     assert lot.peak_price == D("102")

@@ -1,4 +1,4 @@
-"""Turns Mode C breakouts into ordinary signals, so the rest of the bot needs to know nothing new.
+"""Turns quiet-band breakouts into ordinary signals, so the rest of the bot needs to know nothing new.
 
 A consolidation break writes the same two rows a dip touch writes - an episode and a signal - marked with
 `kind: consolidation` in their details. From there the normal machinery takes over: the execution service buys

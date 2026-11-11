@@ -354,7 +354,7 @@ class LiveExecutionService:
             armed_before = row["trailing_active"]
             signal = evaluate_exit(position, candle, coin.config, ema)
             if signal is None and position.trailing_active and not armed_before:
-                # It just armed. A Mode A lot now rides the line, so its stop moves up to break even plus
+                # It just armed. A trend-ride lot now rides the line, so its stop moves up to break even plus
                 # costs - and the order Binance holds has to be moved with it, or the floor only exists here.
                 self._raise_stop_to_break_even(connection, coin, position, row)
             close_request = self._pending_close(connection, position.position_id)
@@ -510,7 +510,7 @@ class LiveExecutionService:
                                (fee_usd if fee_asset == "BNB" else ZERO)),
              "reason": reason, "duration": max(held, 0), "ret": pnl / cost * 100 if cost else ZERO,
              "pnl": money(pnl),
-             # Which way the lot was being held: Mode A rode the trend line, Mode B trailed a giveback.
+             # Which way the lot was being held: riding the trend line, or trailing a giveback.
              "mode": "trend" if uses_trend_exit(position, coin.config.for_source(row["entry_source"]))
                      else "giveback"},
         )
@@ -664,7 +664,7 @@ class LiveExecutionService:
              "qty": quantity(sellable), "cost": money(spent), "fee": money(fee_usd), "asset": fee_asset,
              "fee_bnb": quantity(fee) if fee_asset == "BNB" else ZERO, "order_id": result.exchange_order_id,
              "parent": parent_position_id,
-             # A pyramid add is only ever bought into a climb, so it rides the line (Mode A) - unless its exit
+             # A pyramid add is only ever bought into a climb, so it rides the line - unless its exit
              # belongs to its parent, in which case it has no exit rules of its own at all.
              "trend_exit": coin.config.trend_exit_ema_minutes is not None and stop_price is None
              and (source == PYRAMID or regime == "bullish" or not coin.config.trend_exit_requires_uptrend)},
@@ -694,7 +694,7 @@ class LiveExecutionService:
         return position_id
 
     def _raise_stop_to_break_even(self, connection: Connection, coin: CoinSetup, position: Position, row) -> None:
-        """Move a just-armed Mode A lot's stop up to its fill plus costs, on Binance as well as here.
+        """Move a just-armed trend-ride lot's stop up to its fill plus costs, on Binance as well as here.
 
         Binance holds one stop per lot and the coin is locked behind it, so the old order has to be cancelled
         before the new one can be placed. If the replacement fails the lot is left unprotected on the exchange,
@@ -702,7 +702,7 @@ class LiveExecutionService:
         """
         config = coin.config.for_source(position.entry_source)
         if not uses_trend_exit(position, config):
-            return                                   # Mode B keeps its giveback trail; the floor is not for it
+            return                                   # A trailing-stop lot keeps its giveback trail; the floor is not for it
         floor = position.entry_fill_price * (1 + config.break_even_floor_pct / 100)
         if row["stop_price"] is not None and Decimal(str(row["stop_price"])) >= floor:
             return
@@ -737,7 +737,7 @@ class LiveExecutionService:
                     fill_price: Decimal, entry_source: str = "signal", level: Decimal | None = None) -> None:
         """Park the protective stop on Binance so a crash sells even if this app is offline."""
         # Store the trigger Binance really holds (rounded to its price tick), not the unrounded figure.
-        # A Mode C lot breaks out of a tighter band, so it parks a tighter stop than a dip lot does, and an add
+        # A breakout lot breaks out of a tighter band, so it parks a tighter stop than a dip lot does, and an add
         # that leaves with its parent parks the parent's own level.
         config = coin.config.for_source(entry_source)
         stop_price = self.exchange.stop_trigger(coin.symbol, level if level is not None

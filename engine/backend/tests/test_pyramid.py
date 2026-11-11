@@ -1,7 +1,7 @@
 """The pyramid add-on: the pure rule, then end to end through the database and the execution service.
 
 Proves the wiring: a lot that climbs a step gets another lot added to it, the add knows its parent, it carries its
-own stop and always the trend exit (Mode A), it stops at the maximum, it obeys the blocked hours, it can be
+own stop and always the trend ride, it stops at the maximum, it obeys the blocked hours, it can be
 switched off, and it can be given lots of its own that the core cannot take (and vice versa).
 """
 
@@ -246,7 +246,7 @@ def test_eth_style_adds_keep_running_after_their_parent_leaves(database):
     climb(execution, database, binance, entry, [201, 202, 203])      # one add at +1%, and the parent's trail arms
 
     # A dip that takes the parent's line but stays above the add's own stop (202 fill, stop near 193). The add's
-    # own trail has not armed yet, so Mode A cannot sell it and it keeps running.
+    # own trail has not armed yet, so the trend ride cannot sell it and it keeps running.
     for index, price in enumerate([Decimal("195"), Decimal("195")], start=4):
         binance.price = price
         candle(database, entry + index * MINUTE, price, high=Decimal("202"), low=price)

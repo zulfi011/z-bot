@@ -1,4 +1,4 @@
-"""Mode C: buying a break out of a quiet band.
+"""The quiet-band breakout: buying a break out of a quiet band.
 
 The dip entry needs price to come back down to its average, which in a strong uptrend can take weeks. This
 one needs the opposite: a stretch where ETH goes nowhere. When the last `zone_bars` bars of the chart all sit
@@ -64,7 +64,7 @@ class ConsolidationConfig:
     stop_pct: Decimal
     trail_activation_pct: Decimal
     trail_giveback_pct: Decimal
-    # Mode C obeys the same closed hours as the dip rule; None means it trades around the clock.
+    # The quiet-band breakout obeys the same closed hours as the dip rule; None means it trades around the clock.
     blocked_entry_hours: tuple[int, int] | None = None
 
     def blocked(self, at: datetime) -> bool:

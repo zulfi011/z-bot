@@ -1,4 +1,4 @@
-"""Mode C's rules, on hand-built bars where the right answer is obvious."""
+"""The breakout's rules, on hand-built bars where the right answer is obvious."""
 
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
@@ -96,8 +96,8 @@ def test_a_break_is_bought_only_if_it_holds_through_the_wait():
     assert confirm(breakout, {}) == ("pending", None)      # that minute has not arrived yet
 
 
-def test_the_closed_hours_apply_to_mode_c_too():
-    """Mode C must obey the same 06-12 UTC rule as the dip entry, or the two disagree about when to trade."""
+def test_the_closed_hours_apply_to_breakout_too():
+    """The quiet-band breakout must obey the same 06-12 UTC rule as the dip entry, or the two disagree about when to trade."""
     rule = config(blocked=(6, 12))
     assert rule.blocked(datetime(2026, 1, 1, 6, 0, tzinfo=UTC))
     assert rule.blocked(datetime(2026, 1, 1, 11, 59, tzinfo=UTC))
@@ -112,7 +112,7 @@ def test_too_little_history_is_never_a_signal():
     assert find_breakouts(bars, config()) == []
 
 
-def test_the_eth_strategy_file_describes_mode_c():
+def test_the_eth_strategy_file_describes_breakout():
     import copy
     from tests.test_strategy import ETH_STRATEGY
 
@@ -124,7 +124,7 @@ def test_the_eth_strategy_file_describes_mode_c():
     assert rule.blocked_entry_hours == (6, 12)
 
 
-def test_the_sol_strategy_file_describes_its_own_mode_c():
+def test_the_sol_strategy_file_describes_its_own_breakout():
     """SOL breaks out of a 1-hour chart with no confirmation wait; ETH uses a 2-hour chart and waits 30 minutes."""
     import copy
     from tests.test_strategy import STRATEGY
@@ -149,7 +149,7 @@ def test_a_zero_wait_buys_the_very_next_minute():
     assert entry == breakout.confirm_at + timedelta(minutes=1)
 
 
-def test_btc_has_no_mode_c():
+def test_btc_has_no_breakout():
     """BTC's own grid produced a rule so fragile that one step in any direction lost money, so it gets none."""
     import copy
     from tests.test_strategy import BTC_STRATEGY
@@ -157,7 +157,7 @@ def test_btc_has_no_mode_c():
     assert ConsolidationConfig.from_strategy(copy.deepcopy(BTC_STRATEGY)) is None
 
 
-def test_a_coin_with_no_blocked_hours_trades_mode_c_around_the_clock():
+def test_a_coin_with_no_blocked_hours_trades_breakout_around_the_clock():
     rule = config(blocked=None)
     for hour in (0, 6, 9, 11, 23):
         assert not rule.blocked(datetime(2026, 1, 1, hour, tzinfo=UTC))

@@ -1,7 +1,7 @@
 """The pullback entry: the pure rule, then end to end through the database and the execution service.
 
 The domain tests pin the rule to the research definition. The integration tests prove the wiring: a reclaim in an
-uptrend becomes a confirmed signal and buys a lot from the coin's one set of lots, shared with the dip and Mode C
+uptrend becomes a confirmed signal and buys a lot from the coin's one set of lots, shared with the dip and the quiet-band breakout
 first come first served, and a reclaim outside an uptrend, inside the blocked hours or before the rule was
 switched on never buys. A short line
 (60 minutes, 10-minute dwell) keeps the candle counts small; the full-size rule is checked against the backtest by

@@ -240,13 +240,13 @@ export function PositionCard({ position, data, expanded = true, showCoin = false
     </div>
     {position.trailing_active && position.exit_mode === "trend"
       ? <p className={`position-state ${position.trend_exit_pending ? "warn" : "up"}`}>
-        <span className="mode-chip mode-a">{EXIT.trend.name}</span>
+        <span className="mode-chip exit-ride">{EXIT.trend.name}</span>
         {position.trend_exit_pending
           ? ` Selling next minute — ${coin} closed below the ${n(position.trend_ema_minutes) / 60}-hour trend line.`
           : ` Riding the trend — peak ${price(position.peak_price)}. It keeps running while ${coin} closes above the ${n(position.trend_ema_minutes) / 60}-hour trend line, and its stop has moved up to ${price(position.stop_price)} — break even after fees, so this lot can no longer finish negative.`}
         <Info text={`This lot was bought while the market was in a clean uptrend (7-day above 15-day above 30-day average), so it ignores the ${n(position.trail_giveback_pct)}% give-back rule. It sells at the next minute's open after the first minute that closes below the ${n(position.trend_ema_minutes) / 60}-hour average line, which lets a big move run instead of capping it at about +1%.`} /></p>
       : position.trailing_active
-      ? <p className="position-state up"><span className="mode-chip mode-b">{EXIT.giveback.name}</span> Trailing active — peak {price(position.peak_price)}. It sells if {coin} falls to {price(position.trail_price)} (keeps {keep}% of the peak profit).<Info text={`After ${coin} rises ${n(position.trail_activation_pct)}% above your buy price, a trailing stop follows the highest price. It sells if the price gives back ${n(position.trail_giveback_pct)}% of the best profit reached, locking in the rest.`} /></p>
+      ? <p className="position-state up"><span className="mode-chip exit-trail">{EXIT.giveback.name}</span> Trailing active — peak {price(position.peak_price)}. It sells if {coin} falls to {price(position.trail_price)} (keeps {keep}% of the peak profit).<Info text={`After ${coin} rises ${n(position.trail_activation_pct)}% above your buy price, a trailing stop follows the highest price. It sells if the price gives back ${n(position.trail_giveback_pct)}% of the best profit reached, locking in the rest.`} /></p>
       : <div className="progress-wrap">
         <div className="progress-label"><span>Progress to trailing start</span><b>{pct(position.activation_progress_pct, 0, false)}</b>
           <Info text={`How far ${coin} has moved from your buy price toward +${n(position.trail_activation_pct)}%, where the trailing stop switches on. Until then only the −${n(position.stop_pct)}% stop can close the lot.`} /></div>

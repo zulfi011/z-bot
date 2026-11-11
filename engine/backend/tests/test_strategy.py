@@ -124,7 +124,7 @@ def test_database_url_accepts_common_paste_mistakes(pasted) -> None:
 
 
 def test_eth_strategy_carries_the_trend_exit() -> None:
-    """The deployed ETH file must describe Mode A, or the engine silently falls back to the giveback."""
+    """The deployed ETH file must describe the trend ride, or the engine silently falls back to the giveback."""
     from app.domain.paper_execution import ExecutionConfig
 
     config = ExecutionConfig.from_strategy(copy.deepcopy(ETH_STRATEGY))
@@ -151,7 +151,7 @@ def test_only_the_tested_coins_use_the_trend_exit() -> None:
     """BTC, AAVE and TRX were tested and did not benefit, so their files must not carry it by accident.
 
     AAVE is the interesting one: on paper a trend exit added about $100, but a walk-forward selection test
-    put its honest contribution at $2. It gets Mode C and keeps its giveback exit.
+    put its honest contribution at $2. It gets the quiet-band breakout and keeps its giveback exit.
     """
     from app.domain.paper_execution import ExecutionConfig
 
@@ -159,9 +159,9 @@ def test_only_the_tested_coins_use_the_trend_exit() -> None:
         assert ExecutionConfig.from_strategy(copy.deepcopy(strategy)).trend_exit_ema_minutes is None
 
 
-def test_trx_keeps_its_deployed_exit_but_gains_mode_c() -> None:
+def test_trx_keeps_its_deployed_exit_but_gains_breakout() -> None:
     """Every trend line tested made TRX worse, and an exit retune looked good only in hindsight, so the
-    exit numbers must stay exactly as deployed. Mode C is the whole change."""
+    exit numbers must stay exactly as deployed. The quiet-band breakout is the whole change."""
     from app.domain.consolidation import ConsolidationConfig
     from app.domain.paper_execution import ExecutionConfig
 
@@ -179,7 +179,7 @@ def test_trx_keeps_its_deployed_exit_but_gains_mode_c() -> None:
     assert rule.blocked_entry_hours is None          # TRX trades around the clock
 
 
-def test_aave_keeps_its_giveback_exit_but_gains_mode_c() -> None:
+def test_aave_keeps_its_giveback_exit_but_gains_breakout() -> None:
     from app.domain.consolidation import ConsolidationConfig
     from app.domain.paper_execution import ExecutionConfig
 
@@ -188,7 +188,7 @@ def test_aave_keeps_its_giveback_exit_but_gains_mode_c() -> None:
     assert config.stop_pct == Decimal("4.0")
     assert config.trail_giveback_pct == Decimal("20.0")
     assert config.breakout_stop_pct == Decimal("3.5")
-    # a Mode C lot still exits on the giveback, just with its own numbers
+    # a breakout lot still exits on the giveback, just with its own numbers
     assert config.for_source("breakout").trail_giveback_pct == Decimal("22.0")
 
     rule = ConsolidationConfig.from_strategy(copy.deepcopy(AAVE_STRATEGY))

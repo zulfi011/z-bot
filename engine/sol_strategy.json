@@ -54,7 +54,7 @@
         "protective_stop_pct_from_entry_fill": 4.0,
         "activation_pct_from_entry_fill": 1.283,
         "giveback_of_open_profit_pct": 22.0,
-        "note": "A break comes out of a quiet band rather than a dip, so it carries its own wider stop and its own trail. The trend exit (Mode A) applies to these lots on the same terms as any other."
+        "note": "A break comes out of a quiet band rather than a dip, so it carries its own wider stop and its own trail. The trend ride applies to these lots on the same terms as any other."
       }
     },
     "pyramid_add": {
@@ -64,7 +64,7 @@
       "add_exit": "with_parent",
       "condition": "Any open lot is a parent. While price closes above the 480-minute trend line, add one lot at +0.5% above the parent's fill and a second at +1.0%, in order, at the next minute's open. Blocked hours apply.",
       "exit_note": "An add has no exit of its own: it parks the parent's stop price and is sold in the same minute the parent is. SOL turns quickly, and in the research an add left behind by its parent gave the profit back.",
-      "note": "Adds share the coin's lots with the dip and Mode C, first come first served - there are no reserved slots. Separate add lots were built and then removed: at equal money, bigger shared lots beat them. On or off from the dashboard, and it ships off."
+      "note": "Adds share the coin's lots with the dip and the quiet-band breakout, first come first served - there are no reserved slots. Separate add lots were built and then removed: at equal money, bigger shared lots beat them. On or off from the dashboard, and it ships off."
     }
   },
   "exit": {
@@ -80,7 +80,7 @@
       "description": "The break-even floor. The moment a lot arms - reaches the trail activation - a lot that is being held against the trend line has its protective stop lifted from the -X% level to its own buy price plus the cost of a round trip, and the order parked on Binance is cancelled and re-placed at the new level. A lot that has proved itself and then comes all the way back exits level instead of slightly negative.",
       "level": "entry_fill_price * (1 + break_even_floor_pct / 100)",
       "break_even_floor_pct": "Derived, never hard-coded: (bnb_fee_bps_per_side + slippage_bps_per_side) * 2 / 100 from this file's execution_model. At 7.5bps fee and 2bps slippage that is 0.19%.",
-      "applies_to": "Mode A lots only - the ones opened in a clean uptrend and held against the line. Mode B lots keep the giveback trail and never get a floor.",
+      "applies_to": "Trend-ride lots only - the ones opened in a clean uptrend and held against the line. Trailing-stop lots keep the giveback trail and never get a floor.",
       "requires_arming": "Yes. A lot that never reaches the trail activation keeps only its protective stop. Attaching the floor earlier - as soon as a lot has merely traded above its costs - was tested and is far worse: it turns a normal wobble on the way up into an exit (walk-forward +33.8% against +82.0% of the money, better in 0 of 6 windows).",
       "exit_reason": "break_even",
       "never_caps_a_winner": "A lot that trends does not return to its own buy price, so the floor is simply never reached and the line takes the lot out far above it.",

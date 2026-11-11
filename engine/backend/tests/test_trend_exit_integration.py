@@ -1,7 +1,7 @@
-"""ETH's Mode A exit, end to end through LiveExecutionService.
+"""ETH's trend-ride exit, end to end through LiveExecutionService.
 
 The domain tests prove the rule; this proves the wiring around it — that the trend line is computed from
-stored candles, that a lot opened in a clean uptrend is marked Mode A, that it ignores the giveback level
+stored candles, that a lot opened in a clean uptrend is marked as a trend ride, that it ignores the giveback level
 that would have closed it, and that the first close below the line sells at the NEXT minute's open. It runs
 against a real throwaway database with Binance faked at the HTTP layer, like the other integration tests.
 """
@@ -214,18 +214,18 @@ def test_a_lot_opened_in_an_uptrend_rides_the_trend_line(database):
     entry_time = open_a_lot(world)
 
     position = rows(engine, "SELECT * FROM paper_positions")[0]
-    assert position["trend_exit_active"] is True, "opened in a clean uptrend, so it must be a Mode A lot"
+    assert position["trend_exit_active"] is True, "opened in a clean uptrend, so it must be a trend-ride lot"
     assert position["trailing_active"] is True and position["peak_price"] == Decimal("210.0000000000")
     # It armed in the same minute it was bought, so its stop has already been lifted from -4.5% ($191) to
     # break even plus costs - the lot can no longer come back and finish negative.
     assert position["stop_price"] == Decimal("200.3800000000")
 
-    # Mode B would give back 30% of the $10 gain and sell at 207. Mode A holds: 205 is still above the line.
+    # The trailing stop would give back 30% of the $10 gain and sell at 207. The trend ride holds: 205 is still above the line.
     binance.price = Decimal("205")
     candle(engine, entry_time + 4 * MINUTE, Decimal("205"), high=Decimal("210"), low=Decimal("205"))
     execution.synchronize(SYMBOL)
     assert rows(engine, "SELECT status FROM paper_positions")[0]["status"] == "open", \
-        "Mode A must ignore the giveback level"
+        "The trend ride must ignore the giveback level"
 
     # Coming back to the entry now meets the break-even floor before it ever reaches the line. In live mode the
     # order Binance holds is the one that sells, so the bot leaves the lot alone and waits for that fill.
@@ -237,7 +237,7 @@ def test_a_lot_opened_in_an_uptrend_rides_the_trend_line(database):
 
 
 def test_the_break_even_floor_is_parked_on_binance_when_the_lot_arms(database):
-    """The other half of Mode A: arming lifts the stop to break even, on Binance as well as in the database."""
+    """The other half of the trend ride: arming lifts the stop to break even, on Binance as well as in the database."""
     world = build_world(database, uptrend=True)
     execution, binance, engine = world
     open_a_lot(world)
@@ -274,7 +274,7 @@ def test_a_lot_opened_outside_an_uptrend_keeps_the_giveback_exit(database):
     entry_time = open_a_lot(world)
 
     position = rows(engine, "SELECT * FROM paper_positions")[0]
-    assert position["trend_exit_active"] is False, "no clean uptrend at the buy, so this is a Mode B lot"
+    assert position["trend_exit_active"] is False, "no clean uptrend at the buy, so this is a trailing-stop lot"
 
     # 30% of the $10 peak gain gives back to 207; a minute through that level sells at once.
     binance.price = Decimal("205")
@@ -306,7 +306,7 @@ def test_the_trend_line_is_rebuilt_from_stored_candles_after_a_restart(database)
     assert Decimal(state[SYMBOL]["ema"]) > 0, "the trend line must be warmed up again from stored candles"
 
 
-# ------------------------------------------------------------------ Mode C, end to end
+# ------------------------------------------------------------------ the quiet-band breakout, end to end
 
 def quiet_then_break(engine, start, chart=120, bars=12):
     """Twelve flat 2-hour bars around $200, then one that closes well above them."""
@@ -322,7 +322,7 @@ def quiet_then_break(engine, start, chart=120, bars=12):
 
 
 def test_a_consolidation_break_becomes_a_signal_and_then_a_lot(database):
-    """The whole Mode C path: quiet bars, a break, the wait, the buy - with Mode C's own tighter stop."""
+    """The whole quiet-band breakout path: quiet bars, a break, the wait, the buy - with the breakout's own tighter stop."""
     from app.services.consolidation_service import ConsolidationService
     world = build_world(database, uptrend=False)
     execution, binance, engine = world
@@ -357,7 +357,7 @@ def test_a_consolidation_break_becomes_a_signal_and_then_a_lot(database):
     execution.synchronize(SYMBOL)
     position = rows(engine, "SELECT * FROM paper_positions")[0]
     assert position["entry_source"] == "breakout"
-    # Mode C's own -3.5% stop (209 * 0.965, rounded down to the price tick), not the dip rule's -4.5%
+    # The breakout's own -3.5% stop (209 * 0.965, rounded down to the price tick), not the dip rule's -4.5%
     assert position["stop_price"] == Decimal("201.6700000000")
     assert position["stop_price"] > Decimal("209") * Decimal("0.955")
 
@@ -388,8 +388,8 @@ def test_a_break_that_falls_back_never_buys(database):
     assert rows(engine, "SELECT * FROM paper_positions") == []
 
 
-def test_mode_c_lots_exit_on_their_own_numbers(database):
-    """A Mode C lot arms at +1.283% and gives back 22%, where a dip lot arms at +1.315% and gives back 30%."""
+def test_breakout_lots_exit_on_their_own_numbers(database):
+    """A breakout lot arms at +1.283% and gives back 22%, where a dip lot arms at +1.315% and gives back 30%."""
     from app.domain.paper_execution import ExecutionConfig
 
     config = ExecutionConfig.from_strategy(load_strategies()[SYMBOL])
@@ -397,5 +397,5 @@ def test_mode_c_lots_exit_on_their_own_numbers(database):
     breakout = config.for_source("breakout")
     assert (dip.stop_pct, dip.trail_activation_pct, dip.trail_giveback_pct) == (Decimal("4.5"), Decimal("1.315"), Decimal("30.0"))
     assert (breakout.stop_pct, breakout.trail_activation_pct, breakout.trail_giveback_pct) == (Decimal("3.5"), Decimal("1.283"), Decimal("22.0"))
-    # the trend exit is shared: a Mode C lot bought in an uptrend rides the line like any other
+    # the trend exit is shared: a breakout lot bought in an uptrend rides the line like any other
     assert breakout.trend_exit_ema_minutes == 960

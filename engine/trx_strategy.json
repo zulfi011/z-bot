@@ -50,7 +50,7 @@
       "maximum_zone_pct": 2.0,
       "confirmation_wait_minutes": 3,
       "condition": "The 40 bars before the current one sit inside a band no wider than 2% (highest high / lowest low - 1). The first bar to close above that band's top is the break; 3 minutes later the 1-minute close must still be above the top, and the buy lands on the next minute's open. Only the first break of each quiet stretch counts.",
-      "market_filter": "TRX has no blocked hours and Mode C does not use the dip rule's 30-day trend filter, so a break is taken whenever one happens. Requiring an uptrend first screens out exactly the breaks that start one.",
+      "market_filter": "TRX has no blocked hours and the quiet-band breakout does not use the dip rule's 30-day trend filter, so a break is taken whenever one happens. Requiring an uptrend first screens out exactly the breaks that start one.",
       "exit": {
         "protective_stop_pct_from_entry_fill": 3.0,
         "activation_pct_from_entry_fill": 1.283,

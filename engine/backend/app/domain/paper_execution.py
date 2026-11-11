@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 
 
-# How a lot was opened. "signal" is the dip rule, "breakout" is Mode C, "manual" is a button press; "pullback"
+# How a lot was opened. "signal" is the dip rule, "breakout" is the quiet-band breakout, "manual" is a button press; "pullback"
 # and "pyramid" are the two extra ways in, each of which can be switched on or off. Every way in draws from the
 # SAME set of lots, first come first served - there are no reserved lots.
 DIP = "dip"
@@ -39,7 +39,7 @@ class ExecutionConfig:
     # `trend_exit_ema_minutes` minutes instead of giving back a share of the open profit.
     trend_exit_ema_minutes: int | None = None
     trend_exit_requires_uptrend: bool = True
-    # Mode C lots break out of a tighter band than a dip buys into, so they carry their own stop and trail.
+    # Breakout lots break out of a tighter band than a dip buys into, so they carry their own stop and trail.
     breakout_stop_pct: Decimal | None = None
     breakout_activation_pct: Decimal | None = None
     breakout_giveback_pct: Decimal | None = None
@@ -71,14 +71,14 @@ class ExecutionConfig:
     def break_even_floor_pct(self) -> Decimal:
         """How far above the fill a lot must sell to come out level: both sides' fee and slippage.
 
-        Once a Mode A lot arms, its stop is lifted to this level, so a lot that has already proved itself and
+        Once a trend-ride lot arms, its stop is lifted to this level, so a lot that has already proved itself and
         then comes all the way back cannot finish under water. It is derived from the fee schedule rather than
         chosen, so there is no number here to tune.
         """
         return (self.bnb_fee_bps + self.slippage_bps) * 2 / HUNDRED
 
     def for_source(self, entry_source: str) -> "ExecutionConfig":
-        """The exit numbers this lot lives by. A Mode C lot uses its own; everything else uses the dip's."""
+        """The exit numbers this lot lives by. A breakout lot uses its own; everything else uses the dip's."""
         if entry_source != BREAKOUT or self.breakout_stop_pct is None:
             return self
         return replace(self, stop_pct=self.breakout_stop_pct,
@@ -230,7 +230,7 @@ class ExitFill:
 
 
 def uses_trend_exit(position: Position, config: ExecutionConfig) -> bool:
-    """Mode A: hold to the EMA. Only for lots opened in a clean uptrend, when the strategy asks for it."""
+    """The trend ride: hold to the EMA. Only for lots opened in a clean uptrend, when the strategy asks for it."""
     if config.trend_exit_ema_minutes is None:
         return False
     return position.trend_exit_active or not config.trend_exit_requires_uptrend
@@ -244,7 +244,7 @@ def evaluate_exit(position: Position, candle: Candle, config: ExecutionConfig,
     the trail uses the peak known before the current minute. Gaps fill at the
     worse of the level and the minute's open.
 
-    Once the trail has armed, a lot on the trend exit (Mode A) ignores the giveback and holds while
+    Once the trail has armed, a trend-ride lot ignores the giveback and holds while
     minutes keep closing above `ema`. The first close below it sells at the NEXT minute's open, which
     is why the sale is deferred by one minute rather than filled inside the closing minute.
     """

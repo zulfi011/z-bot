@@ -1,4 +1,4 @@
-"""The trend line used by the Mode A exit: an exponential moving average of 1-minute closes.
+"""The trend line used by the trend-ride exit: an exponential moving average of 1-minute closes.
 
 Same definition as the research grid (pandas `ewm(span=N, adjust=False)`):
 

@@ -66,7 +66,7 @@
       "giveback_of_open_profit_pct": 20.0,
       "activation_candle_can_trigger_trail": false,
       "formula": "entry_fill + 0.80 * (prior_peak - entry_fill)",
-      "note": "The arm was raised from +1.276% to +1.75% in September 2026. It applies to DIP lots only - a Mode C lot keeps its own +1.283% arm, where the later arm was measured to do nothing."
+      "note": "The arm was raised from +1.276% to +1.75% in September 2026. It applies to DIP lots only - a breakout lot keeps its own +1.283% arm, where the later arm was measured to do nothing."
     },
     "same_candle_activation_and_stop": "stop_wins",
     "gap_fill": "min(level, candle_open)"

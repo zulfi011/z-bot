@@ -4,7 +4,7 @@ A reclaim inside an uptrend writes the same two rows a dip touch writes - an epi
 `kind: pullback` in their details, already confirmed with its entry minute. The execution service buys it into a
 pullback lot, never a core one.
 
-The rule needs a 24-hour line and a running count of minutes below it, so unlike Mode C it is not recomputed from
+The rule needs a 24-hour line and a running count of minutes below it, so unlike the quiet-band breakout it is not recomputed from
 scratch every minute: the line and the count live in `engine_state` and advance one stored minute at a time. When
 that state is missing or too far behind the candles, it is warmed up again from stored candles - 20 spans of the
 line, the same warm-up the parity check (`stage2_backtesting/scripts/verify_pullback_parity.py`) proved exact.

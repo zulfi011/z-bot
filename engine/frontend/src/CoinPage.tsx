@@ -232,7 +232,7 @@ function HowItSells({ coin }: { coin: CoinView }) {
     info={`Every lot has a stop-loss from the moment it is bought. Profit is taken ${hours ? "with a trailing stop, or — in a clean uptrend — by riding the trend line" : "with a trailing stop"}. The way out is fixed when the lot opens.`}>
     <div className="sell-next">
       <span>Next lot</span>
-      <span className={`mode-chip ${riding ? "mode-a" : "mode-b"}`} title={exit.tip}>{exit.name}</span>
+      <span className={`mode-chip ${riding ? "exit-ride" : "exit-trail"}`} title={exit.tip}>{exit.name}</span>
       <small>{!hours ? `${name} always uses the trailing stop` : riding ? "clean uptrend" : "trend not clean, so the ordinary stop"}</small>
     </div>
     <ol className="sell-ladder">

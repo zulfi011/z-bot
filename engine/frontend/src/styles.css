@@ -141,16 +141,8 @@ button.link { border: 0; background: none; color: var(--accent); padding: 4px; f
 .position-state.warn { color: var(--warn); }
 .mode-chip { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .02em; padding: 2px 8px;
   border-radius: 999px; margin-right: 6px; }
-.mode-chip.mode-a, .mode-now.mode-a .mode-chip { color: var(--trend); background: color-mix(in srgb, var(--trend) 18%, transparent); }
-.mode-chip.mode-b, .mode-now.mode-b .mode-chip { color: var(--muted); background: color-mix(in srgb, var(--muted) 16%, transparent); }
-
-/* "How a win would be taken": one glance should say which mode is live right now. */
-.exit-mode .mode-now { display: flex; gap: 12px; align-items: flex-start; padding: 12px; border-radius: 12px;
-  background: var(--panel-2); border: 1px solid var(--line); }
-.exit-mode .mode-now.mode-a { border-color: color-mix(in srgb, var(--trend) 45%, var(--line)); }
-.exit-mode .mode-now .mode-chip { margin: 2px 0 0; flex: none; }
-.exit-mode .mode-now b { display: block; font-size: 14px; }
-.exit-mode .mode-now small { display: block; color: var(--muted); font-size: 12.5px; line-height: 1.5; margin-top: 3px; }
+.mode-chip.exit-ride { color: var(--trend); background: color-mix(in srgb, var(--trend) 18%, transparent); }
+.mode-chip.exit-trail { color: var(--muted); background: color-mix(in srgb, var(--muted) 16%, transparent); }
 .mode-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin: 12px 0 0; }
 .mode-facts div { background: var(--panel-2); border-radius: 12px; padding: 9px 11px; }
 .mode-facts dt { font-size: 11.5px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
@@ -196,9 +188,9 @@ button.link { border: 0; background: none; color: var(--accent); padding: 4px; f
 .zone-band { fill: var(--zone); }
 .price-line { fill: none; stroke: var(--text); stroke-width: 2; vector-effect: non-scaling-stroke; }
 .average-line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-dasharray: 6 5; vector-effect: non-scaling-stroke; }
-/* The Mode A trend line: solid and warm, so it reads as "the line the lot is held against", not another average. */
+/* The trend-ride line: solid and warm, so it reads as "the line the lot is held against", not another average. */
 .trend-line { fill: none; stroke: var(--trend); stroke-width: 2.2; vector-effect: non-scaling-stroke; opacity: .9; }
-/* Mode C: the stretches where price really was going nowhere. Boxed, not a smear, so each one reads separately. */
+/* The quiet-band breakout: the stretches where price really was going nowhere. Boxed, not a smear, so each one reads separately. */
 .quiet-band { fill: color-mix(in srgb, var(--quiet) 16%, transparent); stroke: var(--quiet); stroke-width: 1;
   stroke-dasharray: 4 3; vector-effect: non-scaling-stroke; }
 .candle line { stroke-width: 1; vector-effect: non-scaling-stroke; }
@@ -314,13 +306,6 @@ button.link { border: 0; background: none; color: var(--accent); padding: 4px; f
 .trade-close { stroke-width: 2; stroke-dasharray: 6 5; opacity: .85; }
 .trade-trail { stroke-width: 5; stroke-linecap: round; }
 .chart-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; margin-top: 8px; }
-.trade-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; font-weight: 600; }
-.trade-legend span { display: inline-flex; align-items: center; gap: 5px; }
-.trade-legend i { width: 12px; height: 12px; border-radius: 3px; }
-.trade-legend small { font-weight: 500; color: var(--muted); } .trade-legend small.up { color: var(--up); } .trade-legend small.down { color: var(--down); }
-.trade-legend em { font-style: normal; font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 999px; }
-.trade-legend em.mode-a { color: var(--trend); background: color-mix(in srgb, var(--trend) 16%, transparent); }
-.trade-legend em.mode-b { color: var(--muted); background: color-mix(in srgb, var(--muted) 14%, transparent); }
 .chart-foot .legend { margin-top: 0; }
 .chart-key { margin: 6px 0 0; font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .chart-key span { display: inline-block; }
@@ -432,7 +417,6 @@ button.link { border: 0; background: none; color: var(--accent); padding: 4px; f
 .src-manual { --src: var(--muted); } .src-pyramid { --src: var(--warn); }
 .src-swatch { display: inline-grid; place-items: center; min-width: 22px; height: 16px; padding: 0 5px; border-radius: 999px;
   font: 700 10px/1 system-ui, sans-serif; font-style: normal; color: var(--panel); background: var(--src); }
-.trade-legend i.src-swatch { width: auto; height: 16px; border-radius: 999px; }
 .tag.source { color: var(--src); border-color: color-mix(in srgb, var(--src) 55%, transparent);
   background: color-mix(in srgb, var(--src) 10%, transparent); }
 

@@ -623,10 +623,10 @@ def _position_view(row: dict, config: ExecutionConfig, mark: Decimal | None,
     stop = row.get("stop_price") or fill * (1 - config.stop_pct / 100)
     activation = fill * (1 + config.trail_activation_pct / 100)
     peak = row["peak_price"] or fill
-    mode_a = bool(row.get("trend_exit_active")) and config.trend_exit_ema_minutes is not None
-    # A Mode A lot has no giveback level: it is held until a minute closes below the trend line.
+    trend_ride = bool(row.get("trend_exit_active")) and config.trend_exit_ema_minutes is not None
+    # A trend-ride lot has no giveback level: it is held until a minute closes below the trend line.
     trail = (fill + (peak - fill) * (1 - config.trail_giveback_pct / 100)
-             if row["trailing_active"] and not mode_a else None)
+             if row["trailing_active"] and not trend_ride else None)
     value = row["quantity"] * mark if mark else None
     cost = row["allocation_usd"] + (row["entry_fee_usd"] if row["entry_fee_asset"] == "BNB" else ZERO)
     return {
@@ -634,9 +634,9 @@ def _position_view(row: dict, config: ExecutionConfig, mark: Decimal | None,
         "unrealized_pnl_usd": value - cost if value is not None else None,
         "unrealized_pct": (value / cost - 1) * 100 if value is not None and cost else None,
         "stop_price": stop, "activation_price": activation, "trail_price": trail,
-        "exit_mode": "trend" if mode_a else "giveback",
+        "exit_mode": "trend" if trend_ride else "giveback",
         "trend_exit_pending": bool(row.get("trend_exit_pending")),
-        "trend_ema_minutes": config.trend_exit_ema_minutes if mode_a else None,
+        "trend_ema_minutes": config.trend_exit_ema_minutes if trend_ride else None,
         "stop_pct": config.stop_pct, "trail_activation_pct": config.trail_activation_pct,
         "trail_giveback_pct": config.trail_giveback_pct,
         "distance_to_stop_pct": (mark / stop - 1) * 100 if mark else None,
@@ -717,7 +717,7 @@ def _consolidation_band(connection, symbol: str, chart: list[dict], rule: Consol
 
 def _consolidation_view(connection, symbol: str, strategy_id: str, rule: ConsolidationConfig | None,
                         mark) -> dict | None:
-    """Mode C right now: the band being watched, how quiet it is, and any break waiting out its confirmation."""
+    """The quiet-band breakout right now: the band being watched, how quiet it is, and any break waiting out its confirmation."""
     if rule is None:
         return None
     stored = connection.execute(
@@ -738,7 +738,7 @@ def _consolidation_view(connection, symbol: str, strategy_id: str, rule: Consoli
         "chart_minutes": rule.chart_minutes, "zone_bars": rule.zone_bars,
         "zone_hours": rule.chart_minutes * rule.zone_bars / 60,
         "maximum_zone_pct": rule.maximum_zone_pct, "confirmation_wait_minutes": rule.confirmation_wait_minutes,
-        # Mode C's own exit numbers: on AAVE the dip now arms later than a break does, so the page says both.
+        # The breakout's own exit numbers: on AAVE the dip now arms later than a break does, so the page says both.
         "stop_pct": rule.stop_pct, "trail_activation_pct": rule.trail_activation_pct,
         "trail_giveback_pct": rule.trail_giveback_pct,
         "quiet": quiet, "zone_top": top, "zone_bottom": bottom, "zone_width_pct": width,

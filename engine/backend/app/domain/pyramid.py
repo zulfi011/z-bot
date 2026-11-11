@@ -9,7 +9,7 @@ add-on buys more lots at fixed steps above the parent's fill:
 
 How an add leaves is set per coin, because the coins differ:
 
-  "own"          the add is its own lot: its own stop from its own fill, and always the trend exit (Mode A).
+  "own"          the add is its own lot: its own stop from its own fill, and always the trend ride.
                  It was bought in a climb, so it is held against the line; if the parent sells first it keeps
                  running. ETH wants this - its money is in long trends.
   "with_parent"  the add has no exit of its own: it is sold the moment its parent is, at the same price, and it
@@ -34,7 +34,7 @@ HUNDRED = Decimal("100")
 class PyramidConfig:
     step_pct: Decimal
     maximum_adds: int
-    add_exit: str = "own"                    # "own" (its own Mode A exit) or "with_parent"
+    add_exit: str = "own"                    # "own" (its own trend-ride exit) or "with_parent"
     # Shared with the other ways in: the hours the strategy refuses to open lots in.
     blocked_entry_hours: tuple[int, int] | None = None
 

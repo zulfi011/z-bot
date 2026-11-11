@@ -22,7 +22,7 @@ flowchart LR
 
 - `worker`: backfills and streams closed 1-minute candles, runs one signal engine per coin (SOL 3m/12-day,
   ETH 5m/7-day, BTC 5m/5-day with a close-above-30-day-average confirmation, AAVE 3m/10-day, TRX 1m/12-day with
-  that confirmation capped at 10% above the average), the Mode C break finder for the coins that have it and ETH's
+  that confirmation capped at 10% above the average), the quiet-band break finder for the coins that have it and ETH's
   pullback entry (`pullback_service.py`, which keeps its 24-hour line in `engine_state` and re-warms it from stored
   candles), then runs the live execution engine per coin - which also decides the pyramid adds, since those depend
   on open lots rather than on candles alone - then the health checks. It re-reads the trading mode every cycle,

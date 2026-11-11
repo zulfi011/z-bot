@@ -1,6 +1,6 @@
 """The pullback entry: buying the end of a short dip inside an uptrend.
 
-The dip entry needs price to come back to its 7-day average, and Mode C needs a quiet band. In a strong uptrend
+The dip entry needs price to come back to its 7-day average, and the quiet-band breakout needs a quiet band. In a strong uptrend
 neither happens: the price runs far above the average in a wide range, and the core sits idle. This third way in
 buys the pauses of that climb instead:
 

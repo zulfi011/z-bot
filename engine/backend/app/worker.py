@@ -116,7 +116,7 @@ def main() -> None:
     repository = CandleRepository(engine)
     signal_repository = SignalRepository(engine)
     signals = {symbol: SignalService(signal_repository, strategy) for symbol, strategy in strategies.items()}
-    # Mode C runs beside the dip rule and writes the same kind of signal, for the coins whose strategy asks for it.
+    # The quiet-band breakout runs beside the dip rule and writes the same kind of signal, for the coins whose strategy asks for it.
     breakouts = {symbol: service for symbol, service in
                  ((symbol, ConsolidationService(engine, strategy)) for symbol, strategy in strategies.items())
                  if service.enabled}
@@ -192,7 +192,7 @@ def main() -> None:
                     continue
                 if candle.open_time.minute % service.timeframe_minutes == service.timeframe_minutes - 1:
                     service.synchronize()
-                # Mode C is checked every minute: its wait ends on a particular minute, and the buy is the one
+                # The quiet-band breakout is checked every minute: its wait ends on a particular minute, and the buy is the one
                 # after it, so the signal has to be settled before the account advances past it.
                 if candle.symbol in breakouts:
                     breakouts[candle.symbol].synchronize()
