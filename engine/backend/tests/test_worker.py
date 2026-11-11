@@ -6,7 +6,7 @@ from app.worker import sync_account
 
 def test_account_failure_still_runs_health_checks_and_keeps_the_worker_alive():
     execution, monitoring = MagicMock(), MagicMock()
-    execution.synchronize.side_effect = RuntimeError("Paper recovery validation failed: example")
+    execution.synchronize.side_effect = RuntimeError("Recovery validation failed: example")
     assert sync_account(execution, monitoring, logging.getLogger("test")) is None
     monitoring.synchronize.assert_called_once()
 

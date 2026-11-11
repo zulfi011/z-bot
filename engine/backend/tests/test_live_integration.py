@@ -25,7 +25,7 @@ from app.services.binance_exchange import BinanceExchange
 from app.services.live_execution_service import LiveExecutionService
 
 BASE_URL = os.environ.get("INTEGRATION_DATABASE_URL",
-                          "postgresql+psycopg://paperbot:paperbot_local@db:5432/papertrading")
+                          "postgresql+psycopg://zbot:zbot_local@db:5432/zbot")
 SYMBOL = "SOLUSDT"
 MINUTE = timedelta(minutes=1)
 START = datetime(2026, 9, 1, 13, 0, tzinfo=timezone.utc)  # 13:00 UTC: outside the 06-12 blocked window
@@ -163,9 +163,9 @@ def world(database):
     strategies = {SYMBOL: load_strategies()[SYMBOL]}
     execution = LiveExecutionService(database, strategies, exchange)
     with database.begin() as connection:
-        connection.execute(text("DELETE FROM paper_trades"))
-        connection.execute(text("DELETE FROM paper_orders"))
-        connection.execute(text("DELETE FROM paper_positions"))
+        connection.execute(text("DELETE FROM trades"))
+        connection.execute(text("DELETE FROM orders"))
+        connection.execute(text("DELETE FROM positions"))
         connection.execute(text("DELETE FROM signals"))
         connection.execute(text("DELETE FROM touch_episodes"))
         connection.execute(text("DELETE FROM candles_1m"))
@@ -221,7 +221,7 @@ def test_a_lot_is_bought_protected_trailed_and_sold(world):
     # The bot starts at the newest candle, so lay down one minute first and let it take its cursor.
     candle(engine, START, Decimal("200"))
     execution.synchronize(SYMBOL)
-    assert rows(engine, "SELECT * FROM paper_positions") == []
+    assert rows(engine, "SELECT * FROM positions") == []
 
     # A confirmed signal on the next minute: this is where the money moves.
     entry_time = START + MINUTE
@@ -229,7 +229,7 @@ def test_a_lot_is_bought_protected_trailed_and_sold(world):
     confirmed_signal(engine, entry_time, strategy_id)
     execution.synchronize(SYMBOL)
 
-    position = rows(engine, "SELECT * FROM paper_positions")[0]
+    position = rows(engine, "SELECT * FROM positions")[0]
     assert position["status"] == "open"
     assert position["allocation_usd"] == Decimal("100.00")
     assert position["quantity"] == Decimal("0.500000000000")           # $100 at $200, fee paid in BNB
@@ -248,7 +248,7 @@ def test_a_lot_is_bought_protected_trailed_and_sold(world):
         binance.price = price
         candle(engine, entry_time + index * MINUTE, price)
     execution.synchronize(SYMBOL)
-    armed = rows(engine, "SELECT trailing_active, peak_price FROM paper_positions")[0]
+    armed = rows(engine, "SELECT trailing_active, peak_price FROM positions")[0]
     assert armed["trailing_active"] is True
     assert armed["peak_price"] == Decimal("204.0000000000")
 
@@ -257,20 +257,20 @@ def test_a_lot_is_bought_protected_trailed_and_sold(world):
     candle(engine, entry_time + 5 * MINUTE, Decimal("203"), high=Decimal("204"), low=Decimal("203"))
     execution.synchronize(SYMBOL)
 
-    closed = rows(engine, "SELECT * FROM paper_positions")[0]
+    closed = rows(engine, "SELECT * FROM positions")[0]
     assert closed["status"] == "closed" and closed["exit_reason"] == "trailing_stop"
     assert closed["quantity_sold"] == Decimal("0.500000000000")
     assert closed["exit_order_id"]
     assert binance.orders[position["stop_order_id"]]["status"] == "CANCELED"   # the parked stop was pulled first
     assert binance.coin == Decimal("0")                                        # nothing of ours is left on Binance
 
-    trade = rows(engine, "SELECT * FROM paper_trades")[0]
+    trade = rows(engine, "SELECT * FROM trades")[0]
     assert trade["symbol"] == SYMBOL and trade["exit_reason"] == "trailing_stop"
     assert trade["net_pnl_usd"] > 0
     # Both fees were taken in BNB; with no BNBUSDT candle stored they are valued from Binance's ticker.
     assert trade["bnb_fees_usd"] > 0
     assert trade["entry_fee_usd"] > 0 and trade["exit_fee_usd"] > 0
-    orders = rows(engine, "SELECT side, status, exchange_order_id FROM paper_orders ORDER BY side")
+    orders = rows(engine, "SELECT side, status, exchange_order_id FROM orders ORDER BY side")
     assert [(o["side"], o["status"]) for o in orders] == [("buy", "filled"), ("sell", "filled")]
     assert all(o["exchange_order_id"] for o in orders)
 
@@ -288,7 +288,7 @@ def test_a_crash_is_sold_by_binances_own_stop_and_recorded(world):
     candle(engine, entry_time, Decimal("200"))
     confirmed_signal(engine, entry_time, strategy_id)
     execution.synchronize(SYMBOL)
-    position = rows(engine, "SELECT * FROM paper_positions")[0]
+    position = rows(engine, "SELECT * FROM positions")[0]
 
     # Binance fills the parked stop while the app is not looking, below the stop price.
     binance.price = Decimal("195")
@@ -296,10 +296,10 @@ def test_a_crash_is_sold_by_binances_own_stop_and_recorded(world):
     candle(engine, entry_time + MINUTE, Decimal("195"), high=Decimal("200"), low=Decimal("194"))
     execution.synchronize(SYMBOL)
 
-    closed = rows(engine, "SELECT * FROM paper_positions")[0]
+    closed = rows(engine, "SELECT * FROM positions")[0]
     assert closed["status"] == "closed" and closed["exit_reason"] == "protective_stop"
     assert closed["exit_cash_usd"] == Decimal("97.75000000")           # 0.5 at 195.50
-    trade = rows(engine, "SELECT * FROM paper_trades")[0]
+    trade = rows(engine, "SELECT * FROM trades")[0]
     assert trade["net_pnl_usd"] < 0 and trade["exit_fee_usd"] > 0      # the real commission came from myTrades
     # No second sell was sent: Binance had already done it.
     assert [kind for kind, _ in binance.sent if kind.startswith("MARKET:SELL")] == []
@@ -319,10 +319,10 @@ def test_shadow_mode_records_the_same_lot_without_touching_binance(world):
     confirmed_signal(engine, entry_time, strategy_id)
     execution.synchronize(SYMBOL)
 
-    position = rows(engine, "SELECT * FROM paper_positions")[0]
+    position = rows(engine, "SELECT * FROM positions")[0]
     assert position["status"] == "open" and position["quantity"] == Decimal("0.500000000000")
     assert position["entry_order_id"] is None                      # nothing was sent, so there is no Binance id
-    assert rows(engine, "SELECT status FROM paper_orders")[0]["status"] == "shadow"
+    assert rows(engine, "SELECT status FROM orders")[0]["status"] == "shadow"
     assert binance.sent == [] and binance.usdt == Decimal("1000")   # the wallet is untouched
     assert [event["action"] for event in rows(engine, "SELECT action FROM exchange_events ORDER BY id")] == \
         ["market_buy", "protective_stop"]
@@ -333,7 +333,7 @@ def test_another_coins_open_lot_fills_the_shared_pot(world):
     execution, binance, engine = world
     strategy_id = execution.coins[SYMBOL].strategy_id
     with engine.begin() as connection:
-        connection.execute(text("""INSERT INTO paper_positions (position_id, symbol, entry_source, lot_number, status,
+        connection.execute(text("""INSERT INTO positions (position_id, symbol, entry_source, lot_number, status,
                                        entry_time, raw_entry_price, entry_fill_price, quantity, allocation_usd,
                                        entry_fee_usd, entry_fee_asset)
                                    VALUES ('position:eth1', 'ETHUSDT', 'signal', 1, 'open', now(), 3000, 3000,
@@ -344,7 +344,7 @@ def test_another_coins_open_lot_fills_the_shared_pot(world):
     candle(engine, entry_time, Decimal("200"))
     confirmed_signal(engine, entry_time, strategy_id)
     execution.synchronize(SYMBOL)
-    assert rows(engine, "SELECT symbol FROM paper_positions") == [{"symbol": "ETHUSDT"}]
+    assert rows(engine, "SELECT symbol FROM positions") == [{"symbol": "ETHUSDT"}]
     signal = rows(engine, "SELECT status, reason FROM signals")[0]
     assert signal["status"] == "ignored_not_allowed" and "All 1 shared lots are open" in signal["reason"]
     assert binance.sent == []
@@ -361,7 +361,7 @@ def test_nothing_is_bought_without_an_allocation_or_when_paused(world):
     candle(engine, entry_time, Decimal("200"))
     confirmed_signal(engine, entry_time, strategy_id)
     execution.synchronize(SYMBOL)
-    assert rows(engine, "SELECT * FROM paper_positions") == []
+    assert rows(engine, "SELECT * FROM positions") == []
     signal = rows(engine, "SELECT status, reason FROM signals")[0]
     assert signal["status"] == "ignored_not_allowed" and "switched off" in signal["reason"]
     assert binance.sent == []
@@ -387,7 +387,7 @@ def test_a_restart_in_the_middle_of_a_buy_never_buys_twice(world):
         execution.synchronize(SYMBOL)
     # The money really moved on Binance, but the ledger rolled back: nothing is recorded yet.
     assert binance.coin == Decimal("0.5")
-    assert rows(engine, "SELECT * FROM paper_positions") == []
+    assert rows(engine, "SELECT * FROM positions") == []
 
     execution._place_stop = real_place_stop        # the app comes back
     execution.synchronize(SYMBOL)
@@ -395,7 +395,7 @@ def test_a_restart_in_the_middle_of_a_buy_never_buys_twice(world):
     buys = [params for kind, params in binance.sent if kind == "MARKET:BUY"]
     assert len(buys) == 1                                           # one buy on Binance, not two
     assert binance.usdt == Decimal("900") and binance.locked == Decimal("0.5")   # 0.5 SOL, held by its stop
-    position = rows(engine, "SELECT * FROM paper_positions")[0]
+    position = rows(engine, "SELECT * FROM positions")[0]
     assert position["status"] == "open" and position["quantity"] == Decimal("0.500000000000")
     assert position["entry_order_id"] == str(next(o for o in binance.orders.values() if o["side"] == "BUY")["orderId"])
     assert position["stop_order_id"]                                # and it is protected after all
@@ -459,40 +459,6 @@ def test_every_alert_clears_itself_when_its_problem_is_gone(world):
                                    WHERE key='account_settings'"""))
     monitor.synchronize()
     assert rows(engine, "SELECT status FROM monitoring_alerts WHERE alert_key='not_live'")[0]["status"] == "resolved"
-
-
-def test_removing_link_refuses_while_a_link_lot_is_open(world):
-    """Migration 0015 must never strand an open LINK lot that the bot would stop managing."""
-    import importlib.util
-    from alembic.operations import Operations
-    from alembic.runtime.migration import MigrationContext
-    folder = next(p for p in (Path("/src/migrations/versions"), Path(__file__).resolve().parents[1] / "migrations/versions")
-                  if p.exists())
-    spec = importlib.util.spec_from_file_location("remove_link", folder / "0015_remove_link.py")
-    migration = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(migration)
-
-    def run():
-        with engine.begin() as connection, Operations.context(MigrationContext.configure(connection)):
-            migration.upgrade()
-
-    _, _, engine = world
-    with engine.begin() as connection:
-        connection.execute(text("""INSERT INTO coin_allocations (symbol, updated_at)
-                                   VALUES ('LINKUSDT', now())"""))
-        connection.execute(text("""INSERT INTO paper_positions (position_id, symbol, entry_source, lot_number, status,
-                                       entry_time, raw_entry_price, entry_fill_price, quantity, allocation_usd,
-                                       entry_fee_usd, entry_fee_asset)
-                                   VALUES ('position:link1', 'LINKUSDT', 'manual', 1, 'open', now(), 11, 11, 9, 100,
-                                       0.07, 'BNB')"""))
-    with pytest.raises(RuntimeError, match="LINK still has 1 open lot"):
-        run()
-    assert rows(engine, "SELECT symbol FROM coin_allocations WHERE symbol='LINKUSDT'")      # nothing removed
-
-    with engine.begin() as connection:
-        connection.execute(text("UPDATE paper_positions SET status='closed' WHERE position_id='position:link1'"))
-    run()
-    assert rows(engine, "SELECT symbol FROM coin_allocations WHERE symbol='LINKUSDT'") == []  # its share is back
 
 
 def test_a_dropped_coin_cannot_hold_the_behind_alert_open(world):

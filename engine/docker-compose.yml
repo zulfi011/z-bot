@@ -5,7 +5,7 @@ x-backend: &backend
     context: .
     dockerfile: backend/Dockerfile
   environment:
-    DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-paperbot}:${POSTGRES_PASSWORD:-paperbot_local}@db:5432/${POSTGRES_DB:-papertrading}
+    DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-zbot}:${POSTGRES_PASSWORD:-zbot_local}@db:5432/${POSTGRES_DB:-zbot}
     STRATEGY_CONFIG_PATH: /app/config/sol_strategy.json
     ETH_STRATEGY_CONFIG_PATH: /app/config/eth_strategy.json
     BTC_STRATEGY_CONFIG_PATH: /app/config/btc_strategy.json
@@ -31,13 +31,13 @@ services:
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-papertrading}
-      POSTGRES_USER: ${POSTGRES_USER:-paperbot}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-paperbot_local}
+      POSTGRES_DB: ${POSTGRES_DB:-zbot}
+      POSTGRES_USER: ${POSTGRES_USER:-zbot}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-zbot_local}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-paperbot} -d ${POSTGRES_DB:-papertrading}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-zbot} -d ${POSTGRES_DB:-zbot}"]
       interval: 5s
       timeout: 3s
       retries: 20

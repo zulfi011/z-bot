@@ -1,4 +1,4 @@
-"""Pure paper-trading rules: lot sizing, fills, BNB/USDT fees, exits, marking."""
+"""Pure trading rules: fills, BNB/USDT fees, exits, marking."""
 
 from __future__ import annotations
 

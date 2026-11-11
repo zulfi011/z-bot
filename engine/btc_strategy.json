@@ -2,7 +2,7 @@
   "schema_version": 2,
   "strategy_id": "btc_5d_above30_fixed100_trail1257_v1",
   "name": "BTC 5-day touch above 30-day",
-  "status": "paper_trading",
+  "status": "deployed",
   "market": {
     "symbol": "BTCUSDT",
     "fee_symbol": "BNBUSDT",

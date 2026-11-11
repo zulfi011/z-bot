@@ -2,7 +2,7 @@
   "schema_version": 2,
   "strategy_id": "trx_12d_above30max10_breakout_v2",
   "name": "TRX dip + consolidation",
-  "status": "paper_trading",
+  "status": "deployed",
   "market": {
     "symbol": "TRXUSDT",
     "fee_symbol": "BNBUSDT",

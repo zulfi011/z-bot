@@ -84,7 +84,7 @@ def build(database, *, lots=3, pyramid=True, start=T0, add_exit=None, live=True)
     client._request = binance.request  # type: ignore[method-assign]
     execution = LiveExecutionService(database, {SYMBOL: strategy}, BinanceExchange(client, live=live))
     with database.begin() as connection:
-        for table in ("paper_trades", "paper_orders", "paper_positions", "signals", "touch_episodes",
+        for table in ("trades", "orders", "positions", "signals", "touch_episodes",
                       "candles_1m", "exchange_events", "monitoring_alerts", "account_snapshots",
                       "system_events", "control_requests", "engine_state", "daily_averages"):
             connection.execute(text(f"DELETE FROM {table}"))
@@ -140,10 +140,10 @@ def test_a_climbing_lot_gets_lots_added_to_it(database):
     world = build(database, lots=4)
     execution, binance, _ = world
     entry = open_parent(world, database)
-    parent = rows(database, "SELECT position_id, entry_fill_price FROM paper_positions")[0]
+    parent = rows(database, "SELECT position_id, entry_fill_price FROM positions")[0]
 
     climb(execution, database, binance, entry, [201, 202])        # +1% = 202
-    adds = rows(database, "SELECT * FROM paper_positions WHERE entry_source='pyramid' ORDER BY entry_time")
+    adds = rows(database, "SELECT * FROM positions WHERE entry_source='pyramid' ORDER BY entry_time")
     assert len(adds) == 1, "one step, one add"
     assert adds[0]["parent_position_id"] == parent["position_id"]
     assert adds[0]["trend_exit_active"] is True, "an add is always held against the line"
@@ -152,8 +152,8 @@ def test_a_climbing_lot_gets_lots_added_to_it(database):
     assert adds[0]["stop_price"] > Decimal("192"), "and well above the parent's stop, which sits at 191"
 
     climb(execution, database, binance, entry + 2 * MINUTE, [203, 204])   # +2% = 204
-    assert len(rows(database, "SELECT * FROM paper_positions WHERE entry_source='pyramid'")) == 2
-    assert rows(database, "SELECT count(*) AS n FROM paper_positions")[0]["n"] == 3
+    assert len(rows(database, "SELECT * FROM positions WHERE entry_source='pyramid'")) == 2
+    assert rows(database, "SELECT count(*) AS n FROM positions")[0]["n"] == 3
 
 
 def test_it_never_adds_more_than_the_maximum_and_never_to_an_add(database):
@@ -161,7 +161,7 @@ def test_it_never_adds_more_than_the_maximum_and_never_to_an_add(database):
     execution, binance, _ = world
     entry = open_parent(world, database)
     climb(execution, database, binance, entry, [202, 204, 206, 208, 210, 212])
-    adds = rows(database, "SELECT parent_position_id FROM paper_positions WHERE entry_source='pyramid'")
+    adds = rows(database, "SELECT parent_position_id FROM positions WHERE entry_source='pyramid'")
     assert len(adds) == 3, "three is the maximum"
     assert len({row["parent_position_id"] for row in adds}) == 1, "adds are never themselves parents"
 
@@ -171,7 +171,7 @@ def test_switched_off_it_adds_nothing(database):
     execution, binance, _ = world
     entry = open_parent(world, database)
     climb(execution, database, binance, entry, [202, 204])
-    assert rows(database, "SELECT * FROM paper_positions WHERE entry_source='pyramid'") == []
+    assert rows(database, "SELECT * FROM positions WHERE entry_source='pyramid'") == []
 
 
 def test_it_shares_the_coins_lots_and_stops_when_they_run_out(database):
@@ -180,7 +180,7 @@ def test_it_shares_the_coins_lots_and_stops_when_they_run_out(database):
     execution, binance, _ = world
     entry = open_parent(world, database)
     climb(execution, database, binance, entry, [202, 204])
-    assert rows(database, "SELECT * FROM paper_positions WHERE entry_source='pyramid'") == [], \
+    assert rows(database, "SELECT * FROM positions WHERE entry_source='pyramid'") == [], \
         "no free lot, so nothing is added"
 
 
@@ -189,9 +189,9 @@ def test_with_more_lots_the_adds_fill_the_free_ones(database):
     execution, binance, _ = world
     entry = open_parent(world, database)     # one of the three lots is taken by the parent
     climb(execution, database, binance, entry, [202, 204, 206])
-    adds = rows(database, "SELECT * FROM paper_positions WHERE entry_source='pyramid'")
+    adds = rows(database, "SELECT * FROM positions WHERE entry_source='pyramid'")
     assert len(adds) == 2, "the two free lots are filled by adds, then the coin is full"
-    assert rows(database, "SELECT count(*) AS n FROM paper_positions")[0]["n"] == 3
+    assert rows(database, "SELECT count(*) AS n FROM positions")[0]["n"] == 3
 
 
 def test_the_blocked_hours_stop_adds_live(database):
@@ -200,7 +200,7 @@ def test_the_blocked_hours_stop_adds_live(database):
     execution, binance, _ = world
     entry = open_parent(world, database, start)
     climb(execution, database, binance, entry, [202, 204, 206, 208, 210])
-    assert rows(database, "SELECT * FROM paper_positions WHERE entry_source='pyramid'") == []
+    assert rows(database, "SELECT * FROM positions WHERE entry_source='pyramid'") == []
 
 
 # ------------------------------------------------- adds that leave with their parent (SOL's setting)
@@ -208,10 +208,10 @@ def test_an_add_that_follows_its_parent_carries_the_parents_stop(database):
     world = build(database, lots=4, add_exit="with_parent")
     execution, binance, _ = world
     entry = open_parent(world, database)
-    parent = rows(database, "SELECT position_id, stop_price FROM paper_positions")[0]
+    parent = rows(database, "SELECT position_id, stop_price FROM positions")[0]
 
     climb(execution, database, binance, entry, [201, 202])
-    add = rows(database, "SELECT * FROM paper_positions WHERE entry_source='pyramid'")[0]
+    add = rows(database, "SELECT * FROM positions WHERE entry_source='pyramid'")[0]
     assert add["parent_position_id"] == parent["position_id"]
     assert add["stop_price"] == parent["stop_price"], "it parks the parent's level, not one off its own fill"
     assert add["trend_exit_active"] is False, "it has no exit rules of its own"
@@ -224,13 +224,13 @@ def test_an_add_is_sold_in_the_same_minute_its_parent_is(database):
     execution, binance, _ = world
     entry = open_parent(world, database)
     climb(execution, database, binance, entry, [201, 202, 203])      # one add at +1%, and the parent's trail arms
-    assert len(rows(database, "SELECT * FROM paper_positions WHERE status='open'")) == 2
+    assert len(rows(database, "SELECT * FROM positions WHERE status='open'")) == 2
 
     # The parent comes back to its entry, so its break-even floor sells it - and the add goes in the same pass.
     binance.price = Decimal("195")
     candle(database, entry + 4 * MINUTE, Decimal("195"), high=Decimal("203"), low=Decimal("195"))
     execution.synchronize(SYMBOL)
-    closed = rows(database, "SELECT * FROM paper_positions WHERE status='closed' ORDER BY entry_time")
+    closed = rows(database, "SELECT * FROM positions WHERE status='closed' ORDER BY entry_time")
     assert len(closed) == 2, "the parent and its add both leave"
     assert closed[0]["exit_reason"] == "break_even"
     assert closed[1]["exit_reason"] == "parent_exit"
@@ -251,5 +251,5 @@ def test_eth_style_adds_keep_running_after_their_parent_leaves(database):
         binance.price = price
         candle(database, entry + index * MINUTE, price, high=Decimal("202"), low=price)
         execution.synchronize(SYMBOL)
-    open_now = rows(database, "SELECT entry_source FROM paper_positions WHERE status='open'")
+    open_now = rows(database, "SELECT entry_source FROM positions WHERE status='open'")
     assert [row["entry_source"] for row in open_now] == ["pyramid"], "the add outlives the parent"

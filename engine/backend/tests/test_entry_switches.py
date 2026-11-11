@@ -1,6 +1,6 @@
 """The dip and the quiet-band breakout can be switched off per coin; they start on."""
 
-from app.domain.paper_execution import CoinAllocation
+from app.domain.execution import CoinAllocation
 
 
 def allocation(*entries):

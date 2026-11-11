@@ -27,7 +27,7 @@ from app.domain.pyramid import PyramidConfig
 from app.core.settings import get_settings
 from app.core.strategy import COIN_NAMES, load_strategies, load_strategy
 from app.db.session import get_engine
-from app.domain.paper_execution import (
+from app.domain.execution import (
     MODULES, CoinAllocation, ExecutionConfig, ExitSignal, FeeContext,
     Position, fill_exit,
 )
@@ -232,7 +232,7 @@ def _budget(connection, usdt_free: Decimal) -> dict:
     The shared pot (lots x lot size) is measured against it. Shadow lots are left out: they never spent any USDT.
     """
     in_lots = connection.execute(
-        text("""SELECT COALESCE(sum(allocation_usd), 0) FROM paper_positions
+        text("""SELECT COALESCE(sum(allocation_usd), 0) FROM positions
                 WHERE status='open' AND entry_order_id IS NOT NULL""")
     ).scalar_one()
     allocated = read_pot(connection).total_usd
@@ -381,7 +381,7 @@ def set_trading(symbol: str, body: TradingSwitchRequest,
             now = datetime.now(timezone.utc)
             closes = []
             for position_id in connection.execute(
-                text("""SELECT p.position_id FROM paper_positions p WHERE p.symbol=:symbol AND p.status='open'
+                text("""SELECT p.position_id FROM positions p WHERE p.symbol=:symbol AND p.status='open'
                         AND NOT EXISTS (SELECT 1 FROM control_requests r WHERE r.status='pending'
                                         AND r.kind='close_position' AND r.position_id=p.position_id)
                         ORDER BY p.entry_time FOR UPDATE OF p"""),
@@ -452,7 +452,7 @@ def close_position(position_id: str, key: str | None = Header(default=None, alia
     _authorize(key, session)
     with get_engine().begin() as connection:
         position = connection.execute(
-            text("SELECT status, symbol FROM paper_positions WHERE position_id=:id FOR UPDATE"), {"id": position_id}
+            text("SELECT status, symbol FROM positions WHERE position_id=:id FOR UPDATE"), {"id": position_id}
         ).mappings().one_or_none()
         if position is None:
             raise HTTPException(status_code=404, detail="Position not found")
@@ -850,7 +850,7 @@ def _pyramid_view(connection, symbol: str, rule: PyramidConfig | None, allocatio
     if rule is None:
         return None
     counts = dict(connection.execute(
-        text("""SELECT parent_position_id, count(*) FROM paper_positions
+        text("""SELECT parent_position_id, count(*) FROM positions
                 WHERE symbol=:s AND parent_position_id IS NOT NULL GROUP BY 1"""),
         {"s": symbol},
     ).all())
@@ -896,7 +896,7 @@ def _trade_stats(connection, symbol: str | None) -> dict:
                    COALESCE(sum(net_pnl_usd), 0) AS realized_usd,
                    COALESCE(sum(entry_fee_usd + exit_fee_usd), 0) AS fees_usd,
                    COALESCE(sum(slippage_usd), 0) AS slippage_usd
-            FROM paper_trades WHERE CAST(:symbol AS text) IS NULL OR symbol = :symbol
+            FROM trades WHERE CAST(:symbol AS text) IS NULL OR symbol = :symbol
             """
         ),
         {"symbol": symbol},
@@ -969,12 +969,12 @@ def _coin_view(connection, strategy: dict, usdt_free: Decimal, open_rows: list[d
         {"id": strategy_id},
     ).mappings().one())
     trades = [dict(row) for row in connection.execute(
-        text("SELECT * FROM paper_trades WHERE symbol=:s ORDER BY exit_time DESC LIMIT 25"), {"s": symbol}
+        text("SELECT * FROM trades WHERE symbol=:s ORDER BY exit_time DESC LIMIT 25"), {"s": symbol}
     ).mappings().all()]
     orders = [dict(row) for row in connection.execute(
         text(
             """
-            SELECT o.*, p.symbol FROM paper_orders o JOIN paper_positions p USING (position_id)
+            SELECT o.*, p.symbol FROM orders o JOIN positions p USING (position_id)
             WHERE p.symbol=:s ORDER BY o.requested_at DESC, o.side LIMIT 30
             """
         ),
@@ -1021,7 +1021,7 @@ def _coin_view(connection, strategy: dict, usdt_free: Decimal, open_rows: list[d
                            trend_exit_active,
                            entry_fill_price * (1 + :activation / 100.0) AS trailing_start_price,
                            row_number() OVER (ORDER BY entry_time, position_id) AS trade_number
-                    FROM paper_positions WHERE symbol=:s
+                    FROM positions WHERE symbol=:s
                 ) numbered
                 WHERE entry_time >= :start OR exit_time >= :start OR status='open' ORDER BY entry_time
                 """
@@ -1221,7 +1221,7 @@ def dashboard(interval: str = Query(default="15m"), chart: str | None = Query(de
         if shadow:
             usdt_free = shadow["free"]  # shadow buys spend the pretend wallet
         open_rows = [dict(row) for row in connection.execute(
-            text("SELECT * FROM paper_positions WHERE status='open' ORDER BY entry_time")
+            text("SELECT * FROM positions WHERE status='open' ORDER BY entry_time")
         ).mappings().all()]
         bnb_market = connection.execute(
             text("SELECT open_time, close FROM candles_1m WHERE symbol=:s ORDER BY open_time DESC LIMIT 1"),
@@ -1239,7 +1239,7 @@ def dashboard(interval: str = Query(default="15m"), chart: str | None = Query(de
             text("SELECT value FROM engine_state WHERE key='monitoring'")
         ).scalar_one_or_none() or {}
         trades = [dict(row) for row in connection.execute(
-            text("SELECT * FROM paper_trades ORDER BY exit_time DESC LIMIT 25")
+            text("SELECT * FROM trades ORDER BY exit_time DESC LIMIT 25")
         ).mappings().all()]
         requests = [dict(row) for row in connection.execute(
             text("SELECT * FROM control_requests ORDER BY requested_at DESC LIMIT 25")
@@ -1257,7 +1257,7 @@ def dashboard(interval: str = Query(default="15m"), chart: str | None = Query(de
                 SELECT COALESCE(sum(fee_bnb), 0) AS bnb_spent, COALESCE(sum(fee_usd) FILTER (WHERE fee_asset='BNB'), 0) AS bnb_fees_usd,
                        COALESCE(sum(fee_usd) FILTER (WHERE fee_asset='USDT'), 0) AS usdt_fees_usd,
                        count(*) FILTER (WHERE fee_asset='BNB') AS bnb_fills, count(*) FILTER (WHERE fee_asset='USDT') AS usdt_fills
-                FROM paper_orders
+                FROM orders
                 """
             )
         ).mappings().one())
@@ -1388,12 +1388,12 @@ def leaderboard(period: str = Query(default="7d")) -> dict:
              else now - timedelta(days=LEADERBOARD_PERIOD_DAYS[period]))
     with get_engine().connect() as connection:
         trades = [dict(row) for row in connection.execute(
-            text("""SELECT symbol, exit_time, net_pnl_usd FROM paper_trades
+            text("""SELECT symbol, exit_time, net_pnl_usd FROM trades
                     WHERE exit_time >= :start ORDER BY exit_time"""),
             {"start": start},
         ).mappings().all()]
         open_rows = [dict(row) for row in connection.execute(
-            text("SELECT symbol, quantity, allocation_usd FROM paper_positions WHERE status='open'")
+            text("SELECT symbol, quantity, allocation_usd FROM positions WHERE status='open'")
         ).mappings().all()]
         enabled_by_coin = {symbol: read_trading_enabled(connection, symbol) for symbol in strategies}
         pot = read_pot(connection)
@@ -1445,7 +1445,7 @@ def _profit_window(period: str, start: datetime | None, end: datetime | None) ->
 
 def _profit_rows(connection, start: datetime, end: datetime) -> list[dict]:
     return [dict(row) for row in connection.execute(
-        text("SELECT * FROM paper_trades WHERE exit_time >= :start AND exit_time <= :end ORDER BY exit_time"),
+        text("SELECT * FROM trades WHERE exit_time >= :start AND exit_time <= :end ORDER BY exit_time"),
         {"start": start, "end": end},
     ).mappings().all()]
 
@@ -1485,10 +1485,10 @@ def profit(period: str = Query(default="7d"), start: datetime | None = None, end
     with get_engine().connect() as connection:
         rows = _profit_rows(connection, window_start, window_end)
         open_rows = [dict(row) for row in connection.execute(
-            text("SELECT symbol, quantity, allocation_usd, entry_time FROM paper_positions WHERE status='open'")
+            text("SELECT symbol, quantity, allocation_usd, entry_time FROM positions WHERE status='open'")
         ).mappings().all()]
         bnb_spent = connection.execute(
-            text("""SELECT COALESCE(sum(fee_asset_quantity),0) FROM paper_orders
+            text("""SELECT COALESCE(sum(fee_asset_quantity),0) FROM orders
                     WHERE fee_asset='BNB' AND requested_at >= :start AND requested_at <= :end"""),
             {"start": window_start, "end": window_end},
         ).scalar_one()
@@ -1564,5 +1564,5 @@ def monitoring_logs(limit: int = Query(default=100, ge=1, le=500)) -> dict:
 @router.get("/trades")
 def all_trades(limit: int = Query(default=200, ge=1, le=5000)) -> dict:
     with get_engine().connect() as connection:
-        rows = connection.execute(text("SELECT * FROM paper_trades ORDER BY exit_time DESC LIMIT :l"), {"l": limit}).mappings().all()
+        rows = connection.execute(text("SELECT * FROM trades ORDER BY exit_time DESC LIMIT :l"), {"l": limit}).mappings().all()
     return {"trades": [dict(row) for row in rows]}

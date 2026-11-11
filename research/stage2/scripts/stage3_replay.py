@@ -27,7 +27,7 @@ LEGACY = Path(__file__).resolve().parent / "stage3_legacy"
 ARCHIVED = ROOT / "config/archived_stage3_v1"
 sys.path.insert(0, str(LEGACY))
 
-from app.domain.paper_execution import (  # noqa: E402
+from app.domain.execution import (  # noqa: E402
     Candle,
     ExecutionConfig,
     Position,

@@ -99,7 +99,7 @@ def build(database, *, lots=1, uptrend=True, start=T0):
     a7, a15, a30 = (Decimal("210"), Decimal("205"), Decimal("200")) if uptrend else \
                    (Decimal("205"), Decimal("200"), Decimal("210"))
     with database.begin() as connection:
-        for table in ("paper_trades", "paper_orders", "paper_positions", "signals", "touch_episodes",
+        for table in ("trades", "orders", "positions", "signals", "touch_episodes",
                       "candles_1m", "exchange_events", "monitoring_alerts", "account_snapshots",
                       "system_events", "control_requests", "engine_state", "daily_averages"):
             connection.execute(text(f"DELETE FROM {table}"))
@@ -160,7 +160,7 @@ def test_a_pullback_in_an_uptrend_becomes_a_signal_and_buys_a_lot(database):
     binance.price = Decimal("201")
     candle(database, entry, Decimal("201"))
     execution.synchronize(SYMBOL)
-    lot = rows(database, "SELECT * FROM paper_positions")[0]
+    lot = rows(database, "SELECT * FROM positions")[0]
     assert lot["entry_source"] == "pullback" and lot["lot_number"] == 1
     assert lot["trend_exit_active"] is True, "bought in an uptrend, so it rides the trend line"
     assert lot["stop_price"] == Decimal("191.9500000000"), "the dip's -4.5% stop"
@@ -174,7 +174,7 @@ def test_the_pullback_shares_the_coins_lots_with_the_dip(database):
     binance.price = Decimal("201")
     candle(database, entry, Decimal("201"))
     execution.synchronize(SYMBOL)
-    assert [row["entry_source"] for row in rows(database, "SELECT * FROM paper_positions")] == ["signal"]
+    assert [row["entry_source"] for row in rows(database, "SELECT * FROM positions")] == ["signal"]
     skipped = rows(database, "SELECT status, reason FROM signals WHERE signal_id LIKE 'pullback:%'")[0]
     assert skipped["status"] == "ignored_not_allowed" and "All 1 shared lots are open" in skipped["reason"]
 
@@ -186,7 +186,7 @@ def test_a_second_lot_lets_both_the_dip_and_the_pullback_in(database):
     binance.price = Decimal("201")
     candle(database, entry, Decimal("201"))
     execution.synchronize(SYMBOL)
-    lots = {row["entry_source"]: row["lot_number"] for row in rows(database, "SELECT * FROM paper_positions")}
+    lots = {row["entry_source"]: row["lot_number"] for row in rows(database, "SELECT * FROM positions")}
     assert lots == {"signal": 1, "pullback": 2}, "one set of lots, numbered in the order they were bought"
 
 
@@ -207,7 +207,7 @@ def test_a_pullback_in_the_blocked_hours_is_recorded_but_never_bought(database):
     binance.price = Decimal("201")
     candle(database, entry, Decimal("201"))
     execution.synchronize(SYMBOL)
-    assert rows(database, "SELECT * FROM paper_positions") == []
+    assert rows(database, "SELECT * FROM positions") == []
 
 
 def test_pullbacks_from_before_the_switch_on_are_never_written(database):

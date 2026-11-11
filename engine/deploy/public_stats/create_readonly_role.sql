@@ -20,4 +20,4 @@ ALTER ROLE zbot_stats SET statement_timeout = '20s';
 REVOKE ALL ON ALL TABLES IN SCHEMA public FROM zbot_stats;
 SELECT format('GRANT CONNECT ON DATABASE %I TO zbot_stats', current_database()) \gexec
 GRANT USAGE ON SCHEMA public TO zbot_stats;
-GRANT SELECT ON paper_trades, paper_positions, account_snapshots, candles_1m TO zbot_stats;
+GRANT SELECT ON trades, positions, account_snapshots, candles_1m TO zbot_stats;

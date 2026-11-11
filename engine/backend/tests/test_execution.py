@@ -3,7 +3,7 @@ from decimal import Decimal
 
 import pytest
 
-from app.domain.paper_execution import (
+from app.domain.execution import (
     Candle,
     CoinAllocation,
     ExecutionConfig,

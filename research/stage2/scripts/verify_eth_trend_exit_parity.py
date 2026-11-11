@@ -18,10 +18,21 @@ import pandas as pd
 
 import verify_stage3_v2_parity as base
 from app.domain import trend
-from app.domain.paper_execution import (
-    Candle, CoinAllocation, ExecutionConfig, FeeContext, Position, create_entry, evaluate_exit, fill_exit,
-    lot_allocation,
+from app.domain.execution import (
+    Candle, ExecutionConfig, FeeContext, Position, create_entry, evaluate_exit, fill_exit,
 )
+
+
+# The lot sizing these parity checks were run with (ETH 5 lots, the others 3, $100 each). Strategy files no longer
+# carry money, so it lives here.
+LOT_SIZE_USD = Decimal("100")
+LOTS_BY_SYMBOL = {"ETHUSDT": 5}
+
+
+def full_lot(cash: Decimal, open_lots: int, strategy: dict) -> Decimal | None:
+    """One full lot when a slot is free and the cash covers it; never a partial lot."""
+    lots = LOTS_BY_SYMBOL.get(strategy["market"]["symbol"], 3)
+    return LOT_SIZE_USD if open_lots < lots and cash >= LOT_SIZE_USD else None
 
 MONEY, PRICE, QTY = base.MONEY, base.PRICE, base.QTY
 UTC = "UTC"
@@ -56,7 +67,6 @@ def regimes(raw: pd.DataFrame, signal_days: int) -> dict:
 
 def replay(strategy: dict, raw: pd.DataFrame, entries, start, end, bnb: bool) -> dict:
     config = ExecutionConfig.from_strategy(strategy)
-    allocation_rule = CoinAllocation.default(strategy)
     times = pd.DatetimeIndex(raw.open_time)
     o, h, l, c = (raw[k].to_numpy(float) for k in ["open", "high", "low", "close"])
     ema = ema_series(raw, config.trend_exit_ema_minutes) if config.trend_exit_ema_minutes else None
@@ -95,7 +105,7 @@ def replay(strategy: dict, raw: pd.DataFrame, entries, start, end, bnb: bool) ->
             bnb_balance -= fill.fee.bnb.quantize(QTY)
         positions = still
         if pointer < len(order) and order[pointer] == index:
-            allocation = lot_allocation(cash, len(positions), allocation_rule)
+            allocation = full_lot(cash, len(positions), strategy)
             if allocation is not None:
                 allocation = allocation.quantize(MONEY)
                 fill = create_entry(candle.open, allocation, config, context())

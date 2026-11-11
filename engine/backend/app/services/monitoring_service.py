@@ -138,7 +138,7 @@ class MonitoringService:
                     "details": {"trading_mode": mode}}
             loss_limit = Decimal(str(settings.get("daily_loss_limit_usd") or "0"))
             today = connection.execute(
-                text("""SELECT COALESCE(sum(net_pnl_usd),0) FROM paper_trades
+                text("""SELECT COALESCE(sum(net_pnl_usd),0) FROM trades
                         WHERE exit_time >= date_trunc('day', now())""")
             ).scalar_one()
             if loss_limit > 0 and today <= -loss_limit:
@@ -147,7 +147,7 @@ class MonitoringService:
                     "message": f"Today is {today:.2f} USDT. New trades are paused until tomorrow (UTC).",
                     "details": {"today_pnl_usd": str(today), "limit_usd": str(loss_limit)}}
             unprotected = connection.execute(
-                text("""SELECT count(*) FROM paper_positions WHERE status='open' AND stop_order_id IS NULL""")
+                text("""SELECT count(*) FROM positions WHERE status='open' AND stop_order_id IS NULL""")
             ).scalar_one()
             if unprotected and mode == "live":
                 conditions["unprotected_positions"] = {

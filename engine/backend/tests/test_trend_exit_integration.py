@@ -24,7 +24,7 @@ from app.services.binance_exchange import BinanceExchange
 from app.services.live_execution_service import LiveExecutionService
 
 BASE_URL = os.environ.get("INTEGRATION_DATABASE_URL",
-                          "postgresql+psycopg://paperbot:paperbot_local@db:5432/papertrading")
+                          "postgresql+psycopg://zbot:zbot_local@db:5432/zbot")
 SYMBOL = "ETHUSDT"
 MINUTE = timedelta(minutes=1)
 START = datetime(2026, 9, 1, 13, 0, tzinfo=timezone.utc)   # outside the 06-12 UTC blocked window
@@ -143,7 +143,7 @@ def build_world(database, uptrend: bool, live: bool = True):
     a7, a15, a30 = (Decimal("210"), Decimal("205"), Decimal("200")) if uptrend else \
                    (Decimal("195"), Decimal("205"), Decimal("210"))
     with database.begin() as connection:
-        for table in ("paper_trades", "paper_orders", "paper_positions", "signals", "touch_episodes",
+        for table in ("trades", "orders", "positions", "signals", "touch_episodes",
                       "candles_1m", "exchange_events", "monitoring_alerts", "account_snapshots",
                       "system_events", "control_requests", "engine_state", "daily_averages"):
             connection.execute(text(f"DELETE FROM {table}"))
@@ -213,7 +213,7 @@ def test_a_lot_opened_in_an_uptrend_rides_the_trend_line(database):
     execution, binance, engine = world
     entry_time = open_a_lot(world)
 
-    position = rows(engine, "SELECT * FROM paper_positions")[0]
+    position = rows(engine, "SELECT * FROM positions")[0]
     assert position["trend_exit_active"] is True, "opened in a clean uptrend, so it must be a trend-ride lot"
     assert position["trailing_active"] is True and position["peak_price"] == Decimal("210.0000000000")
     # It armed in the same minute it was bought, so its stop has already been lifted from -4.5% ($191) to
@@ -224,7 +224,7 @@ def test_a_lot_opened_in_an_uptrend_rides_the_trend_line(database):
     binance.price = Decimal("205")
     candle(engine, entry_time + 4 * MINUTE, Decimal("205"), high=Decimal("210"), low=Decimal("205"))
     execution.synchronize(SYMBOL)
-    assert rows(engine, "SELECT status FROM paper_positions")[0]["status"] == "open", \
+    assert rows(engine, "SELECT status FROM positions")[0]["status"] == "open", \
         "The trend ride must ignore the giveback level"
 
     # Coming back to the entry now meets the break-even floor before it ever reaches the line. In live mode the
@@ -232,7 +232,7 @@ def test_a_lot_opened_in_an_uptrend_rides_the_trend_line(database):
     binance.price = Decimal("199")
     candle(engine, entry_time + 5 * MINUTE, Decimal("199"), high=Decimal("205"), low=Decimal("199"))
     execution.synchronize(SYMBOL)
-    waiting = rows(engine, "SELECT status, stop_price FROM paper_positions")[0]
+    waiting = rows(engine, "SELECT status, stop_price FROM positions")[0]
     assert waiting["status"] == "open" and waiting["stop_price"] == Decimal("200.3800000000")
 
 
@@ -241,7 +241,7 @@ def test_the_break_even_floor_is_parked_on_binance_when_the_lot_arms(database):
     world = build_world(database, uptrend=True)
     execution, binance, engine = world
     open_a_lot(world)
-    stored = rows(engine, "SELECT stop_price, stop_order_id FROM paper_positions")[0]
+    stored = rows(engine, "SELECT stop_price, stop_order_id FROM positions")[0]
     assert stored["stop_price"] == Decimal("200.3800000000"), "lifted from the -4.5% stop at $191"
     parked = binance.orders[str(stored["stop_order_id"])]
     assert parked["type"] == "STOP_LOSS_LIMIT" and parked["status"] == "NEW"
@@ -255,12 +255,12 @@ def test_the_break_even_floor_sells_the_lot_when_nothing_is_parked(database):
     world = build_world(database, uptrend=True, live=False)
     execution, binance, engine = world
     entry_time = open_a_lot(world)
-    assert rows(engine, "SELECT stop_price FROM paper_positions")[0]["stop_price"] == Decimal("200.3800000000")
+    assert rows(engine, "SELECT stop_price FROM positions")[0]["stop_price"] == Decimal("200.3800000000")
 
     binance.price = Decimal("199")
     candle(engine, entry_time + 4 * MINUTE, Decimal("199"), high=Decimal("205"), low=Decimal("199"))
     execution.synchronize(SYMBOL)
-    closed = rows(engine, "SELECT * FROM paper_positions")[0]
+    closed = rows(engine, "SELECT * FROM positions")[0]
     assert closed["status"] == "closed"
     assert closed["exit_reason"] == "break_even", "the floor sold it, not the -4.5% stop and not the line"
     # Without an order on Binance the bot sells at market, so the fill is this minute's price rather than the
@@ -273,14 +273,14 @@ def test_a_lot_opened_outside_an_uptrend_keeps_the_giveback_exit(database):
     execution, binance, engine = world
     entry_time = open_a_lot(world)
 
-    position = rows(engine, "SELECT * FROM paper_positions")[0]
+    position = rows(engine, "SELECT * FROM positions")[0]
     assert position["trend_exit_active"] is False, "no clean uptrend at the buy, so this is a trailing-stop lot"
 
     # 30% of the $10 peak gain gives back to 207; a minute through that level sells at once.
     binance.price = Decimal("205")
     candle(engine, entry_time + 4 * MINUTE, Decimal("205"), high=Decimal("210"), low=Decimal("205"))
     execution.synchronize(SYMBOL)
-    closed = rows(engine, "SELECT status, exit_reason FROM paper_positions")[0]
+    closed = rows(engine, "SELECT status, exit_reason FROM positions")[0]
     assert closed["status"] == "closed" and closed["exit_reason"] == "trailing_stop"
 
 
@@ -300,7 +300,7 @@ def test_the_trend_line_is_rebuilt_from_stored_candles_after_a_restart(database)
     binance.price = Decimal("205")
     candle(engine, entry_time + 4 * MINUTE, Decimal("205"), high=Decimal("210"), low=Decimal("205"))
     execution.synchronize(SYMBOL)
-    assert rows(engine, "SELECT status FROM paper_positions")[0]["status"] == "open"
+    assert rows(engine, "SELECT status FROM positions")[0]["status"] == "open"
     with engine.begin() as connection:
         state = connection.execute(text("SELECT value FROM engine_state WHERE key='live_execution'")).scalar_one()
     assert Decimal(state[SYMBOL]["ema"]) > 0, "the trend line must be warmed up again from stored candles"
@@ -355,7 +355,7 @@ def test_a_consolidation_break_becomes_a_signal_and_then_a_lot(database):
     binance.price = Decimal("209")
     candle(engine, confirm_at + MINUTE, Decimal("209"))
     execution.synchronize(SYMBOL)
-    position = rows(engine, "SELECT * FROM paper_positions")[0]
+    position = rows(engine, "SELECT * FROM positions")[0]
     assert position["entry_source"] == "breakout"
     # The breakout's own -3.5% stop (209 * 0.965, rounded down to the price tick), not the dip rule's -4.5%
     assert position["stop_price"] == Decimal("201.6700000000")
@@ -385,12 +385,12 @@ def test_a_break_that_falls_back_never_buys(database):
 
     candle(engine, confirm_at + MINUTE, Decimal("198"))
     execution.synchronize(SYMBOL)
-    assert rows(engine, "SELECT * FROM paper_positions") == []
+    assert rows(engine, "SELECT * FROM positions") == []
 
 
 def test_breakout_lots_exit_on_their_own_numbers(database):
     """A breakout lot arms at +1.283% and gives back 22%, where a dip lot arms at +1.315% and gives back 30%."""
-    from app.domain.paper_execution import ExecutionConfig
+    from app.domain.execution import ExecutionConfig
 
     config = ExecutionConfig.from_strategy(load_strategies()[SYMBOL])
     dip = config.for_source("signal")

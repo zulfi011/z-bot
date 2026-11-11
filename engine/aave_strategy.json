@@ -2,7 +2,7 @@
   "schema_version": 2,
   "strategy_id": "aave_10d_breakout_arm175_v3",
   "name": "AAVE dip + consolidation",
-  "status": "paper_trading",
+  "status": "deployed",
   "market": {
     "symbol": "AAVEUSDT",
     "fee_symbol": "BNBUSDT",

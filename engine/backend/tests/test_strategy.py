@@ -125,7 +125,7 @@ def test_database_url_accepts_common_paste_mistakes(pasted) -> None:
 
 def test_eth_strategy_carries_the_trend_exit() -> None:
     """The deployed ETH file must describe the trend ride, or the engine silently falls back to the giveback."""
-    from app.domain.paper_execution import ExecutionConfig
+    from app.domain.execution import ExecutionConfig
 
     config = ExecutionConfig.from_strategy(copy.deepcopy(ETH_STRATEGY))
     assert config.trend_exit_ema_minutes == 960
@@ -136,7 +136,7 @@ def test_eth_strategy_carries_the_trend_exit() -> None:
 def test_sol_carries_its_own_trend_exit_and_keeps_its_tight_stop() -> None:
     """SOL's line is 8 hours, not ETH's 16, and its -2% stop must not drift toward ETH's -4.5%:
     widening SOL's stop cost a third of its profit in the backtest."""
-    from app.domain.paper_execution import ExecutionConfig
+    from app.domain.execution import ExecutionConfig
 
     config = ExecutionConfig.from_strategy(copy.deepcopy(STRATEGY))
     assert config.trend_exit_ema_minutes == 480
@@ -150,10 +150,10 @@ def test_sol_carries_its_own_trend_exit_and_keeps_its_tight_stop() -> None:
 def test_only_the_tested_coins_use_the_trend_exit() -> None:
     """BTC, AAVE and TRX were tested and did not benefit, so their files must not carry it by accident.
 
-    AAVE is the interesting one: on paper a trend exit added about $100, but a walk-forward selection test
+    AAVE is the interesting one: on paper a trend exit added about a third of the money, but a walk-forward selection test
     put its honest contribution at $2. It gets the quiet-band breakout and keeps its giveback exit.
     """
-    from app.domain.paper_execution import ExecutionConfig
+    from app.domain.execution import ExecutionConfig
 
     for strategy in (BTC_STRATEGY, AAVE_STRATEGY, TRX_STRATEGY):
         assert ExecutionConfig.from_strategy(copy.deepcopy(strategy)).trend_exit_ema_minutes is None
@@ -163,7 +163,7 @@ def test_trx_keeps_its_deployed_exit_but_gains_breakout() -> None:
     """Every trend line tested made TRX worse, and an exit retune looked good only in hindsight, so the
     exit numbers must stay exactly as deployed. The quiet-band breakout is the whole change."""
     from app.domain.consolidation import ConsolidationConfig
-    from app.domain.paper_execution import ExecutionConfig
+    from app.domain.execution import ExecutionConfig
 
     config = ExecutionConfig.from_strategy(copy.deepcopy(TRX_STRATEGY))
     assert config.trend_exit_ema_minutes is None
@@ -181,7 +181,7 @@ def test_trx_keeps_its_deployed_exit_but_gains_breakout() -> None:
 
 def test_aave_keeps_its_giveback_exit_but_gains_breakout() -> None:
     from app.domain.consolidation import ConsolidationConfig
-    from app.domain.paper_execution import ExecutionConfig
+    from app.domain.execution import ExecutionConfig
 
     config = ExecutionConfig.from_strategy(copy.deepcopy(AAVE_STRATEGY))
     assert config.trend_exit_ema_minutes is None

@@ -23,10 +23,21 @@ PROJECT = ROOT.parent
 STAGE3 = PROJECT / "live_bot"
 sys.path.insert(0, str(STAGE3 / "backend"))
 
-from app.domain.paper_execution import (  # noqa: E402
-    Candle, CoinAllocation, ExecutionConfig, FeeContext, Position, create_entry, evaluate_exit, fill_exit,
-    lot_allocation,
+from app.domain.execution import (  # noqa: E402
+    Candle, ExecutionConfig, FeeContext, Position, create_entry, evaluate_exit, fill_exit,
 )
+
+
+# The lot sizing these parity checks were run with (ETH 5 lots, the others 3, $100 each). Strategy files no longer
+# carry money, so it lives here.
+LOT_SIZE_USD = Decimal("100")
+LOTS_BY_SYMBOL = {"ETHUSDT": 5}
+
+
+def full_lot(cash: Decimal, open_lots: int, strategy: dict) -> Decimal | None:
+    """One full lot when a slot is free and the cash covers it; never a partial lot."""
+    lots = LOTS_BY_SYMBOL.get(strategy["market"]["symbol"], 3)
+    return LOT_SIZE_USD if open_lots < lots and cash >= LOT_SIZE_USD else None
 from app.domain.signal_engine import SignalCandle, build_signal_engine as build_engine  # noqa: E402
 
 MONEY, PRICE, QTY = Decimal("0.00000001"), Decimal("0.0000000001"), Decimal("0.000000000001")
@@ -101,7 +112,6 @@ def signals(strategy: dict, raw: pd.DataFrame) -> list[pd.Timestamp]:
 
 def replay(strategy: dict, raw: pd.DataFrame, entries, start, end, bnb: bool) -> dict:
     config = ExecutionConfig.from_strategy(strategy)
-    allocation_rule = CoinAllocation.default(strategy)
     times = pd.DatetimeIndex(raw.open_time)
     o, h, l, c = (raw[k].to_numpy(float) for k in ["open", "high", "low", "close"])
     wanted = sorted({int(times.searchsorted(e)) for t, e in entries if t >= start and e < end})
@@ -113,7 +123,7 @@ def replay(strategy: dict, raw: pd.DataFrame, entries, start, end, bnb: bool) ->
     while index < len(times):
         candle = Candle(times[index].to_pydatetime(), dec(o[index]), dec(h[index]), dec(l[index]), dec(c[index]))
         if pointer < len(wanted) and wanted[pointer] == index:
-            allocation = lot_allocation(cash, len(positions), allocation_rule)
+            allocation = full_lot(cash, len(positions), strategy)
             if allocation is not None:
                 allocation = allocation.quantize(MONEY)
                 fill = create_entry(candle.open, allocation, config, context())

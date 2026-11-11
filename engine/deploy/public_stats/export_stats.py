@@ -9,7 +9,7 @@ Dollar amounts never leave the database: each trade's effect on the account is c
 profit / wallet value when the lot was bought, and only that percentage is exported.
 
 Usage (on the server):  python3 export_stats.py --compose-dir /opt/z-bot/engine --out /path/to/docs/stats.json
-Testing elsewhere:      python3 export_stats.py --psql "docker exec -i some-postgres psql -U zbot_stats -d papertrading" --out x.json
+Testing elsewhere:      python3 export_stats.py --psql "docker exec -i some-postgres psql -U zbot_stats -d zbot" --out x.json
 """
 from __future__ import annotations
 
@@ -27,8 +27,8 @@ WITH live_trades AS (
     SELECT t.trade_id, t.symbol, t.entry_source, t.exit_reason, t.exit_mode, t.entry_time, t.exit_time,
            t.duration_minutes, t.net_return_pct, t.net_pnl_usd,
            p.entry_order_id, COALESCE(p.exit_order_id, p.stop_order_id) AS exit_order_id
-    FROM paper_trades t
-    JOIN paper_positions p ON p.position_id = t.position_id
+    FROM trades t
+    JOIN positions p ON p.position_id = t.position_id
     WHERE p.entry_order_id IS NOT NULL
 ), weighted AS (
     SELECT lt.*,
@@ -54,7 +54,7 @@ SELECT json_build_object(
                 THEN round(((c.close / p.entry_fill_price - 1) * 100)::numeric, 3) END,
             'entry_order', p.entry_order_id
         ) ORDER BY p.entry_time)
-        FROM paper_positions p
+        FROM positions p
         LEFT JOIN LATERAL (SELECT close FROM candles_1m WHERE symbol = p.symbol
                            ORDER BY open_time DESC LIMIT 1) c ON true
         WHERE p.status = 'open' AND p.entry_order_id IS NOT NULL), '[]'::json)
@@ -78,8 +78,8 @@ def compose_db_name(compose_dir: Path) -> str:
     if env.exists():
         for line in env.read_text().splitlines():
             if line.startswith("POSTGRES_DB="):
-                return line.split("=", 1)[1].strip().strip('"').strip("'") or "papertrading"
-    return "papertrading"
+                return line.split("=", 1)[1].strip().strip('"').strip("'") or "zbot"
+    return "zbot"
 
 
 def run_query(args) -> dict:

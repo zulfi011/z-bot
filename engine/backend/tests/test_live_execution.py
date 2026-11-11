@@ -9,7 +9,7 @@ from decimal import Decimal
 
 import pytest
 
-from app.domain.paper_execution import Candle, Position
+from app.domain.execution import Candle, Position
 from app.services import live_execution_service as live
 from app.services.binance_exchange import OrderResult, SymbolRules
 
@@ -60,10 +60,10 @@ class FakeConnection:
                                                       "pullback_enabled": True, "pyramid_enabled": False},
             "trading_enabled FROM coin_allocations": True,
             # every way in shares one set of lots, so there is a single number to count
-            "count(*) FROM paper_positions": 0,
-            "sum(allocation_usd),0) FROM paper_positions WHERE symbol": Decimal("0"),
-            "sum(allocation_usd),0) FROM paper_positions\n": Decimal("0"),
-            "FROM paper_trades": Decimal("0"),
+            "count(*) FROM positions": 0,
+            "sum(allocation_usd),0) FROM positions WHERE symbol": Decimal("0"),
+            "sum(allocation_usd),0) FROM positions\n": Decimal("0"),
+            "FROM trades": Decimal("0"),
             "FROM control_requests": [],
             "FROM candles_1m": Decimal("600"),
             **answers,
@@ -164,15 +164,15 @@ ROW = {"stop_order_id": None, "entry_source": "signal"}
     ({"trading_enabled FROM coin_allocations": False}, "switched off"),
     ({"FROM engine_state": {"trading_mode": "off"}}, "All trading is stopped"),
     # the count is every coin's open lots: the pot is shared, so other coins can fill it
-    ({"count(*) FROM paper_positions": 3}, "All 3 shared lots are open"),
-    ({"FROM engine_state": {"trading_mode": "shadow", "pot_lots": 5, "pot_lot_size_usd": "100"}, "count(*) FROM paper_positions": 5},
+    ({"count(*) FROM positions": 3}, "All 3 shared lots are open"),
+    ({"FROM engine_state": {"trading_mode": "shadow", "pot_lots": 5, "pot_lot_size_usd": "100"}, "count(*) FROM positions": 5},
      "All 5 shared lots are open"),
     ({"SELECT dip_enabled, breakout_enabled": {"dip_enabled": True, "breakout_enabled": True, "pullback_enabled": False,
                                                "pyramid_enabled": False}}, "pullback entry is switched off"),
     ({"FROM engine_state": {"trading_mode": "shadow", "maximum_open_value_usd": "150", "pot_lots": 3,
                             "pot_lot_size_usd": "100"},
-      "sum(allocation_usd),0) FROM paper_positions": Decimal("100")}, "limit on money in open trades"),
-    ({"FROM paper_trades": Decimal("-30")}, "loss limit"),
+      "sum(allocation_usd),0) FROM positions": Decimal("100")}, "limit on money in open trades"),
+    ({"FROM trades": Decimal("-30")}, "loss limit"),
 ])
 def test_entries_are_blocked_with_a_reason_the_dashboard_can_show(answers, expected):
     source = "pullback" if "pullback" in expected else "signal"
@@ -184,7 +184,7 @@ def test_entries_are_blocked_with_a_reason_the_dashboard_can_show(answers, expec
 def test_the_pot_lot_size_is_what_every_coin_buys():
     connection = FakeConnection(**{"FROM engine_state": {"trading_mode": "shadow", "pot_lots": 5,
                                                          "pot_lot_size_usd": "120"},
-                                   "count(*) FROM paper_positions": 4})
+                                   "count(*) FROM positions": 4})
     allowed, reason, lot = service()._entry_allowed(connection, live.CoinSetup.from_strategy(STRATEGY))
     assert allowed and reason is None and lot == Decimal("120")
 
@@ -205,14 +205,14 @@ def test_a_shadow_buy_is_recorded_with_a_stop_and_never_sent():
     engine, connection = service(), FakeConnection()
     coin = engine.coins["SOLUSDT"]
     assert engine._buy(connection, coin, candle("200"), signal_id="s1") == "position:s1"
-    opened = connection.written("INSERT INTO paper_positions")
+    opened = connection.written("INSERT INTO positions")
     assert opened["cost"] == Decimal("100.00") and opened["qty"] == Decimal("0.500000000000")
     assert opened["fill"] == Decimal("200.0000000000") and opened["fee"] == Decimal("0.10")
-    order = connection.written("INSERT INTO paper_orders", "'buy'")
+    order = connection.written("INSERT INTO orders", "'buy'")
     assert order["status"] == "shadow"
     stop = engine.exchange.calls[-1]
     assert stop[0] == "stop" and stop[3] == Decimal("196.000")  # 2% under the fill
-    assert connection.wrote("UPDATE paper_positions SET stop_order_id")
+    assert connection.wrote("UPDATE positions SET stop_order_id")
 
 
 def test_a_live_buy_uses_the_real_fill_and_a_bnb_fee_leaves_the_quantity_whole():
@@ -222,7 +222,7 @@ def test_a_live_buy_uses_the_real_fill_and_a_bnb_fee_leaves_the_quantity_whole()
     engine = service(exchange=FakeExchange(live=True, buy=filled), balances={"USDT": Decimal("500")})
     connection = FakeConnection(**{"FROM candles_1m": Decimal("900")})  # BNB price for the fee
     engine._buy(connection, engine.coins["SOLUSDT"], candle("201"), signal_id="s1")
-    opened = connection.written("INSERT INTO paper_positions")
+    opened = connection.written("INSERT INTO positions")
     assert opened["qty"] == Decimal("0.497000000000")            # fee paid in BNB, all the coin stays sellable
     assert opened["asset"] == "BNB" and opened["fee"] == Decimal("1.08")  # 0.0012 BNB at $900
     assert opened["order_id"] == "11"
@@ -235,7 +235,7 @@ def test_a_fee_taken_in_the_coin_reduces_what_can_be_sold():
     engine = service(exchange=FakeExchange(live=True, buy=filled), balances={"USDT": Decimal("500")})
     connection = FakeConnection()
     engine._buy(connection, engine.coins["SOLUSDT"], candle("200"), signal_id="s1")
-    assert connection.written("INSERT INTO paper_positions")["qty"] == Decimal("0.499500000000")
+    assert connection.written("INSERT INTO positions")["qty"] == Decimal("0.499500000000")
 
 
 def test_a_rejected_buy_leaves_no_position_and_says_why():
@@ -244,7 +244,7 @@ def test_a_rejected_buy_leaves_no_position_and_says_why():
     engine = service(exchange=FakeExchange(live=True, buy=failed), balances={"USDT": Decimal("500")})
     connection = FakeConnection()
     assert engine._buy(connection, engine.coins["SOLUSDT"], candle("200"), signal_id="s1") is None
-    assert not connection.wrote("INSERT INTO paper_positions")
+    assert not connection.wrote("INSERT INTO positions")
     assert connection.wrote("INSERT INTO system_events")
 
 
@@ -263,7 +263,7 @@ def test_execution_observation_calculates_fee_impact_and_reference_slippage():
 
 def test_a_blocked_signal_is_marked_instead_of_bought():
     engine = service()
-    connection = FakeConnection(**{"count(*) FROM paper_positions": 3})
+    connection = FakeConnection(**{"count(*) FROM positions": 3})
     assert engine._buy(connection, engine.coins["SOLUSDT"], candle(), signal_id="s1") is None
     assert "All 3 shared lots are open" in connection.written("UPDATE signals")["reason"]
 
@@ -292,11 +292,11 @@ def test_an_unprotected_lot_is_reported_loudly():
 def test_a_shadow_sell_books_the_profit_after_fees():
     engine, connection = service(), FakeConnection()
     engine._sell(connection, engine.coins["SOLUSDT"], position(), ROW, "trailing_stop", candle("210"))
-    closed = connection.written("UPDATE paper_positions SET status='closed'")
+    closed = connection.written("UPDATE positions SET status='closed'")
     # 0.5 SOL at $210 = $105, minus the $0.105 exit fee, minus the $100 lot.
     assert closed["received"] == Decimal("105") and closed["pnl"] == Decimal("4.895")
     assert closed["reason"] == "trailing_stop" and closed["sold"] == Decimal("0.500000000000")
-    trade = connection.written("INSERT INTO paper_trades")
+    trade = connection.written("INSERT INTO trades")
     assert trade["pnl"] == Decimal("4.895") and trade["duration"] == 30 and trade["symbol"] == "SOLUSDT"
 
 
@@ -310,7 +310,7 @@ def test_selling_cancels_the_parked_stop_first_and_only_sells_what_binance_holds
                  candle("210"))
     assert engine.exchange.calls[0] == ("cancel", "SOLUSDT", "99")
     assert engine.exchange.calls[1] == ("sell", "SOLUSDT", Decimal("0.45"))  # clamped to the real balance
-    closed = connection.written("UPDATE paper_positions SET status='closed'")
+    closed = connection.written("UPDATE positions SET status='closed'")
     assert closed["received"] == Decimal("94.5") and closed["pnl"] == Decimal("-5.5945")
 
 
@@ -319,7 +319,7 @@ def test_a_failed_sell_keeps_the_position_open():
     engine = service(exchange=FakeExchange(live=True, sell=failed), balances={"SOL": Decimal("0.5")})
     connection = FakeConnection()
     engine._sell(connection, engine.coins["SOLUSDT"], position(), ROW, "trailing_stop", candle("210"))
-    assert not connection.wrote("UPDATE paper_positions SET status='closed'")
+    assert not connection.wrote("UPDATE positions SET status='closed'")
     assert connection.wrote("INSERT INTO system_events")
 
 
@@ -331,7 +331,7 @@ def test_a_stop_binance_filled_itself_is_recorded_as_a_closed_trade():
     connection = FakeConnection(**{"FROM candles_1m": Decimal("900")})
     assert engine._stop_order_filled(connection, engine.coins["SOLUSDT"], position(),
                                      {**ROW, "stop_order_id": "31"}) is True
-    closed = connection.written("UPDATE paper_positions SET status='closed'")
+    closed = connection.written("UPDATE positions SET status='closed'")
     assert closed["reason"] == "protective_stop" and closed["received"] == Decimal("98.00")
     assert closed["asset"] == "BNB"  # commission read back from myTrades
 

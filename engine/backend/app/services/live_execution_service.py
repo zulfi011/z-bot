@@ -22,7 +22,7 @@ from sqlalchemy import text
 from sqlalchemy.engine import Connection, Engine
 
 from app.domain import trend
-from app.domain.paper_execution import (
+from app.domain.execution import (
     BREAKOUT, MODULES, PULLBACK, PYRAMID, Candle, CoinAllocation, ExecutionConfig, Position,
     evaluate_exit, manual_exit_signal, uses_trend_exit,
 )
@@ -84,7 +84,7 @@ def suggested_pot(value: Decimal, minimum_lot: Decimal = Decimal("10")) -> Share
 
 def open_lot_total(connection: Connection) -> int:
     """Open lots across every coin: they all come out of the one shared pot."""
-    return int(connection.execute(text("SELECT count(*) FROM paper_positions WHERE status='open'")).scalar_one())
+    return int(connection.execute(text("SELECT count(*) FROM positions WHERE status='open'")).scalar_one())
 
 
 def affordable_lot(lot: Decimal, free_usdt: Decimal) -> Decimal | None:
@@ -155,11 +155,11 @@ def shadow_account(connection: Connection, settings: dict) -> dict | None:
     if start <= ZERO:
         return None
     realized = connection.execute(
-        text("""SELECT COALESCE(sum(t.net_pnl_usd), 0) FROM paper_trades t
-                JOIN paper_positions p ON p.position_id = t.position_id WHERE p.entry_order_id IS NULL""")
+        text("""SELECT COALESCE(sum(t.net_pnl_usd), 0) FROM trades t
+                JOIN positions p ON p.position_id = t.position_id WHERE p.entry_order_id IS NULL""")
     ).scalar_one()
     rows = connection.execute(
-        text("SELECT symbol, quantity, allocation_usd FROM paper_positions WHERE status='open' AND entry_order_id IS NULL")
+        text("SELECT symbol, quantity, allocation_usd FROM positions WHERE status='open' AND entry_order_id IS NULL")
     ).mappings().all()
     open_cost = sum((row["allocation_usd"] for row in rows), ZERO)
     open_value = sum((row["quantity"] * (latest_price(connection, row["symbol"]) or ZERO) for row in rows), ZERO)
@@ -217,7 +217,7 @@ class LiveExecutionService:
                 text("SELECT value FROM engine_state WHERE key=:key"), {"key": STATE_KEY}
             ).scalar_one_or_none() or {}
             open_positions = connection.execute(
-                text("SELECT count(*) FROM paper_positions WHERE status='open'")
+                text("SELECT count(*) FROM positions WHERE status='open'")
             ).scalar_one()
             snapshot = connection.execute(
                 text("SELECT * FROM account_snapshots ORDER BY timestamp DESC LIMIT 1")
@@ -460,7 +460,7 @@ class LiveExecutionService:
         connection.execute(
             text(
                 """
-                UPDATE paper_positions SET status='closed', exit_time=:at, raw_exit_price=:price, exit_fill_price=:price,
+                UPDATE positions SET status='closed', exit_time=:at, raw_exit_price=:price, exit_fill_price=:price,
                     exit_fee_usd=:fee, exit_fee_asset=:asset, exit_cash_usd=:received, exit_reason=:reason,
                     realized_pnl_usd=:pnl, exit_order_id=:order_id, quantity_sold=:sold, trailing_active=:trailing,
                     peak_price=:peak, trailing_started_at=:trail_at, bars_held=:bars, updated_at=now()
@@ -476,7 +476,7 @@ class LiveExecutionService:
         connection.execute(
             text(
                 """
-                INSERT INTO paper_orders (order_id, position_id, side, status, requested_at, raw_price, fill_price,
+                INSERT INTO orders (order_id, position_id, side, status, requested_at, raw_price, fill_price,
                     quantity, notional_usd, fee_usd, fee_asset, fee_bnb, slippage_usd, exchange_order_id,
                     client_order_id, order_type, fee_asset_quantity)
                 VALUES (:id, :position_id, 'sell', :status, :at, :price, :price, :qty, :notional, :fee, :asset,
@@ -494,7 +494,7 @@ class LiveExecutionService:
         connection.execute(
             text(
                 """
-                INSERT INTO paper_trades (trade_id, position_id, symbol, entry_source, entry_time, exit_time, quantity,
+                INSERT INTO trades (trade_id, position_id, symbol, entry_source, entry_time, exit_time, quantity,
                     allocation_usd, entry_fill_price, exit_fill_price, entry_fee_usd, exit_fee_usd, bnb_fees_usd,
                     slippage_usd, exit_reason, exit_mode, duration_minutes, net_return_pct, net_pnl_usd)
                 VALUES (:id, :position_id, :symbol, :source, :entry_time, :exit_time, :qty, :cost, :entry_price,
@@ -524,7 +524,7 @@ class LiveExecutionService:
             text(
                 """
                 SELECT s.signal_id, COALESCE(s.details->>'kind', 'touch') AS kind FROM signals s
-                LEFT JOIN paper_positions p ON p.signal_id = s.signal_id
+                LEFT JOIN positions p ON p.signal_id = s.signal_id
                 WHERE s.status='confirmed' AND s.strategy_id=:strategy AND s.entry_time=:t AND p.position_id IS NULL
                 ORDER BY s.signal_id FOR UPDATE OF s
                 """
@@ -560,8 +560,8 @@ class LiveExecutionService:
             return
         rows = connection.execute(
             text("""SELECT p.position_id, p.entry_fill_price, p.stop_price,
-                           (SELECT count(*) FROM paper_positions a WHERE a.parent_position_id = p.position_id) AS adds
-                    FROM paper_positions p
+                           (SELECT count(*) FROM positions a WHERE a.parent_position_id = p.position_id) AS adds
+                    FROM positions p
                     WHERE p.symbol=:s AND p.status='open' AND p.entry_source <> 'pyramid'
                     ORDER BY p.entry_time"""),
             {"s": coin.symbol},
@@ -651,7 +651,7 @@ class LiveExecutionService:
         connection.execute(
             text(
                 """
-                INSERT INTO paper_positions (position_id, symbol, signal_id, entry_source, lot_number, status,
+                INSERT INTO positions (position_id, symbol, signal_id, entry_source, lot_number, status,
                     entry_time, raw_entry_price, entry_fill_price, quantity, allocation_usd, entry_fee_usd,
                     entry_fee_asset, entry_fee_bnb, entry_order_id, trend_exit_active, parent_position_id)
                 VALUES (:id, :symbol, :signal_id, :source, :lot, 'open', :at, :raw, :fill, :qty, :cost, :fee,
@@ -672,7 +672,7 @@ class LiveExecutionService:
         connection.execute(
             text(
                 """
-                INSERT INTO paper_orders (order_id, position_id, side, status, requested_at, raw_price, fill_price,
+                INSERT INTO orders (order_id, position_id, side, status, requested_at, raw_price, fill_price,
                     quantity, notional_usd, fee_usd, fee_asset, fee_bnb, slippage_usd, exchange_order_id,
                     client_order_id, order_type, fee_asset_quantity)
                 VALUES (:id, :position_id, 'buy', :status, :at, :raw, :fill, :qty, :notional, :fee, :asset,
@@ -724,11 +724,11 @@ class LiveExecutionService:
                             {"symbol": coin.symbol, "position_id": position.position_id, "error": result.error,
                              "note": "The lot is unprotected on Binance; the bot will still sell at break even."})
             connection.execute(
-                text("UPDATE paper_positions SET stop_order_id=:order_id, stop_price=:stop WHERE position_id=:id"),
+                text("UPDATE positions SET stop_order_id=:order_id, stop_price=:stop WHERE position_id=:id"),
                 {"id": position.position_id, "order_id": result.exchange_order_id, "stop": price(level)},
             )
         else:
-            connection.execute(text("UPDATE paper_positions SET stop_price=:stop WHERE position_id=:id"),
+            connection.execute(text("UPDATE positions SET stop_price=:stop WHERE position_id=:id"),
                                {"id": position.position_id, "stop": price(level)})
         self._event(connection, "INFO", "stop_raised_to_break_even",
                     {"symbol": coin.symbol, "position_id": position.position_id, "stop": str(price(level))})
@@ -746,7 +746,7 @@ class LiveExecutionService:
                                                client_order_id=order_id_for("s", position_id))
         self._record_exchange_event(connection, coin.symbol, "protective_stop", position_id, result)
         connection.execute(
-            text("UPDATE paper_positions SET stop_order_id=:order_id, stop_price=:stop WHERE position_id=:id"),
+            text("UPDATE positions SET stop_order_id=:order_id, stop_price=:stop WHERE position_id=:id"),
             {"id": position_id, "order_id": result.exchange_order_id, "stop": price(stop_price)},
         )
         if not result.ok:
@@ -774,7 +774,7 @@ class LiveExecutionService:
         maximum_open = Decimal(str(settings.get("maximum_open_value_usd") or "0"))
         if maximum_open > ZERO:
             total_open = connection.execute(
-                text("SELECT COALESCE(sum(allocation_usd),0) FROM paper_positions WHERE status='open'")
+                text("SELECT COALESCE(sum(allocation_usd),0) FROM positions WHERE status='open'")
             ).scalar_one()
             if total_open + lot > maximum_open:
                 return False, f"The ${maximum_open:.0f} limit on money in open trades would be passed.", lot
@@ -798,7 +798,7 @@ class LiveExecutionService:
                        entry_fee_usd, entry_fee_asset, bars_held, trailing_active, peak_price, trailing_started_at,
                        trend_exit_active, trend_exit_pending, entry_source, stop_order_id, stop_price,
                        parent_position_id
-                FROM paper_positions WHERE symbol=:symbol AND status='open' ORDER BY entry_time FOR UPDATE
+                FROM positions WHERE symbol=:symbol AND status='open' ORDER BY entry_time FOR UPDATE
                 """
             ),
             {"symbol": symbol},
@@ -811,17 +811,17 @@ class LiveExecutionService:
     def _open_lot_count(self, connection: Connection, symbol: str) -> int:
         """Open lots of this coin. Every way in shares them, so there is only one number to count."""
         return int(connection.execute(
-            text("SELECT count(*) FROM paper_positions WHERE symbol=:s AND status='open'"), {"s": symbol},
+            text("SELECT count(*) FROM positions WHERE symbol=:s AND status='open'"), {"s": symbol},
         ).scalar_one())
 
     def _today_pnl(self, connection: Connection) -> Decimal:
         return connection.execute(
-            text("SELECT COALESCE(sum(net_pnl_usd),0) FROM paper_trades WHERE exit_time >= date_trunc('day', now())")
+            text("SELECT COALESCE(sum(net_pnl_usd),0) FROM trades WHERE exit_time >= date_trunc('day', now())")
         ).scalar_one()
 
     def _save_position_state(self, connection: Connection, position: Position) -> None:
         connection.execute(
-            text("""UPDATE paper_positions SET bars_held=:bars, trailing_active=:trailing, peak_price=:peak,
+            text("""UPDATE positions SET bars_held=:bars, trailing_active=:trailing, peak_price=:peak,
                     trailing_started_at=:trail_at, trend_exit_pending=:pending, updated_at=now()
                     WHERE position_id=:id"""),
             {"id": position.position_id, "bars": position.bars_held, "trailing": position.trailing_active,
@@ -1001,7 +1001,7 @@ class LiveExecutionService:
         with self.engine.begin() as connection:
             settings = read_settings(connection)
             rows = connection.execute(
-                text("""SELECT symbol, quantity, allocation_usd FROM paper_positions WHERE status='open'""")
+                text("""SELECT symbol, quantity, allocation_usd FROM positions WHERE status='open'""")
             ).mappings().all()
             open_value = open_cost = ZERO
             for row in rows:
@@ -1009,9 +1009,9 @@ class LiveExecutionService:
                 open_value += row["quantity"] * mark
                 open_cost += row["allocation_usd"]
             allocated = read_pot(connection).total_usd
-            realized = connection.execute(text("SELECT COALESCE(sum(net_pnl_usd),0) FROM paper_trades")).scalar_one()
+            realized = connection.execute(text("SELECT COALESCE(sum(net_pnl_usd),0) FROM trades")).scalar_one()
             fees = connection.execute(
-                text("SELECT COALESCE(sum(entry_fee_usd + exit_fee_usd),0) FROM paper_trades")
+                text("SELECT COALESCE(sum(entry_fee_usd + exit_fee_usd),0) FROM trades")
             ).scalar_one()
             usdt_free, usdt_locked = free.get("USDT", ZERO), locked.get("USDT", ZERO)
             bnb = held.get("BNB", ZERO)

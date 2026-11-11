@@ -6,7 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-RUN groupadd --system paperbot && useradd --system --gid paperbot paperbot
+RUN groupadd --system zbot && useradd --system --gid zbot zbot
 
 COPY backend/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
@@ -20,7 +20,7 @@ COPY btc_strategy.json ./config/btc_strategy.json
 COPY aave_strategy.json ./config/aave_strategy.json
 COPY trx_strategy.json ./config/trx_strategy.json
 
-RUN mkdir -p /app/secrets && chown -R paperbot:paperbot /app
+RUN mkdir -p /app/secrets && chown -R zbot:zbot /app
 
 EXPOSE 8000
 
@@ -31,11 +31,11 @@ COPY backend/requirements-dev.txt ./requirements-dev.txt
 RUN pip install --no-cache-dir -r requirements-dev.txt
 COPY backend/tests ./tests
 
-USER paperbot
+USER zbot
 CMD ["python", "-m", "pytest", "-q"]
 
 
 FROM base AS runtime
 
-USER paperbot
+USER zbot
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -2,7 +2,7 @@
   "schema_version": 2,
   "strategy_id": "eth_7d_trend16h_breakout_pullback_v5",
   "name": "ETH dip + consolidation + pullback · trend exit",
-  "status": "paper_trading",
+  "status": "deployed",
   "market": {
     "symbol": "ETHUSDT",
     "fee_symbol": "BNBUSDT",

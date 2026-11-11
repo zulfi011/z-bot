@@ -2,7 +2,7 @@
   "schema_version": 2,
   "strategy_id": "sol_12d_trend8h_breakout_pyramid_v3",
   "name": "SOL dip + consolidation + adds · trend exit",
-  "status": "paper_trading",
+  "status": "deployed",
   "market": {
     "symbol": "SOLUSDT",
     "fee_symbol": "BNBUSDT",

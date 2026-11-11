@@ -9,7 +9,7 @@ import pandas as pd
 
 import verify_stage3_v2_parity as base
 import verify_eth_trend_exit_parity as parity
-from app.domain.paper_execution import Candle, ExecutionConfig, Position, evaluate_exit
+from app.domain.execution import Candle, ExecutionConfig, Position, evaluate_exit
 
 SLIP = Decimal("2") / Decimal("10000")
 

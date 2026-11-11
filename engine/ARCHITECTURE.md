@@ -60,7 +60,7 @@ starting for the first time begins at the newest candle instead of replaying his
 
 - `candles_1m` (every coin plus BNBUSDT), `daily_averages` (7/15/30-day and each coin's signal average).
 - `touch_episodes`, `signals`: every touch and its decision (bought, skipped 06–12 UTC, downtrend, blocked …).
-- `paper_positions`, `paper_orders`, `paper_trades`: lots and fills with their Binance order ids, the fee asset and
+- `positions`, `orders`, `trades`: lots and fills with their Binance order ids, the fee asset and
   the fee amount; positions also hold the parked stop's id and price and the quantity actually sold.
 - `exchange_events`: every order request and Binance's reply, including shadow orders — the audit trail.
 - `coin_allocations`: each coin's on/off switch (`trading_enabled`) and extra-entry toggles; its old lot columns are

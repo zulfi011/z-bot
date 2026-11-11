@@ -9,7 +9,7 @@ leave the server.
 - **Nothing in the bot changes.** No code, container, restart or rebuild. These files sit in the repo and are only
   run by a cron job.
 - **Read-only database login** (`zbot_stats`, from `create_readonly_role.sql`):
-  - It can only `SELECT` from `paper_trades`, `paper_positions`, `account_snapshots` and `candles_1m`.
+  - It can only `SELECT` from `trades`, `positions`, `account_snapshots` and `candles_1m`.
   - Every transaction it opens is read-only, and every query stops after 20 seconds.
   - It has no password, so it can't log in over the network, only from inside the db container.
 - **Low priority:** the job runs once a day at 00:30 UTC with `nice` and `ionice`. It finishes in seconds and is

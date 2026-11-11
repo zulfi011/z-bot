@@ -8,7 +8,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     app_name: str = "Z-Bot"
     app_version: str = "3.0.0"
-    database_url: str = "postgresql+psycopg://paperbot:paperbot_local@db:5432/papertrading"
+    database_url: str = "postgresql+psycopg://zbot:zbot_local@db:5432/zbot"
     strategy_config_path: Path = Path("/app/config/sol_strategy.json")
     eth_strategy_config_path: Path = Path("/app/config/eth_strategy.json")
     btc_strategy_config_path: Path = Path("/app/config/btc_strategy.json")
