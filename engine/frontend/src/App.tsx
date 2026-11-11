@@ -89,11 +89,9 @@ function PageRail({ page, coins, data, onSelect }:
     <button className={`rail-chip ${page === "main" ? "active" : ""}`} aria-current={page === "main" ? "page" : undefined}
       onClick={() => onSelect("main")}><span className="rail-home" aria-hidden>⌂</span>Main</button>
     {coins.map(symbol => {
-      const coin = data?.coins[symbol];
       return <button key={symbol} className={`rail-chip ${page === symbol ? "active" : ""}`}
         aria-current={page === symbol ? "page" : undefined} onClick={() => onSelect(symbol)}>
         <CoinToken symbol={symbol} />{coinLabel(symbol)}
-        {coin && coin.positions.length > 0 && <i className="rail-dot" title={`${coin.positions.length} open lot${coin.positions.length === 1 ? "" : "s"}`} />}
       </button>;
     })}
   </nav>;

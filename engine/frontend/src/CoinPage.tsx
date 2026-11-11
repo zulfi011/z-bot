@@ -301,7 +301,7 @@ function Rules({ coin }: { coin: CoinView }) {
 
   return <Card title="Strategy rules" className="rules-card"
     info="The fixed rules the bot follows for this coin. They were chosen from backtests; changing them would restart the evaluation.">
-
+    <div className="rules-scroll">
     <h4 className="rule-group">{ways}</h4>
     <dl className="rules">
       <Rule label={c ? "1 · The dip" : "Entry"}>
@@ -379,8 +379,7 @@ function Rules({ coin }: { coin: CoinView }) {
         {" "}Set on the Main page. When the wallet holds less than a full lot, a buy uses what is left.</Rule>
       <Rule label="Costs">{n(s.usdt_fee_bps) / 100}% per side in USDT, or {n(s.bnb_fee_bps) / 100}% with BNB, plus {n(s.slippage_bps) / 100}% slippage.</Rule>
     </dl>
-
-    <details className="rule-backtest"><summary>What the backtest showed</summary><p>{s.backtest}</p></details>
+    </div>
   </Card>;
 }
 

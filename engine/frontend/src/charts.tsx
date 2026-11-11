@@ -205,7 +205,7 @@ export function PriceChart({ coin, points, markers, zonePct, averageDays, mode, 
              quiet, armed, trades, first, last, candle: Math.max(1.5, bucket * 0.6) };
   }, [points, markers, zonePct, height, view.from, view.to, layers]);
 
-  // Markers close together on screen merge into one, with a count, until the chart is zoomed in enough.
+  // Trade lines close together on screen share one hover target (the card lists them all) until zoomed in.
   const groups = useMemo(() => {
     if (!chart || !layers.trades) return [] as (Group & { left: number })[];
     const toPx = (value: number) => value / W * (stageWidth || 800);
@@ -215,7 +215,7 @@ export function PriceChart({ coin, points, markers, zonePct, averageDays, mode, 
     ]).sort((a, b) => a.x - b.x);
     const out: Group[] = [];
     for (const dot of dots) {
-      const near = out.find(group => group.kind === dot.kind && Math.abs(toPx(group.x) - toPx(dot.x)) < 18 && Math.abs(group.y - dot.y) < 18);
+      const near = out.find(group => group.kind === dot.kind && Math.abs(toPx(group.x) - toPx(dot.x)) < 10);
       if (near) near.trades.push(dot.trade);
       else out.push({ kind: dot.kind, x: dot.x, y: dot.y, trades: [dot.trade] });
     }
@@ -225,9 +225,9 @@ export function PriceChart({ coin, points, markers, zonePct, averageDays, mode, 
   if (!chart) return <div className="chart-empty">Waiting for price data…</div>;
   const active = hover == null ? null : points[hover];
   const last = points.at(-1)!;
-  const topPx = (value: number) => Math.max(9, Math.min(height - 9, value));
   const range = `${time(points[chart.first].open_time, true)} → ${time(points[chart.last].open_time, true)}`;
   const pickedGroup = groups.find(group => `${group.kind}-${group.trades[0].key}` === picked);
+  const pickedKeys = new Set(pickedGroup?.trades.map(trade => trade.key) ?? []);
   // A new interval (different first candle or length) fades in instead of snapping.
   const series = `${points[0].open_time}-${points.length}-${mode}`;
   const chips: { layer: Layer; label: string; cls: string; show: boolean }[] = [
@@ -260,30 +260,29 @@ export function PriceChart({ coin, points, markers, zonePct, averageDays, mode, 
         {layers.average && chart.average && <polyline points={chart.average} className="average-line" />}
         {layers.pullback && chart.pullback && <polyline points={chart.pullback} className="pullback-line" />}
         {layers.trend && chart.trend && <polyline points={chart.trend} className="trend-line" />}
-        {layers.trades && chart.trades.map(trade => <line key={trade.key}
-          className={`trade-path ${trade.open ? "open" : trade.won ? "won" : "lost"}`}
-          x1={trade.entry.x} y1={trade.entry.y} x2={trade.end.x} y2={trade.end.y} />)}
+        {/* Each trade: a solid line where it was bought (its way-in colour), a dashed line where it was sold
+            (green win, red loss). No numbers: hover or tap a line for the details. */}
+        {layers.trades && chart.trades.map(trade => <g key={trade.key} className={`trade-mark ${trade.source.cls} ${pickedKeys.has(trade.key) ? "picked" : ""}`}>
+          {trade.entryShown && <line className="trade-open" x1={trade.entry.x} x2={trade.entry.x} y1={0} y2={height} />}
+          {trade.exitShown && trade.exit && <line className={`trade-close ${trade.won ? "won" : "lost"}`} x1={trade.exit.x} x2={trade.exit.x} y1={0} y2={height} />}
+        </g>)}
         {hover != null && <line className="crosshair" x1={chart.x(hover)} x2={chart.x(hover)} y1={0} y2={height} />}
       </svg>
-      {/* Markers live in HTML, not the stretched SVG, so they stay round, readable and easy to tap. */}
+      {/* Invisible, finger-wide strips over each trade line: hover or tap one to see the trade. */}
       <div className="chart-marks">
         {groups.map(group => {
           const id = `${group.kind}-${group.trades[0].key}`;
-          const first = group.trades[0];
-          const cls = group.kind === "buy" ? `mark-buy ${first.source.cls} ${first.open ? "open" : ""}`
-            : `mark-sell ${group.trades.every(t => t.won) ? "won" : group.trades.every(t => !t.won) ? "lost" : "mixed"}`;
-          return <button key={id} type="button" className={`mark ${cls} ${picked === id ? "picked" : ""}`}
-            style={{ left: `${group.left}%`, top: topPx(group.y) }}
-            aria-label={`${group.trades.length} trade${group.trades.length === 1 ? "" : "s"}: ${group.kind === "buy" ? "bought" : "sold"} here`}
+          return <button key={id} type="button" className={`trade-hit ${picked === id ? "picked" : ""}`}
+            style={{ left: `${group.left}%` }}
+            aria-label={`${group.trades.length} trade${group.trades.length === 1 ? "" : "s"} ${group.kind === "buy" ? "bought" : "sold"} here`}
             onPointerDown={event => event.stopPropagation()}
             onMouseEnter={() => matchMedia("(hover: hover)").matches && setPicked(id)}
-            onClick={() => setPicked(current => current === id ? null : id)}>
-            {group.trades.length > 1 ? group.trades.length : ""}
-          </button>;
+            onMouseLeave={() => matchMedia("(hover: hover)").matches && setPicked(current => current === id ? null : current)}
+            onClick={() => setPicked(current => current === id ? null : id)} />;
         })}
       </div>
       {pickedGroup && <TradeCard points={points} onClose={() => setPicked(null)}
-        group={{ ...pickedGroup, left: Math.min(Math.max(pickedGroup.left, 14), 86), top: topPx(pickedGroup.y), below: pickedGroup.y < 120 }} />}
+        group={{ ...pickedGroup, left: Math.min(Math.max(pickedGroup.left, 14), 86), top: 8, below: true }} />}
       <ChartZoom zoomed={zoomed} onZoom={zoomAt} onReset={reset} anchor={view.to >= points.length - 1.5 ? 1 : 0.5} />
     </div>
     <Overview points={points} view={view} onChange={setRange} />

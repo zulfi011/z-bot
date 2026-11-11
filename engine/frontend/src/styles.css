@@ -738,7 +738,6 @@ button.link.inline { padding: 0; font-size: inherit; }
 }
 
 /* Coin page: full-width lots cards; How it buys / How it sells */
-@media (min-width: 980px) { .page > .coin-open-lots, .page > .lots-card { grid-column: 1 / -1; } }
 .entry-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .entry-list li { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; padding: 10px 12px;
   border-radius: 12px; background: var(--panel-2); }
@@ -767,3 +766,16 @@ button.link.inline { padding: 0; font-size: inherit; }
 .rules-card .rules > div { display: block; }
 @media (min-width: 760px) { .rules-card .rules { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 980px) { .page > .rules-card { grid-column: 1 / -1; } }
+.rules-card .rules-scroll { max-height: 420px; overflow-y: auto; padding-right: 6px; margin-top: 4px; scrollbar-width: thin; }
+
+/* Price chart trades as lines: solid buy line in its way-in colour, dashed sell line green (win) or red (loss) */
+.trade-close.won { stroke: var(--up); } .trade-close.lost { stroke: var(--down); }
+.trade-mark.picked .trade-open, .trade-mark.picked .trade-close { stroke-width: 3.2; opacity: 1; }
+.trade-hit { position: absolute; top: 0; bottom: 0; width: 14px; margin-left: -7px; padding: 0; border: 0; background: transparent;
+  pointer-events: auto; cursor: pointer; }
+.trade-hit:hover, .trade-hit.picked { background: color-mix(in srgb, var(--text) 6%, transparent); }
+.price-chart.waiting .trade-mark { opacity: 0; }
+.price-chart.in-view .trade-mark { animation: lines-in .35s ease-out .35s both; }
+@keyframes lines-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .price-chart.in-view .trade-mark { animation: none; } .price-chart.waiting .trade-mark { opacity: 1; } }
+.layer-chip i.lg-trades { width: 3px !important; height: 12px !important; border-radius: 1px !important; box-shadow: 3px 0 0 -0.5px var(--panel-2), 6px 0 0 0 var(--up) !important; margin-right: 6px; }
