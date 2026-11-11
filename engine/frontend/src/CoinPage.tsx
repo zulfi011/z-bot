@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { CoinView, Dashboard, Interval, PullbackView } from "./api";
 import { PriceChart } from "./charts";
 import { ago, amount, duration, label, n, pct, price, signedUsd, time, tone, usd } from "./format";
+import { LearnMore } from "./binance";
 import { useControls } from "./controls";
 import { BnbCard, LotsCard, PositionCard, TradeList } from "./panels";
 import { EXIT, SOURCE, sourceOf } from "./sources";
@@ -200,6 +201,7 @@ function HowItBuys({ coin }: { coin: CoinView }) {
           onChange={on => flip(key, on)} />
       </li>)}
     </ul>
+    <LearnMore page="strategies" anchor="ways-in-how-it-buys">How each way in works</LearnMore>
   </Card>;
 }
 
@@ -244,6 +246,7 @@ function HowItSells({ coin }: { coin: CoinView }) {
     <p className="card-note">Open lots: {coin.positions.length
       ? hours ? `${modes.giveback ?? 0} trailing · ${modes.trend ?? 0} riding the trend` : `${coin.positions.length} trailing`
       : "none"}{hours && plan.trend_line != null ? ` · trend line ${price(plan.trend_line)}` : ""}</p>
+    <LearnMore page="strategies" anchor="ways-out-how-it-sells">How each way out works</LearnMore>
   </Card>;
 }
 

@@ -7,9 +7,17 @@ const CHART_ICON = <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="
 
 /** Top-bar link to the public page with Z-Bot's own live track record. */
 export function LiveResultsLink() {
-  return <Tip text="Live results: see how Z-Bot trades on a real Binance account. Every trade, after fees, updated daily.">
-    <a className="icon-button" href={LIVE_RESULTS} target="_blank" rel="noreferrer" aria-label="Live results (opens in a new tab)">{CHART_ICON}</a>
+  return <Tip text="Learn & live results: how Z-Bot works, its strategies and research, and how it trades on a real Binance account.">
+    <a className="icon-button" href={LIVE_RESULTS} target="_blank" rel="noreferrer" aria-label="Learn and live results (opens in a new tab)">{CHART_ICON}</a>
   </Tip>;
+}
+
+/** A page of the online guide, e.g. guideUrl("strategies", "dip"). */
+export const guideUrl = (page: string, anchor?: string) => `${LIVE_RESULTS}guide.html?p=${page}${anchor ? `#${anchor}` : ""}`;
+
+/** Small "Learn more" link to the online guide, for the foot of a card. */
+export function LearnMore({ page, anchor, children = "Learn more" }: { page: string; anchor?: string; children?: ReactNode }) {
+  return <a className="learn-more" href={guideUrl(page, anchor)} target="_blank" rel="noreferrer">{children} →</a>;
 }
 
 const API_MANAGEMENT = "https://www.binance.com/en/my/settings/api-management";

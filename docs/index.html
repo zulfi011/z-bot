@@ -65,7 +65,7 @@ footer p { margin: 6px 0; }
 .error { background: var(--panel); border: 1px solid var(--down); border-radius: 14px; padding: 16px; margin-top: 24px; }
 nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .word.small { font-size: 24px; }
-.links { display: flex; gap: 18px; font-size: 14px; }
+.links { display: flex; gap: 18px; font-size: 14px; flex-wrap: wrap; }
 .links a { color: var(--muted); text-decoration: none; }
 .links a:hover { color: var(--text); }
 .hero { margin-top: 56px; max-width: 720px; }
@@ -107,8 +107,11 @@ tr.blank td { color: transparent; }
   <nav>
     <div class="word small" aria-label="Z-Bot"><img class="z-dark" src="zbot-z-dark.svg" alt=""><img class="z-light" src="zbot-z-light.svg" alt="">-Bot</div>
     <div class="links">
+      <a href="guide.html?p=how-it-works">How it works</a>
+      <a href="guide.html?p=strategies">Strategies</a>
+      <a href="guide.html?p=research">Research</a>
+      <a href="#results">Live results</a>
       <a href="https://github.com/zulfi011/z-bot">GitHub</a>
-      <a href="https://www.linkedin.com/in/zulfi0">LinkedIn</a>
     </div>
   </nav>
 
@@ -118,12 +121,13 @@ tr.blank td { color: transparent; }
       published daily, red months included.</p>
     <div class="cta">
       <a class="btn primary" href="https://github.com/zulfi011/z-bot">Star on GitHub</a>
+      <a class="btn" href="guide.html?p=how-it-works">How it works</a>
     </div>
   </section>
 
   <section class="points">
     <div class="point"><b>Tested before it trades</b><span>Each idea must hold up on data it was never tuned on.
-      Most don't — the rejected ones are part of the release.</span></div>
+      Most don't — the rejected ones are part of the release. <a href="guide.html?p=research">See the research</a></span></div>
     <div class="point"><b>Protected on the exchange</b><span>Every open position has its stop-loss parked on Binance
       itself, so a server crash or restart doesn't leave it unguarded.</span></div>
     <div class="point"><b>Open source</b><span>The bot, the dashboard and the research are being prepared for public
@@ -172,6 +176,8 @@ tr.blank td { color: transparent; }
   </section>
 
   <footer>
+    <p>Z-Bot is open-source software, built by Zulfi · <a href="https://github.com/zulfi011/z-bot">GitHub</a> ·
+      <a href="https://www.linkedin.com/in/zulfi0">LinkedIn</a> · <a href="guide.html">Guide</a></p>
     <p>Live trades only, after fees, updated daily. Raw data: <a href="stats.json">stats.json</a></p>
     <p>Not financial advice. These are past results from one account; they don't predict future returns, and
       crypto trading can lose money.</p>

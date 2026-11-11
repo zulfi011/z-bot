@@ -11,7 +11,7 @@ a phone too.
 | Status dot | Green when prices are arriving. Red if the dashboard cannot reach the bot. |
 | ↻ | Refresh now. The page also refreshes itself every 15 seconds. |
 | ☀ / ☾ | Light or dark theme. |
-| Chart icon | Opens the public live results and the guide. |
+| Chart icon | **Learn & live results**: opens the guide and the public live results. The **How it buys** and **How it sells** cards also link to the matching part of the guide. |
 | **Attach Binance account** | Connects your own Binance account (see [Attaching Binance](#attaching-binance)). After that it shows a small "Binance" chip. |
 
 Scrolling down hides the top bar; the coin bar stays. Scrolling up brings it back.
