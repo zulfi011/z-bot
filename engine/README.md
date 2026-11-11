@@ -29,7 +29,7 @@ accepts them, and nothing reaches the real Binance.
 | `backend/app/domain/` | Strategy logic without I/O: signals, exits, breakout, pullback, add-ons |
 | `backend/app/services/` | Binance client and exchange, trading (`live_execution_service.py`), the account (`account.py`), monitoring, market data |
 | `backend/app/api/` | The dashboard's API, one module per topic: `controls`, `dashboard`, `coin_view`, `profit`, `binance`, `session`, `health`; `routes.py` joins them |
-| `backend/migrations/` | Database schema (Alembic); runs automatically on start |
+| `backend/migrations/` | Database schema, applied on start: `schema.sql` is the whole schema for a new install; `history/` upgrades older databases; new steps go in `versions/` |
 | `frontend/src/` | The dashboard (React + Vite) |
 | `*_strategy.json` | One strategy file per coin: the rules and settings the bot runs |
 | `devtools/` | Fake Binance and the strategies-page generator |
