@@ -10,6 +10,7 @@ from decimal import Decimal
 import pytest
 
 from app.domain.execution import Candle, Position
+from app.services import account
 from app.services import live_execution_service as live
 from app.services.binance_exchange import OrderResult, SymbolRules
 
@@ -377,10 +378,10 @@ class _Client:
 
 # ---------------------------------------------------------------- lot affordability
 def test_the_last_coin_to_buy_takes_whatever_the_pot_has_left():
-    assert live.affordable_lot(Decimal("100"), Decimal("250")) == Decimal("100")
-    assert live.affordable_lot(Decimal("100"), Decimal("98")) == Decimal("98.00")
-    assert live.affordable_lot(Decimal("150"), Decimal("1.009")) == Decimal("1.00")
-    assert live.affordable_lot(Decimal("100"), Decimal("0.004")) is None      # nothing left at all
+    assert account.affordable_lot(Decimal("100"), Decimal("250")) == Decimal("100")
+    assert account.affordable_lot(Decimal("100"), Decimal("98")) == Decimal("98.00")
+    assert account.affordable_lot(Decimal("150"), Decimal("1.009")) == Decimal("1.00")
+    assert account.affordable_lot(Decimal("100"), Decimal("0.004")) is None      # nothing left at all
 
 
 def test_a_lot_shrunk_by_earlier_losses_still_buys():

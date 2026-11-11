@@ -27,8 +27,8 @@ accepts them, and nothing reaches the real Binance.
 |---|---|
 | `backend/app/worker.py` | The loop: prices in, signals, orders, health checks |
 | `backend/app/domain/` | Strategy logic without I/O: signals, exits, breakout, pullback, add-ons |
-| `backend/app/services/` | Binance client and exchange, execution, monitoring, market data |
-| `backend/app/api/routes.py` | The dashboard's API and controls |
+| `backend/app/services/` | Binance client and exchange, trading (`live_execution_service.py`), the account (`account.py`), monitoring, market data |
+| `backend/app/api/` | The dashboard's API, one module per topic: `controls`, `dashboard`, `coin_view`, `profit`, `binance`, `session`, `health`; `routes.py` joins them |
 | `backend/migrations/` | Database schema (Alembic); runs automatically on start |
 | `frontend/src/` | The dashboard (React + Vite) |
 | `*_strategy.json` | One strategy file per coin: the rules and settings the bot runs |

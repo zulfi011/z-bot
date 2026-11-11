@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from app.api.routes import _equity_bucket
+from app.api.common import _equity_bucket
 
 
 def test_equity_bucket_keeps_recent_accounts_detailed() -> None:
@@ -15,7 +15,7 @@ def test_equity_bucket_bounds_long_histories() -> None:
 
 def test_profit_summary_separates_costs_from_the_result():
     from decimal import Decimal as D
-    from app.api.routes import _summarize
+    from app.api.profit import _summarize
     rows = [{"net_pnl_usd": D("4"), "entry_fee_usd": D("0.08"), "exit_fee_usd": D("0.08"), "bnb_fees_usd": D("0.16"),
              "allocation_usd": D("100"), "duration_minutes": 60},
             {"net_pnl_usd": D("-2"), "entry_fee_usd": D("0.08"), "exit_fee_usd": D("0.08"), "bnb_fees_usd": D("0"),
@@ -31,7 +31,7 @@ def test_profit_summary_separates_costs_from_the_result():
 
 def test_profit_windows_cover_the_quick_ranges_and_custom_dates():
     from datetime import datetime, timezone
-    from app.api.routes import _profit_window
+    from app.api.profit import _profit_window
     start, end, name = _profit_window("7d", None, None)
     assert name == "7d" and (end - start).days == 7
     custom_start = datetime(2026, 1, 1, tzinfo=timezone.utc)

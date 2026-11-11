@@ -10,7 +10,7 @@ from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
 from app.core import credentials
-from app.services.live_execution_service import STATE_KEY, coin_label, read_pot, read_settings
+from app.services.account import STATE_KEY, coin_label, read_pot, read_settings
 
 # How far back a health check looks for candles. Long enough to spot a real gap, short enough to stay an
 # index lookup instead of a scan of every candle ever stored.

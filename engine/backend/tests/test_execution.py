@@ -5,7 +5,6 @@ import pytest
 
 from app.domain.execution import (
     Candle,
-    CoinAllocation,
     ExecutionConfig,
     FeeContext,
     Position,

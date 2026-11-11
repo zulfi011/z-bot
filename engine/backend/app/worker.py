@@ -8,17 +8,17 @@ from app.core import credentials
 from app.core.settings import get_settings
 from app.core.strategy import load_strategies
 from app.db.session import get_engine
-from app.services.binance_market_data import BinanceMarketData
-from app.services.candle_repository import CandleRepository
-from app.services.monitoring_service import MonitoringService
+from app.services.account import read_settings
 from app.services.binance_client import BinanceClient
 from app.services.binance_exchange import BinanceExchange
-from app.services.live_execution_service import LiveExecutionService, read_settings
-from app.services.signal_repository import SignalRepository
+from app.services.binance_market_data import BinanceMarketData
+from app.services.candle_repository import CandleRepository
 from app.services.consolidation_service import ConsolidationService
+from app.services.live_execution_service import LiveExecutionService
+from app.services.monitoring_service import MonitoringService
 from app.services.pullback_service import PullbackService
+from app.services.signal_repository import SignalRepository
 from app.services.signal_service import SignalService
-
 
 ONE_MINUTE = timedelta(minutes=1)
 

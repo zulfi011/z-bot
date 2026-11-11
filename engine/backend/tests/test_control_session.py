@@ -6,7 +6,8 @@ import pytest
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
-from app.api import routes
+from app.api import common
+from api_patch import patch_api
 from app.core import control_session as session
 
 KEY = "the-real-control-key"
@@ -43,7 +44,7 @@ def test_guessing_the_key_is_slowed_down():
 
 @pytest.fixture
 def server(monkeypatch):
-    monkeypatch.setattr(routes, "get_settings", lambda: SimpleNamespace(strategy_edit_token=KEY))
+    patch_api(monkeypatch, "get_settings", lambda: SimpleNamespace(strategy_edit_token=KEY))
     session._failures.clear()
     from app.main import app
     return TestClient(app, base_url="http://localhost")
@@ -62,18 +63,18 @@ def test_unlock_act_and_lock_through_the_api(server, monkeypatch):
 
     # An unlocked device passes the control check with no key at all.
     token = server.cookies.get(session.COOKIE)
-    routes._authorize(None, token)
+    common._authorize(None, token)
 
     server.delete("/api/v1/session")
     assert server.get("/api/v1/session").json()["unlocked"] is False
 
 
 def test_a_locked_device_is_refused_with_a_clear_message(monkeypatch):
-    monkeypatch.setattr(routes, "get_settings", lambda: SimpleNamespace(strategy_edit_token=KEY))
+    patch_api(monkeypatch, "get_settings", lambda: SimpleNamespace(strategy_edit_token=KEY))
     with pytest.raises(HTTPException) as error:
-        routes._authorize(None, None)
+        common._authorize(None, None)
     assert error.value.status_code == 403 and "locked" in error.value.detail
-    routes._authorize(KEY, None)                                        # scripts may still send the key header
+    common._authorize(KEY, None)                                        # scripts may still send the key header
 
 
 def test_the_key_can_be_guessed_only_a_few_times(server):
