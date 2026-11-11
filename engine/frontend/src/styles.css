@@ -677,3 +677,62 @@ button.link.inline { padding: 0; font-size: inherit; }
 .way-progress { height: 4px; border-radius: 999px; background: var(--panel); overflow: hidden; margin-top: 5px; max-width: 180px; }
 .way-progress i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--accent), var(--up)); }
 .way-step.block .way-progress i { background: var(--down); }
+
+/* Price chart: trades as markers on the price (no numbers), a hover card, layer chips, an overview strip */
+.chart-marks { position: absolute; inset: 0; pointer-events: none; }
+.mark { position: absolute; transform: translate(-50%, -50%); pointer-events: auto; border: 0; padding: 0; cursor: pointer;
+  display: grid; place-items: center; font: 700 10px/1 Inter, system-ui, sans-serif; color: #fff; transition: transform .15s ease; }
+.mark:hover, .mark.picked { transform: translate(-50%, -50%) scale(1.25); z-index: 3; }
+.mark-buy { width: 14px; height: 14px; border-radius: 50%; background: var(--src); box-shadow: 0 0 0 2px var(--panel), 0 0 0 3px var(--src); }
+.mark-buy.open { background: var(--panel); box-shadow: 0 0 0 2px var(--src); }
+.mark-sell { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 0 2px var(--panel); }
+.mark-sell.won { background: var(--up); } .mark-sell.lost { background: var(--down); } .mark-sell.mixed { background: var(--muted); }
+.mark:not(:empty) { width: auto; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; }
+.trade-path { stroke-width: 1.6; vector-effect: non-scaling-stroke; opacity: .75; }
+.trade-path.won { stroke: var(--up); } .trade-path.lost { stroke: var(--down); }
+.trade-path.open { stroke: var(--muted); stroke-dasharray: 4 4; }
+.trade-card { position: absolute; z-index: 6; width: 250px; transform: translate(-50%, calc(-100% - 14px)); background: var(--panel);
+  border: 1px solid var(--line); border-radius: 12px; padding: 10px 30px 10px 12px; box-shadow: var(--shadow); display: grid; gap: 8px;
+  font-size: 12.5px; animation: card-in .16s ease-out; }
+.trade-card.below { transform: translate(-50%, 14px); }
+.trade-card-row { display: grid; gap: 2px; }
+.trade-card-row b { display: flex; align-items: center; gap: 5px; font-size: 13px; }
+.trade-card-row b .arrow { color: var(--muted); }
+.trade-card-row small { color: var(--muted); font-size: 12px; }
+.trade-card-row > span { font-weight: 700; }
+.trade-card-close { position: absolute; top: 6px; right: 6px; border: 0; background: none; color: var(--muted); width: 22px; height: 22px; border-radius: 6px; font-size: 11px; }
+.trade-card-close:hover { background: var(--panel-2); color: var(--text); }
+@keyframes card-in { from { opacity: 0; } to { opacity: 1; } }
+
+.overview { position: relative; height: 36px; margin-top: 8px; border-radius: 8px; background: var(--panel-2); border: 1px solid var(--line);
+  overflow: hidden; touch-action: none; cursor: pointer; user-select: none; }
+.overview svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.overview polyline { fill: none; stroke: var(--muted); stroke-width: 1.4; vector-effect: non-scaling-stroke; opacity: .8; }
+.overview-shade { position: absolute; top: 0; bottom: 0; background: color-mix(in srgb, var(--bg) 55%, transparent); pointer-events: none; }
+.overview-window { position: absolute; top: 0; bottom: 0; border: 1.5px solid var(--accent); border-radius: 7px; cursor: grab;
+  background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.overview-window:active { cursor: grabbing; }
+.overview-window b { position: absolute; top: 50%; width: 4px; height: 14px; margin-top: -7px; border-radius: 2px; background: var(--accent); cursor: ew-resize; }
+.overview-window b:first-child { left: -2.5px; } .overview-window b:last-child { right: -2.5px; }
+
+.layer-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
+.layer-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600;
+  border: 1px solid var(--line); background: var(--panel-2); color: var(--muted); opacity: .55; transition: opacity .15s ease, border-color .15s ease; }
+.layer-chip.on { opacity: 1; color: var(--text); }
+.layer-chip:hover { border-color: var(--accent); }
+.layer-chip i { display: inline-block; width: 12px; height: 3px; border-radius: 2px; }
+.layer-chip i.lg-zone, .layer-chip i.lg-quiet { height: 10px; }
+.lg-trades { width: 9px !important; height: 9px !important; border-radius: 50% !important; background: var(--accent); box-shadow: 0 0 0 2px var(--panel-2), 0 0 0 3px var(--accent); }
+.layer-note { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--muted); }
+.layer-note i { display: inline-block; width: 12px; height: 10px; border-radius: 2px; }
+
+/* Entrance: the series rises in when the chart is first seen, and again when the interval changes (the SVG remounts). */
+.price-chart.waiting .price-series, .price-chart.waiting .mark { opacity: 0; }
+.price-chart.in-view .price-series { animation: series-in .6s cubic-bezier(.2, .8, .2, 1) both; transform-box: fill-box; }
+.price-chart.in-view .mark { animation: mark-in .3s ease-out .35s both; }
+@keyframes series-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes mark-in { from { opacity: 0; scale: .4; } to { opacity: 1; scale: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .price-chart.in-view .price-series, .price-chart.in-view .mark, .trade-card { animation: none; }
+  .price-chart.waiting .price-series, .price-chart.waiting .mark { opacity: 1; }
+}

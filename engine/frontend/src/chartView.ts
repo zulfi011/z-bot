@@ -27,25 +27,53 @@ export function useChartView(count: number, onHover?: (fraction: number | null) 
   const drag = useRef<{ x: number; view: View; moved: boolean } | null>(null);
   const pinch = useRef<{ distance: number; view: View; anchor: number } | null>(null);
   const tap = useRef(0);
+  // A running glide (buttons, wheel, Fit, overview strip) and where it is heading.
+  const anim = useRef<number | null>(null);
+  const target = useRef<View | null>(null);
 
   const full: View = { from: 0, to: Math.max(count - 1, 1) };
   const current = view ? clamp(view, count) : full;
   live.current = current;
   const zoomed = view != null && (current.from > 0.5 || current.to < full.to - 0.5);
 
-  const reset = useCallback(() => { setView(null); }, []);
+  const stop = () => { if (anim.current != null) cancelAnimationFrame(anim.current); anim.current = null; target.current = null; };
+  /** Glide to a view in ~240 ms (ease-out), or jump when the viewer prefers reduced motion. */
+  const animateTo = useCallback((next: View, done?: () => void) => {
+    const goal = clamp(next, count);
+    const reduce = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (anim.current != null) cancelAnimationFrame(anim.current);
+    if (reduce) { anim.current = null; target.current = null; setView(goal); done?.(); return; }
+    const from = live.current, start = performance.now();
+    target.current = goal;
+    const step = (now: number) => {
+      const t = Math.min(1, (now - start) / 240), e = 1 - Math.pow(1 - t, 3);
+      setView({ from: from.from + (goal.from - from.from) * e, to: from.to + (goal.to - from.to) * e });
+      if (t < 1) anim.current = requestAnimationFrame(step);
+      else { anim.current = null; target.current = null; done?.(); }
+    };
+    anim.current = requestAnimationFrame(step);
+  }, [count]);
+  useEffect(() => () => { if (anim.current != null) cancelAnimationFrame(anim.current); }, []);
+
+  const reset = useCallback(() => {
+    animateTo({ from: 0, to: Math.max(count - 1, 1) }, () => setView(null));
+  }, [animateTo, count]);
   const fractionOf = (clientX: number) => {
     const box = ref.current?.getBoundingClientRect();
     if (!box || !box.width) return 0;
     return Math.min(Math.max((clientX - box.left) / box.width, 0), 1);
   };
   const zoomAt = useCallback((factor: number, anchor: number) => {
-    const view = live.current;
+    // Build on where a running glide is heading, so quick wheel ticks add up smoothly.
+    const view = target.current ?? live.current;
     const span = view.to - view.from;
     const middle = view.from + anchor * span;
-    const next = { from: middle - anchor * span * factor, to: middle + (1 - anchor) * span * factor };
-    setView(clamp(next, count));
-  }, [count]);
+    animateTo({ from: middle - anchor * span * factor, to: middle + (1 - anchor) * span * factor });
+  }, [animateTo]);
+  /** Show exactly this range (used by the overview strip); glides unless `instant`. */
+  const setRange = useCallback((next: View, instant = false) => {
+    if (instant) { stop(); setView(clamp(next, count)); } else animateTo(next);
+  }, [animateTo, count]);
 
   // The wheel listener has to be non-passive to stop the page scrolling while the chart zooms.
   useEffect(() => {
@@ -62,6 +90,7 @@ export function useChartView(count: number, onHover?: (fraction: number | null) 
 
   const handlers = {
     onPointerDown: (event: React.PointerEvent<SVGSVGElement>) => {
+      stop();
       pointers.current.set(event.pointerId, event.clientX);
       event.currentTarget.setPointerCapture?.(event.pointerId);
       if (pointers.current.size === 2) {
@@ -118,5 +147,5 @@ export function useChartView(count: number, onHover?: (fraction: number | null) 
     onDoubleClick: () => reset(),
   };
 
-  return { ref, view: current, full, zoomed, reset, handlers, fractionOf, zoomAt };
+  return { ref, view: current, full, zoomed, reset, handlers, fractionOf, zoomAt, setRange };
 }

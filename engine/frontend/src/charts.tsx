@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { ChartPoint, EquityPoint, Marker } from "./api";
-import { n, pct, price, signedUsd, time, usd } from "./format";
-import { SOURCE, sourceOf } from "./sources";
+import type { ChartPoint, EquityPoint, Marker, Num } from "./api";
+import { label, n, pct, price, signedUsd, time, tone, usd } from "./format";
+import { sourceOf } from "./sources";
 import { useChartView } from "./chartView";
 
 const W = 1000;
@@ -18,14 +18,114 @@ function runs(points: ChartPoint[], on: (point: ChartPoint) => boolean): [number
   return found;
 }
 
+type Layer = "average" | "zone" | "trend" | "quiet" | "pullback" | "trades";
+const LAYERS_KEY = "chart-layers";
+const readLayers = (): Record<Layer, boolean> => {
+  const all = { average: true, zone: true, trend: true, quiet: true, pullback: true, trades: true };
+  try { return { ...all, ...JSON.parse(localStorage.getItem(LAYERS_KEY) ?? "{}") }; } catch { return all; }
+};
+
+/** Width of an element in CSS pixels, kept current. */
+function useWidth<T extends Element>() {
+  const ref = useRef<T>(null);
+  const [width, setWidth] = useState(0);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(entries => setWidth(entries[0].contentRect.width));
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+  return [ref, width] as const;
+}
+
+type TradeView = {
+  key: string; source: ReturnType<typeof sourceOf>; status: string; won: boolean; open: boolean;
+  pnl: Num | null; exitLabel: string; entryTime: string; exitTime: string | null; entryPrice: Num; exitPrice: Num | null;
+  entry: { x: number; y: number }; exit: { x: number; y: number } | null; end: { x: number; y: number };
+  entryShown: boolean; exitShown: boolean;
+};
+type Dot = { kind: "buy" | "sell"; x: number; y: number; trade: TradeView };
+type Group = { kind: "buy" | "sell"; x: number; y: number; trades: TradeView[] };
+
+/** The whole period as a thin line, with the visible window: drag it to move, drag its edges to zoom. */
+function Overview({ points, view, onChange }:
+  { points: ChartPoint[]; view: { from: number; to: number }; onChange: (next: { from: number; to: number }, instant?: boolean) => void }) {
+  const box = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ mode: "move" | "left" | "right"; x: number; view: { from: number; to: number } } | null>(null);
+  const count = points.length - 1;
+  const closes = points.map(point => n(point.close));
+  const low = Math.min(...closes), high = Math.max(...closes);
+  const line = closes.map((value, index) => `${index / Math.max(count, 1) * 1000},${36 - (value - low) / Math.max(high - low, 1e-9) * 30 - 3}`).join(" ");
+  const left = view.from / Math.max(count, 1) * 100, right = view.to / Math.max(count, 1) * 100;
+  const indexAt = (clientX: number) => {
+    const rect = box.current!.getBoundingClientRect();
+    return Math.min(Math.max((clientX - rect.left) / rect.width, 0), 1) * count;
+  };
+  return <div className="overview" ref={box}
+    onPointerDown={event => {
+      const at = indexAt(event.clientX), edge = (view.to - view.from) * 0.12 + count * 0.008;
+      const mode = Math.abs(at - view.from) < edge ? "left" : Math.abs(at - view.to) < edge ? "right"
+        : at > view.from && at < view.to ? "move" : null;
+      if (!mode) { const span = view.to - view.from; onChange({ from: at - span / 2, to: at + span / 2 }); return; }
+      event.currentTarget.setPointerCapture(event.pointerId);
+      drag.current = { mode, x: event.clientX, view };
+    }}
+    onPointerMove={event => {
+      const d = drag.current; if (!d) return;
+      const rect = box.current!.getBoundingClientRect();
+      const shift = (event.clientX - d.x) / rect.width * count;
+      const next = d.mode === "move" ? { from: d.view.from + shift, to: d.view.to + shift }
+        : d.mode === "left" ? { from: Math.min(d.view.from + shift, d.view.to - 6), to: d.view.to }
+          : { from: d.view.from, to: Math.max(d.view.to + shift, d.view.from + 6) };
+      onChange(next, true);
+    }}
+    onPointerUp={() => { drag.current = null; }} onPointerCancel={() => { drag.current = null; }}
+    role="slider" aria-label="Visible part of the chart: drag to move, drag the edges to zoom"
+    aria-valuemin={0} aria-valuemax={count} aria-valuenow={Math.round(view.from)}>
+    <svg viewBox="0 0 1000 36" preserveAspectRatio="none" aria-hidden="true"><polyline points={line} /></svg>
+    <i className="overview-shade" style={{ left: 0, width: `${left}%` }} />
+    <i className="overview-shade" style={{ left: `${right}%`, right: 0 }} />
+    <span className="overview-window" style={{ left: `${left}%`, width: `${Math.max(right - left, 1)}%` }}><b /><b /></span>
+  </div>;
+}
+
+/** The card shown for a marker: every trade at that spot, in plain words. */
+function TradeCard({ group, points, onClose }: { group: Group & { left: number; top: number; below: boolean }; points: ChartPoint[]; onClose: () => void }) {
+  const latest = points.at(-1);
+  return <div className={`trade-card ${group.below ? "below" : ""}`} style={{ left: `${group.left}%`, top: group.top }} role="dialog"
+    aria-label="Trade details" onPointerDown={event => event.stopPropagation()}>
+    <button type="button" className="trade-card-close" aria-label="Close" onClick={onClose}>✕</button>
+    {group.trades.map(trade => {
+      const nowPct = trade.open && latest ? (n(latest.close) / n(trade.entryPrice) - 1) * 100 : null;
+      return <div key={trade.key} className="trade-card-row">
+        <b><i className={`src-swatch ${trade.source.cls}`}>{trade.source.letter}</i>{trade.source.name} <span className="arrow">→</span> {trade.open ? "still open" : trade.exitLabel}</b>
+        <small>Bought {time(trade.entryTime, true)} at {price(trade.entryPrice)}</small>
+        {trade.exitTime && <small>Sold {time(trade.exitTime, true)} at {price(trade.exitPrice)}</small>}
+        <span className={trade.open ? tone(nowPct) : trade.won ? "up" : "down"}>
+          {trade.open ? `now ${price(latest?.close)} (${pct(nowPct)})` : signedUsd(trade.pnl)}</span>
+      </div>;
+    })}
+  </div>;
+}
+
 export function PriceChart({ coin, points, markers, zonePct, averageDays, mode, trendHours, zoneHours, pullbackHours,
   pullbackDwell, height = 250 }:
   { coin: string; points: ChartPoint[]; markers: Marker[]; zonePct: number; averageDays: number;
     mode: "line" | "candles"; trendHours?: number | null; zoneHours?: number | null; pullbackHours?: number | null;
     pullbackDwell?: number | null; height?: number }) {
   const [hover, setHover] = useState<number | null>(null);
+  const [layers, setLayers] = useState(readLayers);
+  const [picked, setPicked] = useState<string | null>(null);
+  const [frame, seen] = useSeen<HTMLDivElement>();
+  const [stage, stageWidth] = useWidth<HTMLDivElement>();
+  const toggle = (layer: Layer) => setLayers(current => {
+    const next = { ...current, [layer]: !current[layer] };
+    try { localStorage.setItem(LAYERS_KEY, JSON.stringify(next)); } catch { /* ignore */ }
+    return next;
+  });
   // Pinch or wheel to zoom, drag or swipe to look back, double-tap to see everything again.
-  const { ref, view, zoomed, reset, handlers, zoomAt } = useChartView(points.length, fraction =>
+  const { ref, view, zoomed, reset, handlers, zoomAt, setRange } = useChartView(points.length, fraction =>
     setHover(fraction == null ? null
       : Math.round(Math.min(Math.max(view.from + fraction * (view.to - view.from), 0), points.length - 1))));
   const chart = useMemo(() => {
@@ -36,10 +136,10 @@ export function PriceChart({ coin, points, markers, zonePct, averageDays, mode, 
     const shown = points.slice(first, last + 1);
     // The price scale follows what is on screen, so zooming in really does open the move up.
     const values = shown.flatMap(point => [n(point.low), n(point.high),
-      ...(point.trend_line == null ? [] : [n(point.trend_line)]),
-      ...(point.pullback_line == null ? [] : [n(point.pullback_line)]),
-      ...(point.zone_top == null ? [] : [n(point.zone_top), n(point.zone_bottom)]),
-      ...(point.signal_average == null ? [] : [n(point.signal_average) * (1 - zone), n(point.signal_average) * (1 + zone)])]);
+      ...(point.trend_line == null || !layers.trend ? [] : [n(point.trend_line)]),
+      ...(point.pullback_line == null || !layers.pullback ? [] : [n(point.pullback_line)]),
+      ...(point.zone_top == null || !layers.quiet ? [] : [n(point.zone_top), n(point.zone_bottom)]),
+      ...(point.signal_average == null || !(layers.average || layers.zone) ? [] : [n(point.signal_average) * (1 - zone), n(point.signal_average) * (1 + zone)])]);
     const low = Math.min(...values), high = Math.max(...values), pad = (high - low) * 0.08 || 1;
     const min = low - pad, max = high + pad;
     const x = (index: number) => (index - view.from) / span * W;
@@ -87,122 +187,138 @@ export function PriceChart({ coin, points, markers, zonePct, averageDays, mode, 
       const index = indexAt(value);
       return index >= view.from - 0.5 && index <= view.to + 0.5;
     };
-    const trades = markers.map(marker => {
-      const source = sourceOf(marker.entry_source);
-      const rides = marker.trend_exit_active === true;
-      const won = marker.status !== "open" && n(marker.realized_pnl_usd) >= 0;
+    const latest = { x: x(points.length - 1), y: y(n(points.at(-1)!.close)) };
+    const trades: TradeView[] = markers.map(marker => {
+      const open = marker.status === "open" || !marker.exit_time;
+      const entry = { x: xTime(marker.entry_time), y: y(n(marker.entry_fill_price)) };
+      const exit = marker.exit_time ? { x: xTime(marker.exit_time), y: y(n(marker.exit_fill_price)) } : null;
       return {
-        key: marker.position_id, number: marker.trade_number, source, status: marker.status,
-        pnl: marker.realized_pnl_usd, rides, won, added: marker.parent_position_id != null,
-        entry: inRange(marker.entry_time) ? { x: xTime(marker.entry_time), y: y(n(marker.entry_fill_price)) } : null,
-        trail: inRange(marker.trailing_started_at) ? { x: xTime(marker.trailing_started_at!), y: y(n(marker.trailing_start_price)) } : null,
-        exit: marker.exit_time && inRange(marker.exit_time) ? { x: xTime(marker.exit_time), y: y(n(marker.exit_fill_price)) } : null,
-        text: `Trade ${marker.trade_number} · bought by ${source.long} · ${rides ? "rides the trend line" : "gives profit back"}: `
-          + `bought ${time(marker.entry_time, true)} at ${price(marker.entry_fill_price)}`
-          + (marker.trailing_started_at ? ` · trailing from ${time(marker.trailing_started_at)} at ${price(marker.trailing_start_price)}` : "")
-          + (marker.exit_time ? ` · sold ${time(marker.exit_time, true)} at ${price(marker.exit_fill_price)} (${signedUsd(marker.realized_pnl_usd)})` : " · still open"),
+        key: marker.position_id, source: sourceOf(marker.entry_source), status: marker.status, open,
+        won: !open && n(marker.realized_pnl_usd) >= 0, pnl: marker.realized_pnl_usd,
+        exitLabel: label(marker.exit_reason ?? ""), entryTime: marker.entry_time, exitTime: marker.exit_time,
+        entryPrice: marker.entry_fill_price, exitPrice: marker.exit_fill_price,
+        entry, exit, end: exit ?? latest, entryShown: inRange(marker.entry_time), exitShown: !!exit && inRange(marker.exit_time),
       };
-    }).filter(trade => trade.entry || trade.trail || trade.exit);
+    // A trade is drawn when any part of it overlaps the view.
+    }).filter(trade => !(trade.end.x < -20 || trade.entry.x > W + 20));
     return { x, y, band, average, line, trend: polyline("trend_line"), pullback: polyline("pullback_line"),
-             quiet, armed, trades, first, last, shown,
-             candle: Math.max(1.5, bucket * 0.6), min, max };
-  }, [points, markers, zonePct, height, view.from, view.to]);
+             quiet, armed, trades, first, last, candle: Math.max(1.5, bucket * 0.6) };
+  }, [points, markers, zonePct, height, view.from, view.to, layers]);
+
+  // Markers close together on screen merge into one, with a count, until the chart is zoomed in enough.
+  const groups = useMemo(() => {
+    if (!chart || !layers.trades) return [] as (Group & { left: number })[];
+    const toPx = (value: number) => value / W * (stageWidth || 800);
+    const dots: Dot[] = chart.trades.flatMap(trade => [
+      ...(trade.entryShown ? [{ kind: "buy" as const, x: trade.entry.x, y: trade.entry.y, trade }] : []),
+      ...(trade.exitShown && trade.exit ? [{ kind: "sell" as const, x: trade.exit.x, y: trade.exit.y, trade }] : []),
+    ]).sort((a, b) => a.x - b.x);
+    const out: Group[] = [];
+    for (const dot of dots) {
+      const near = out.find(group => group.kind === dot.kind && Math.abs(toPx(group.x) - toPx(dot.x)) < 18 && Math.abs(group.y - dot.y) < 18);
+      if (near) near.trades.push(dot.trade);
+      else out.push({ kind: dot.kind, x: dot.x, y: dot.y, trades: [dot.trade] });
+    }
+    return out.map(group => ({ ...group, left: group.x / W * 100 }));
+  }, [chart, layers.trades, stageWidth]);
 
   if (!chart) return <div className="chart-empty">Waiting for price data…</div>;
   const active = hover == null ? null : points[hover];
   const last = points.at(-1)!;
-  const sources = new Set(chart.trades.map(trade => trade.source.letter));
-  const leftPct = (value: number) => `${value / W * 100}%`;
-  const topPx = (value: number) => `${Math.max(9, Math.min(height - 9, value))}px`;
+  const topPx = (value: number) => Math.max(9, Math.min(height - 9, value));
   const range = `${time(points[chart.first].open_time, true)} → ${time(points[chart.last].open_time, true)}`;
-  return <div className="chart">
-    <div className="chart-stage" style={{ height }}>
-      <svg ref={ref} viewBox={`0 0 ${W} ${height}`} preserveAspectRatio="none" style={{ height }} {...handlers}
+  const pickedGroup = groups.find(group => `${group.kind}-${group.trades[0].key}` === picked);
+  // A new interval (different first candle or length) fades in instead of snapping.
+  const series = `${points[0].open_time}-${points.length}-${mode}`;
+  const chips: { layer: Layer; label: string; cls: string; show: boolean }[] = [
+    { layer: "average", label: `${averageDays}-day average`, cls: "lg-avg", show: true },
+    { layer: "zone", label: `±${zonePct}% entry zone`, cls: "lg-zone", show: true },
+    { layer: "trend", label: `${trendHours}h trend line`, cls: "lg-trend", show: !!chart.trend },
+    { layer: "quiet", label: `${zoneHours}h quiet band`, cls: "lg-quiet", show: chart.quiet.length > 0 || !!zoneHours },
+    { layer: "pullback", label: `${pullbackHours}h pullback line`, cls: "lg-pull", show: !!chart.pullback },
+    { layer: "trades", label: "Trades", cls: "lg-trades", show: markers.length > 0 },
+  ];
+  return <div className={`chart price-chart ${seen ? "in-view" : "waiting"}`} ref={frame}>
+    <div className="chart-stage" style={{ height }} ref={stage} onPointerDown={() => setPicked(null)}>
+      <svg key={series} ref={ref} viewBox={`0 0 ${W} ${height}`} preserveAspectRatio="none" style={{ height }} {...handlers}
         aria-label={`${coin} price with the ${averageDays}-day average and ±${zonePct}% entry zone. Pinch or scroll to zoom, drag to move.`}>
-        {chart.armed.map((span, index) => <rect key={`armed-${index}`} className="pullback-armed"
+        {layers.pullback && chart.armed.map((span, index) => <rect key={`armed-${index}`} className="pullback-armed"
           x={span.left} width={Math.max(1, span.right - span.left)} y={0} height={height} />)}
-        {chart.band && <polygon points={chart.band} className="zone-band" />}
-        {chart.quiet.map((box, index) => <polygon key={index} points={box} className="quiet-band" />)}
-        {mode === "line" ? <polyline points={chart.line} className="price-line" /> : points.map((point, index) => {
-          if (index < chart.first - 1 || index > chart.last + 1) return null;
-          const up = n(point.close) >= n(point.open), cx = chart.x(index);
-          const top = chart.y(Math.max(n(point.open), n(point.close))), bottom = chart.y(Math.min(n(point.open), n(point.close)));
-          return <g key={point.open_time} className={up ? "candle up" : "candle down"}>
-            <line x1={cx} x2={cx} y1={chart.y(n(point.high))} y2={chart.y(n(point.low))} />
-            <rect x={cx - chart.candle / 2} width={chart.candle} y={top} height={Math.max(1, bottom - top)} />
-          </g>;
-        })}
-        {chart.average && <polyline points={chart.average} className="average-line" />}
-        {chart.pullback && <polyline points={chart.pullback} className="pullback-line" />}
-        {chart.trend && <polyline points={chart.trend} className="trend-line" />}
-        {chart.trades.map(trade => <g key={trade.key} className={`trade-mark ${trade.source.cls}`}>
-          <title>{trade.text}</title>
-          {trade.entry && <line className="trade-open" x1={trade.entry.x} x2={trade.entry.x} y1={0} y2={height} />}
-          {trade.trail && <line className="trade-trail" x1={trade.trail.x - 16} x2={trade.trail.x + 16} y1={trade.trail.y} y2={trade.trail.y} />}
-          {trade.exit && <line className="trade-close" x1={trade.exit.x} x2={trade.exit.x} y1={0} y2={height} />}
-        </g>)}
+        {layers.zone && chart.band && <polygon points={chart.band} className="zone-band" />}
+        {layers.quiet && chart.quiet.map((box, index) => <polygon key={index} points={box} className="quiet-band" />)}
+        <g className="price-series">
+          {mode === "line" ? <polyline points={chart.line} className="price-line" /> : points.map((point, index) => {
+            if (index < chart.first - 1 || index > chart.last + 1) return null;
+            const up = n(point.close) >= n(point.open), cx = chart.x(index);
+            const top = chart.y(Math.max(n(point.open), n(point.close))), bottom = chart.y(Math.min(n(point.open), n(point.close)));
+            return <g key={point.open_time} className={up ? "candle up" : "candle down"}>
+              <line x1={cx} x2={cx} y1={chart.y(n(point.high))} y2={chart.y(n(point.low))} />
+              <rect x={cx - chart.candle / 2} width={chart.candle} y={top} height={Math.max(1, bottom - top)} />
+            </g>;
+          })}
+        </g>
+        {layers.average && chart.average && <polyline points={chart.average} className="average-line" />}
+        {layers.pullback && chart.pullback && <polyline points={chart.pullback} className="pullback-line" />}
+        {layers.trend && chart.trend && <polyline points={chart.trend} className="trend-line" />}
+        {layers.trades && chart.trades.map(trade => <line key={trade.key}
+          className={`trade-path ${trade.open ? "open" : trade.won ? "won" : "lost"}`}
+          x1={trade.entry.x} y1={trade.entry.y} x2={trade.end.x} y2={trade.end.y} />)}
         {hover != null && <line className="crosshair" x1={chart.x(hover)} x2={chart.x(hover)} y1={0} y2={height} />}
       </svg>
-      {/* Badges live in HTML, not the stretched SVG, so they stay round and readable at any width. */}
-      <div className="chart-badges" aria-hidden="true">
-        {chart.trades.map(trade => <span key={trade.key}>
-          {trade.entry && <i className={`buy-badge ${trade.source.cls}`} title={trade.text}
-            style={{ left: leftPct(trade.entry.x), top: topPx(trade.entry.y) }}>{trade.source.letter}{trade.number}</i>}
-          {trade.exit && <i className={`sell-dot ${trade.source.cls} ${trade.won ? "won" : "lost"}`} title={trade.text}
-            style={{ left: leftPct(trade.exit.x), top: topPx(trade.exit.y) }} />}
-        </span>)}
+      {/* Markers live in HTML, not the stretched SVG, so they stay round, readable and easy to tap. */}
+      <div className="chart-marks">
+        {groups.map(group => {
+          const id = `${group.kind}-${group.trades[0].key}`;
+          const first = group.trades[0];
+          const cls = group.kind === "buy" ? `mark-buy ${first.source.cls} ${first.open ? "open" : ""}`
+            : `mark-sell ${group.trades.every(t => t.won) ? "won" : group.trades.every(t => !t.won) ? "lost" : "mixed"}`;
+          return <button key={id} type="button" className={`mark ${cls} ${picked === id ? "picked" : ""}`}
+            style={{ left: `${group.left}%`, top: topPx(group.y) }}
+            aria-label={`${group.trades.length} trade${group.trades.length === 1 ? "" : "s"}: ${group.kind === "buy" ? "bought" : "sold"} here`}
+            onPointerDown={event => event.stopPropagation()}
+            onMouseEnter={() => matchMedia("(hover: hover)").matches && setPicked(id)}
+            onClick={() => setPicked(current => current === id ? null : id)}>
+            {group.trades.length > 1 ? group.trades.length : ""}
+          </button>;
+        })}
       </div>
-      <ChartZoom zoomed={zoomed} onZoom={zoomAt} onReset={reset} />
+      {pickedGroup && <TradeCard points={points} onClose={() => setPicked(null)}
+        group={{ ...pickedGroup, left: Math.min(Math.max(pickedGroup.left, 14), 86), top: topPx(pickedGroup.y), below: pickedGroup.y < 120 }} />}
+      <ChartZoom zoomed={zoomed} onZoom={zoomAt} onReset={reset} anchor={view.to >= points.length - 1.5 ? 1 : 0.5} />
     </div>
+    <Overview points={points} view={view} onChange={setRange} />
     <div className="chart-readout">
       {active ? <>
         <span>{time(active.open_time, true)}</span><b>{price(active.close)}</b>
         <span>H {price(active.high)} · L {price(active.low)}</span>
         {active.signal_average != null && <span className="avg">{averageDays}D {price(active.signal_average)}</span>}
-        {active.trend_line != null && <span className="trend">Trend {price(active.trend_line)}</span>}
-        {active.pullback_line != null && <span className="pull">Pullback line {price(active.pullback_line)}</span>}
+        {active.trend_line != null && layers.trend && <span className="trend">Trend {price(active.trend_line)}</span>}
+        {active.pullback_line != null && layers.pullback && <span className="pull">Pullback line {price(active.pullback_line)}</span>}
         {active.pullback_armed && <span className="pull"><b className="pull">armed</b></span>}
-        {active.zone_top != null && <span className="quiet">Quiet {price(active.zone_bottom)}–{price(active.zone_top)}</span>}
+        {active.zone_top != null && layers.quiet && <span className="quiet">Quiet {price(active.zone_bottom)}–{price(active.zone_top)}</span>}
       </> : <>
         <span>Latest</span><b>{price(last.close)}</b>
         {last.signal_average != null && <span className="avg">{averageDays}D avg {price(last.signal_average)}</span>}
-        {last.trend_line != null && <span className="trend">Trend line {price(last.trend_line)}</span>}
-        {last.pullback_line != null && <span className="pull">Pullback line {price(last.pullback_line)}</span>}
-        <span className="muted">{zoomed ? range : "Touch or hover to inspect · pinch or scroll to zoom"}</span>
+        <span className="muted">{zoomed ? range : "Hover a marker for its trade · scroll, pinch or drag the strip to zoom"}</span>
       </>}
     </div>
-    <div className="chart-foot">
-      <div className="trade-legend">
-        {chart.trades.length ? chart.trades.map(trade => <span key={trade.key} title={trade.text}>
-          <i className={`src-swatch ${trade.source.cls}`}>{trade.source.letter}{trade.number}</i>{trade.source.name}
-          {trendHours ? <em className={trade.rides ? "mode-a" : "mode-b"}>{trade.rides ? "rides" : "gives back"}</em> : null}
-          <small className={trade.status === "open" ? "" : trade.won ? "up" : "down"}>{trade.status === "open" ? "open" : signedUsd(trade.pnl)}</small>
-        </span>) : <span className="muted">No trades in this view</span>}
-      </div>
-      <div className="legend"><span><i className="lg-price" />{coin}</span><span><i className="lg-avg" />{averageDays}-day average</span>
-        <span><i className="lg-zone" />±{zonePct}% entry zone</span>
-        {chart.trend && <span><i className="lg-trend" />{trendHours}-hour trend line</span>}
-        {chart.quiet.length > 0 && <span><i className="lg-quiet" />{zoneHours}-hour quiet band</span>}
-        {chart.pullback && <span><i className="lg-pull" />{pullbackHours}-hour pullback line</span>}
-        {chart.armed.length > 0 && <span><i className="lg-armed" />pullback armed{pullbackDwell ? ` (${pullbackDwell / 60}h+ below the line)` : ""}</span>}</div>
+    <div className="layer-chips" role="group" aria-label="Show or hide chart layers">
+      {chips.filter(chip => chip.show).map(chip => <button key={chip.layer} type="button" aria-pressed={layers[chip.layer]}
+        className={`layer-chip ${layers[chip.layer] ? "on" : ""}`} onClick={() => toggle(chip.layer)}>
+        <i className={chip.cls} />{chip.label}</button>)}
+      {pullbackDwell && layers.pullback && chart.armed.length > 0
+        ? <span className="layer-note"><i className="lg-armed" />pullback armed ({pullbackDwell / 60}h+ under the line)</span> : null}
     </div>
-    {chart.trades.length > 0 && <p className="chart-key">
-      {(["D", "C", "P", "+", "M"] as const).filter(letter => sources.has(letter)).map(letter => {
-        const source = Object.values(SOURCE).find(item => item.letter === letter)!;
-        return <span key={letter} className="key-source"><i className={`src-swatch ${source.cls}`}>{letter}</i>{source.name}</span>;
-      })}
-      <span className="key-sep" /> <span className="key-open" /> bought · <span className="key-trail" /> trailing started ·
-      <span className="key-close" /> sold · <i className="sell-dot won key-dot" /> win · <i className="sell-dot lost key-dot" /> loss</p>}
   </div>;
 }
 
 /** Zoom buttons, for when a mouse wheel or two fingers are not to hand. */
-function ChartZoom({ zoomed, onZoom, onReset }:
-  { zoomed: boolean; onZoom: (factor: number, anchor: number) => void; onReset: () => void }) {
+function ChartZoom({ zoomed, onZoom, onReset, anchor = 0.5 }:
+  { zoomed: boolean; onZoom: (factor: number, anchor: number) => void; onReset: () => void; anchor?: number }) {
   return <div className="chart-zoom">
-    <button type="button" aria-label="Zoom in" onClick={() => onZoom(1 / 1.6, 0.5)}>+</button>
-    <button type="button" aria-label="Zoom out" onClick={() => onZoom(1.6, 0.5)}>−</button>
-    {zoomed && <button type="button" className="reset" onClick={onReset}>Reset</button>}
+    <button type="button" aria-label="Zoom in" onClick={() => onZoom(1 / 1.6, anchor)}>+</button>
+    <button type="button" aria-label="Zoom out" onClick={() => onZoom(1.6, anchor)}>−</button>
+    {zoomed && <button type="button" className="reset" onClick={onReset}>Fit</button>}
   </div>;
 }
 
@@ -285,7 +401,7 @@ export function EquityChart({ points, view, start, end, height = 200 }:
         {hover != null && <line className="crosshair" x1={x(hover)} x2={x(hover)} y1={0} y2={height} />}
       </svg>
       {hover != null && <span className={`equity-dot ${tone}`} style={dot(hover)} aria-hidden="true" />}
-      <ChartZoom zoomed={zoomed} onZoom={zoomAt} onReset={reset} />
+      <ChartZoom zoomed={zoomed} onZoom={zoomAt} onReset={reset} anchor={window.to >= points.length - 1.5 ? 1 : 0.5} />
     </div>
     <div className="chart-axis" aria-hidden="true">
       <span>{tick(left)}</span><span>{tick(left + width / 2)}</span><span>{tick(right)}</span>
