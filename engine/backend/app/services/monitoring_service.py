@@ -195,8 +195,8 @@ class MonitoringService:
                 if catching_up:
                     conditions["starting_up"] = {
                         "severity": "warning", "title": "The bot is starting up",
-                        "message": "It is catching up on the minutes it missed while it was off. Trading resumes "
-                                   "on its own within a few minutes.",
+                        "message": "It is catching up on the latest prices (after a first start or a restart). "
+                                   "Trading starts on its own within a few minutes.",
                         "details": {"started_at": self.started_at.isoformat()}}
             existing = {
                 row["alert_key"]: row["status"] for row in connection.execute(

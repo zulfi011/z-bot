@@ -141,6 +141,12 @@ def main() -> None:
         try:
             for item, days in backfill_days.items():
                 backfill(client, repository, item, days, log)
+            # A first start downloads a month per coin, which takes minutes; by the end the first coins are minutes
+            # old. A second pass only fetches those few minutes, so every coin is current before trading starts.
+            for item, days in backfill_days.items():
+                backfill(client, repository, item, days, log)
+            # The "starting up" grace counts from here, once the prices are in, not from when the process began.
+            monitoring.started_at = datetime.now(timezone.utc)
             for service in breakouts.values():
                 service.synchronize()
             for service in pullbacks.values():
