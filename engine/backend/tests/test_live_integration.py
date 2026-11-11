@@ -176,9 +176,9 @@ def world(database):
         connection.execute(text("DELETE FROM control_requests"))
         connection.execute(text("DELETE FROM engine_state"))
         connection.execute(
-            text("""INSERT INTO coin_allocations (symbol, lot_size_usd, lots, updated_at)
-                    VALUES (:s, 100, 1, now())
-                    ON CONFLICT (symbol) DO UPDATE SET lot_size_usd=100, lots=1, trading_enabled=true"""),
+            text("""INSERT INTO coin_allocations (symbol, trading_enabled, updated_at)
+                    VALUES (:s, true, now())
+                    ON CONFLICT (symbol) DO UPDATE SET trading_enabled=true"""),
             {"s": SYMBOL})
         connection.execute(
             text("""INSERT INTO engine_state (key, value) VALUES ('account_settings', CAST(:v AS jsonb))
@@ -478,8 +478,8 @@ def test_removing_link_refuses_while_a_link_lot_is_open(world):
 
     _, _, engine = world
     with engine.begin() as connection:
-        connection.execute(text("""INSERT INTO coin_allocations (symbol, lot_size_usd, lots, updated_at)
-                                   VALUES ('LINKUSDT', 100, 1, now())"""))
+        connection.execute(text("""INSERT INTO coin_allocations (symbol, updated_at)
+                                   VALUES ('LINKUSDT', now())"""))
         connection.execute(text("""INSERT INTO paper_positions (position_id, symbol, entry_source, lot_number, status,
                                        entry_time, raw_entry_price, entry_fill_price, quantity, allocation_usd,
                                        entry_fee_usd, entry_fee_asset)

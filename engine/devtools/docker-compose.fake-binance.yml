@@ -1,13 +1,14 @@
 # Local only: run the whole app against a pretend Binance wallet (real prices, fake money).
-#   docker compose -f docker-compose.yml -f devtools/docker-compose.fake-binance.yml up -d --build
+#   FAKE_USDT=1000 FAKE_BNB=0.1 docker compose -f docker-compose.yml -f devtools/docker-compose.fake-binance.yml up -d --build
+# FAKE_USDT / FAKE_BNB are the pretend balances (BNB pays the fees); pick any amounts.
 # Never use this on the trading server.
 services:
   fake-binance:
     image: python:3.12-slim
     command: ["python", "/fake/fake_binance.py"]
     environment:
-      FAKE_USDT: "300"
-      FAKE_BNB: "0.02"
+      FAKE_USDT: ${FAKE_USDT:?set FAKE_USDT to the pretend USDT balance}
+      FAKE_BNB: ${FAKE_BNB:?set FAKE_BNB to the pretend BNB balance for fees}
     volumes:
       - ./devtools/fake_binance.py:/fake/fake_binance.py:ro
     restart: unless-stopped

@@ -17,7 +17,7 @@ NOW = datetime(2026, 9, 12, 14, 0, tzinfo=timezone.utc)
 STRATEGY = {
     "strategy_id": "sol-3m",
     "market": {"symbol": "SOLUSDT"},
-    "portfolio": {"default_lot_size_usd": 100, "default_lots": 3},
+    "portfolio": {"minimum_lot_size_usd": 10, "maximum_lot_size_usd": 100000, "maximum_lots_per_coin": 20},
     "execution_model": {"usdt_fee_bps_per_side": 10, "bnb_fee_bps_per_side": 7.5, "slippage_bps_per_side": 0},
     "exit": {"protective_stop_pct_from_entry_fill": 2, "maximum_hold_minutes": None,
              "trailing_stop": {"activation_pct_from_entry_fill": 1.251, "giveback_of_open_profit_pct": 12}},
@@ -55,8 +55,8 @@ class FakeConnection:
     def __init__(self, **answers):
         self.answers = {
             "FROM engine_state": {"trading_mode": "shadow", "daily_loss_limit_usd": "25",
-                                  "maximum_open_value_usd": "0"},
-            "lot_size_usd, lots, dip_enabled": {"lot_size_usd": Decimal("100"), "lots": 3, "dip_enabled": True, "breakout_enabled": True,
+                                  "maximum_open_value_usd": "0", "pot_lots": 3, "pot_lot_size_usd": "100"},
+            "SELECT dip_enabled, breakout_enabled": {"dip_enabled": True, "breakout_enabled": True,
                                                       "pullback_enabled": True, "pyramid_enabled": False},
             "trading_enabled FROM coin_allocations": True,
             # every way in shares one set of lots, so there is a single number to count
@@ -165,11 +165,12 @@ ROW = {"stop_order_id": None, "entry_source": "signal"}
     ({"FROM engine_state": {"trading_mode": "off"}}, "All trading is stopped"),
     # the count is every coin's open lots: the pot is shared, so other coins can fill it
     ({"count(*) FROM paper_positions": 3}, "All 3 shared lots are open"),
-    ({"FROM engine_state": {"trading_mode": "shadow", "pot_lots": 5}, "count(*) FROM paper_positions": 5},
+    ({"FROM engine_state": {"trading_mode": "shadow", "pot_lots": 5, "pot_lot_size_usd": "100"}, "count(*) FROM paper_positions": 5},
      "All 5 shared lots are open"),
-    ({"lot_size_usd, lots, dip_enabled": {"lot_size_usd": Decimal("100"), "lots": 3, "dip_enabled": True, "breakout_enabled": True, "pullback_enabled": False,
+    ({"SELECT dip_enabled, breakout_enabled": {"dip_enabled": True, "breakout_enabled": True, "pullback_enabled": False,
                                                "pyramid_enabled": False}}, "pullback entry is switched off"),
-    ({"FROM engine_state": {"trading_mode": "shadow", "maximum_open_value_usd": "150"},
+    ({"FROM engine_state": {"trading_mode": "shadow", "maximum_open_value_usd": "150", "pot_lots": 3,
+                            "pot_lot_size_usd": "100"},
       "sum(allocation_usd),0) FROM paper_positions": Decimal("100")}, "limit on money in open trades"),
     ({"FROM paper_trades": Decimal("-30")}, "loss limit"),
 ])

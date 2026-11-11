@@ -40,8 +40,9 @@ SETTINGS_KEY = "account_settings"
 TICKER_CACHE_SECONDS = 120
 BALANCE_CACHE_SECONDS = 10
 # Binance rejects an order whose value is below its minimum; a lot must also cover its own fees comfortably.
-DEFAULT_SETTINGS = {"trading_mode": "shadow", "daily_loss_limit_usd": "25", "maximum_open_value_usd": "0",
-                    "pot_lots": 3, "pot_lot_size_usd": "100", "shadow_start_usd": "0"}
+# No money is assumed: the pot is empty and the loss limit off until the user sets them (or sets a shadow amount).
+DEFAULT_SETTINGS = {"trading_mode": "shadow", "daily_loss_limit_usd": "0", "maximum_open_value_usd": "0",
+                    "pot_lots": 0, "pot_lot_size_usd": "0", "shadow_start_usd": "0"}
 
 
 @dataclass(frozen=True)
@@ -123,14 +124,13 @@ def read_settings(connection: Connection) -> dict:
 
 def read_allocation(connection: Connection, symbol: str) -> CoinAllocation | None:
     row = connection.execute(
-        text("""SELECT lot_size_usd, lots, dip_enabled, breakout_enabled, pullback_enabled, pyramid_enabled
+        text("""SELECT dip_enabled, breakout_enabled, pullback_enabled, pyramid_enabled
                 FROM coin_allocations WHERE symbol=:symbol"""),
         {"symbol": symbol},
     ).mappings().one_or_none()
     if not row:
         return None
-    return CoinAllocation(row["lot_size_usd"], int(row["lots"]),
-                          frozenset(name for name in MODULES if row[f"{name}_enabled"]))
+    return CoinAllocation(frozenset(name for name in MODULES if row[f"{name}_enabled"]))
 
 
 # Which signal kind opens which kind of lot. All of them draw on the coin's one set of lots.

@@ -36,12 +36,10 @@ def validate_strategy(strategy: dict) -> dict:
     if not isinstance(days, int) or not 1 <= days <= 60:
         raise RuntimeError("Signal average must be a whole number of days between 1 and 60")
     portfolio = strategy["portfolio"]
-    if not 5 <= portfolio["minimum_lot_size_usd"] <= portfolio["default_lot_size_usd"] <= portfolio["maximum_lot_size_usd"]:
-        raise RuntimeError("Lot sizes must satisfy $5 <= minimum <= default <= maximum")
-    if not 1 <= portfolio["default_lots"] <= portfolio["maximum_lots_per_coin"] <= 100:
-        raise RuntimeError("Default lots must be between 1 and the per-coin maximum")
-    if portfolio["default_lot_size_usd"] * portfolio["default_lots"] > portfolio["reference_capital_usd"]:
-        raise RuntimeError("The default allocation cannot exceed the strategy's reference capital")
+    if not 5 <= portfolio["minimum_lot_size_usd"] <= portfolio["maximum_lot_size_usd"]:
+        raise RuntimeError("Lot sizes must satisfy $5 <= minimum <= maximum")
+    if not 1 <= portfolio["maximum_lots_per_coin"] <= 100:
+        raise RuntimeError("The per-coin lot maximum must be between 1 and 100")
     trend = strategy["entry"].get("trend_filter")
     if trend and trend.get("type") != "confirmation_close_above_average_30d":
         raise RuntimeError("Unsupported trend filter")

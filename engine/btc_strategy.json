@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "strategy_id": "btc_5d_above30_fixed100_trail1257_v1",
-  "name": "BTC 5-day touch above 30-day · fixed $100 lots",
+  "name": "BTC 5-day touch above 30-day",
   "status": "paper_trading",
   "market": {
     "symbol": "BTCUSDT",
@@ -60,13 +60,10 @@
     "gap_fill": "min(level, candle_open)"
   },
   "portfolio": {
-    "reference_capital_usd": 300.0,
-    "default_lot_size_usd": 100.0,
-    "default_lots": 3,
     "minimum_lot_size_usd": 10.0,
     "maximum_lot_size_usd": 100000.0,
     "maximum_lots_per_coin": 20,
-    "sizing_rule": "Each coin gets lot size x lots from the free USDT in the Binance wallet. A trade buys exactly one full lot when the coin has a free slot and Binance has at least one lot of free USDT; smaller amounts are never traded.",
+    "sizing_rule": "Every coin that is switched on shares one pot of equal lots, set in the dashboard. A trade buys one full lot when a lot is free and the wallet has the USDT for it; when less than a full lot is left, the buy uses what is left. Money is never set per coin.",
     "leverage_allowed": false,
     "short_selling_allowed": false
   },
@@ -82,8 +79,8 @@
     "maximum_drawdown_review_pct": 15.0
   },
   "provenance": {
-    "research": "stage2_backtesting/results/btc_full_research_v1/REPORT.md",
-    "backtest_bnb_fees": "Oct 2024 – Jul 2026 on $300 as 3 × $100 full lots: 189 trades, +$71.92 with USDT fees, +$81.41 with BNB fees, max drawdown about −8%; unseen Aug–Sep 2026 −$13.38",
-    "caveats": "Fragile: only the 5-day average and ±0.2% zone work (neighbours lose); 82% of profit in the earlier period; later −$5.19 at stress costs; walk-forward −$19.80. Ranked last of SOL/ETH/BTC."
+    "research": "research/stage2/results/btc_full_research_v1/REPORT.md",
+    "backtest_bnb_fees": "Oct 2024 – Jul 2026 with 3 equal lots: 189 trades, +24.0% of the money with USDT fees, +27.1% with BNB fees, max drawdown about −8%; unseen Aug–Sep 2026 −4.5%",
+    "caveats": "Fragile: only the 5-day average and ±0.2% zone work (neighbours lose); 82% of profit in the earlier period; later −1.7% of the money at stress costs; walk-forward −6.6%. Ranked last of SOL/ETH/BTC."
   }
 }

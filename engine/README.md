@@ -12,10 +12,10 @@ docker compose up -d --build
 
 The dashboard is on port 3000. Without a Binance account everything runs in shadow mode. For the API docs (port 8000, `/docs`) and direct database access, add `-f devtools/docker-compose.dev.yml`. `docker compose down` keeps the database; `docker compose down -v` deletes it.
 
-To try the order flow against a pretend Binance wallet (real prices, fake money):
+To try the order flow against a pretend Binance wallet (real prices, fake money), choose its pretend balances:
 
 ```bash
-docker compose -f docker-compose.yml -f devtools/docker-compose.fake-binance.yml up -d --build
+FAKE_USDT=1000 FAKE_BNB=0.1 docker compose -f docker-compose.yml -f devtools/docker-compose.fake-binance.yml up -d --build
 ```
 
 ## Layout

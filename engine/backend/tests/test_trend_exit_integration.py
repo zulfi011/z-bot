@@ -148,9 +148,9 @@ def build_world(database, uptrend: bool, live: bool = True):
                       "system_events", "control_requests", "engine_state", "daily_averages"):
             connection.execute(text(f"DELETE FROM {table}"))
         connection.execute(
-            text("""INSERT INTO coin_allocations (symbol, lot_size_usd, lots, updated_at)
-                    VALUES (:s, 100, 1, now())
-                    ON CONFLICT (symbol) DO UPDATE SET lot_size_usd=100, lots=1, trading_enabled=true"""),
+            text("""INSERT INTO coin_allocations (symbol, trading_enabled, updated_at)
+                    VALUES (:s, true, now())
+                    ON CONFLICT (symbol) DO UPDATE SET trading_enabled=true"""),
             {"s": SYMBOL})
         connection.execute(
             text("""INSERT INTO engine_state (key, value) VALUES ('account_settings', CAST(:v AS jsonb))

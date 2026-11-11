@@ -89,7 +89,7 @@ export type Strategy = {
   strategy_id: string; name: string; symbol: string; signal_timeframe: string; signal_average_days: number;
   touch_zone_pct: number; confirmation_wait_minutes: number; blocked_entry_hours_utc: { start: number; end: number } | null;
   stop_pct: Num; trail_activation_pct: Num; trail_giveback_pct: Num; drawdown_review_pct: Num; requires_close_above_30d: boolean; maximum_above_30d_pct: Num | null;
-  reference_capital_usd: Num; usdt_fee_bps: Num; bnb_fee_bps: Num; slippage_bps: Num; backtest: string;
+  usdt_fee_bps: Num; bnb_fee_bps: Num; slippage_bps: Num; backtest: string;
   pullback: { ema_minutes: number; dwell_minutes: number; requires_uptrend: boolean } | null;
   pyramid: { step_pct: Num; maximum_adds: number; add_exit: "own" | "with_parent" } | null;
 };

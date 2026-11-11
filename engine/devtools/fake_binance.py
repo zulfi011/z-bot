@@ -18,8 +18,12 @@ from urllib.parse import parse_qs, urlparse
 from urllib.request import urlopen
 
 PORT = int(os.environ.get("PORT", "9000"))
-START_USDT = Decimal(os.environ.get("FAKE_USDT", "300"))
-START_BNB = Decimal(os.environ.get("FAKE_BNB", "0.02"))
+# The pretend balances are yours to choose; there is no built-in amount.
+try:
+    START_USDT = Decimal(os.environ["FAKE_USDT"])
+    START_BNB = Decimal(os.environ["FAKE_BNB"])
+except (KeyError, ArithmeticError) as error:
+    raise SystemExit("Set FAKE_USDT and FAKE_BNB to the pretend balances, e.g. FAKE_USDT=1000 FAKE_BNB=0.1") from error
 PUBLIC = "https://data-api.binance.vision/api/v3/ticker/price?symbol="
 FEE = Decimal("0.00075")  # 0.075%: the BNB-discounted taker fee
 RULES = {  # stepSize, tickSize - close to Binance's real filters for these pairs

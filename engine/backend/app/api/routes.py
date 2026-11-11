@@ -323,7 +323,7 @@ def set_entry_module(symbol: str, module: str, body: ModuleRequest,
         stored = read_allocation(connection, symbol) or CoinAllocation.default(load_strategy(symbol))
         entries = set(stored.entries)
         entries.add(module) if body.enabled else entries.discard(module)
-        target = CoinAllocation(stored.lot_size_usd, max(1, stored.lots), frozenset(entries))
+        target = CoinAllocation(frozenset(entries))
         _save_allocation(connection, symbol, target, event="coin_entry_module_set",
                          extra={"module": module, "enabled": body.enabled})
     return {"status": "applied", "symbol": symbol, "module": module, "enabled": body.enabled}
@@ -335,15 +335,15 @@ def _save_allocation(connection, symbol: str, target: CoinAllocation, event: str
     connection.execute(
         text(
             """
-            INSERT INTO coin_allocations (symbol, lot_size_usd, lots, dip_enabled, breakout_enabled, pullback_enabled,
+            INSERT INTO coin_allocations (symbol, dip_enabled, breakout_enabled, pullback_enabled,
                                           pyramid_enabled, trading_enabled, revision, request_id, updated_at)
-            VALUES (:symbol, :lot, :lots, :dip, :breakout, :pullback, :pyramid, false, 1, NULL, now())
+            VALUES (:symbol, :dip, :breakout, :pullback, :pyramid, false, 1, NULL, now())
             ON CONFLICT (symbol) DO UPDATE SET dip_enabled=EXCLUDED.dip_enabled, breakout_enabled=EXCLUDED.breakout_enabled,
                 pullback_enabled=EXCLUDED.pullback_enabled, pyramid_enabled=EXCLUDED.pyramid_enabled,
                 revision=coin_allocations.revision + 1, updated_at=now()
             """
         ),
-        {"symbol": symbol, "lot": target.lot_size_usd, "lots": target.lots,
+        {"symbol": symbol,
          "dip": target.enabled("dip"), "breakout": target.enabled("breakout"),
          "pullback": target.enabled("pullback"), "pyramid": target.enabled("pyramid")},
     )
@@ -1126,7 +1126,6 @@ def _coin_view(connection, strategy: dict, usdt_free: Decimal, open_rows: list[d
             == "confirmation_close_above_average_30d",
             "maximum_above_30d_pct": (strategy["entry"].get("trend_filter") or {}).get("maximum_above_average_pct"),
             "trail_activation_pct": config.trail_activation_pct, "trail_giveback_pct": config.trail_giveback_pct,
-            "reference_capital_usd": strategy["portfolio"]["reference_capital_usd"],
             "usdt_fee_bps": config.usdt_fee_bps, "bnb_fee_bps": config.bnb_fee_bps, "slippage_bps": config.slippage_bps,
             "backtest": strategy["provenance"]["backtest_bnb_fees"],
             "pullback": None if pullback_rule is None else {

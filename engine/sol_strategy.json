@@ -49,7 +49,7 @@
       "maximum_zone_pct": 2.0,
       "confirmation_wait_minutes": 0,
       "condition": "The 24 bars before the current one sit inside a band no wider than 2% (highest high / lowest low - 1). The first bar to close above that band's top buys at the next minute's open. Only the first break of each quiet stretch counts.",
-      "market_filter": "Only the blocked hours are shared with the dip rule. The downtrend filter is deliberately NOT applied: requiring the averages to be stacked upward before a break screens out exactly the breaks that start a new trend, and cost -$16.24 on SOL in the backtest.",
+      "market_filter": "Only the blocked hours are shared with the dip rule. The downtrend filter is deliberately NOT applied: requiring the averages to be stacked upward before a break screens out exactly the breaks that start a new trend, and it lost money on both ETH and SOL in the backtest.",
       "exit": {
         "protective_stop_pct_from_entry_fill": 4.0,
         "activation_pct_from_entry_fill": 1.283,
@@ -81,10 +81,10 @@
       "level": "entry_fill_price * (1 + break_even_floor_pct / 100)",
       "break_even_floor_pct": "Derived, never hard-coded: (bnb_fee_bps_per_side + slippage_bps_per_side) * 2 / 100 from this file's execution_model. At 7.5bps fee and 2bps slippage that is 0.19%.",
       "applies_to": "Mode A lots only - the ones opened in a clean uptrend and held against the line. Mode B lots keep the giveback trail and never get a floor.",
-      "requires_arming": "Yes. A lot that never reaches the trail activation keeps only its protective stop. Attaching the floor earlier - as soon as a lot has merely traded above its costs - was tested and is far worse: it turns a normal wobble on the way up into an exit (walk-forward $169 against $410, better in 0 of 6 windows).",
+      "requires_arming": "Yes. A lot that never reaches the trail activation keeps only its protective stop. Attaching the floor earlier - as soon as a lot has merely traded above its costs - was tested and is far worse: it turns a normal wobble on the way up into an exit (walk-forward +33.8% against +82.0% of the money, better in 0 of 6 windows).",
       "exit_reason": "break_even",
       "never_caps_a_winner": "A lot that trends does not return to its own buy price, so the floor is simply never reached and the line takes the lot out far above it.",
-      "evidence": "ETH, 5 x $100 shared, Oct 2024 - Jul 2026: losing lots 105 -> 67, win rate 77.1% -> 85.4%, profit $415.50 -> $430.16, better in 6 of 6 walk-forward windows. The two variants people reach for first were both rejected: a floor that rides 0.19% above the trend line instead of sitting at the buy price (walk-forward $325 against $410 - it is a moving level, so it sells the dips that trending lots recover from), and dropping the arming requirement. See stage2_backtesting/scripts/eth_line_gap.py and eth_floor_and_arm.py."
+      "evidence": "ETH, 5 shared lots, Oct 2024 - Jul 2026: losing lots 105 -> 67, win rate 77.1% -> 85.4%, profit +83.1% -> +86.0% of the money, better in 6 of 6 walk-forward windows. The two variants people reach for first were both rejected: a floor that rides 0.19% above the trend line instead of sitting at the buy price (walk-forward +65.0% against +82.0% - it is a moving level, so it sells the dips that trending lots recover from), and dropping the arming requirement. See research/stage2/scripts/eth_line_gap.py and eth_floor_and_arm.py."
     },
     "same_candle_activation_and_stop": "stop_wins",
     "gap_fill": "min(level, candle_open)",
@@ -93,17 +93,14 @@
       "requires_uptrend": true,
       "condition": "Once the trail has armed, a lot opened while 7d > 15d > 30d ignores the giveback and is sold at the next minute's open after a 1-minute close below the 480-minute EMA of 1-minute closes (pandas ewm span=480, adjust=False). The protective stop stays active throughout. From the minute after it arms the protective stop sits at the break-even floor, not the original level, so the lot cannot finish negative while it waits for the line.",
       "fallback": "Lots opened outside a clean uptrend keep the 12% giveback trailing stop.",
-      "note": "8 hours, not ETH's 16: SOL moves faster and a longer line holds it through reversals. 8h-11h all give +$77 to +$85, so the choice sits on a plateau."
+      "note": "8 hours, not ETH's 16: SOL moves faster and a longer line holds it through reversals. 8h-11h all give +26% to +28% of the money, so the choice sits on a plateau."
     }
   },
   "portfolio": {
-    "reference_capital_usd": 300.0,
-    "default_lot_size_usd": 100.0,
-    "default_lots": 3,
     "minimum_lot_size_usd": 10.0,
     "maximum_lot_size_usd": 100000.0,
     "maximum_lots_per_coin": 20,
-    "sizing_rule": "Each coin gets lot size x lots from the free USDT in the Binance wallet. A trade buys exactly one full lot when the coin has a free slot and Binance has at least one lot of free USDT; smaller amounts are never traded.",
+    "sizing_rule": "Every coin that is switched on shares one pot of equal lots, set in the dashboard. A trade buys one full lot when a lot is free and the wallet has the USDT for it; when less than a full lot is left, the buy uses what is left. Money is never set per coin.",
     "leverage_allowed": false,
     "short_selling_allowed": false
   },
@@ -119,10 +116,10 @@
     "maximum_drawdown_review_pct": 15.0
   },
   "provenance": {
-    "research": "stage2_backtesting/results/sol_ema_exit_grid.parquet, sol_consolidation_v4, sol_three_modes.py and sol_selection_test.py",
-    "backtest_bnb_fees": "Oct 2024 - Sep 2026 on $300 as 3 x $100 lots: +$85.01 over 241 trades (222 dip, 19 breakout) at a 72.6% win rate, max drawdown -6.70%, walk-forward +$101.31. The deployed giveback-only rule made +$57.32 at -6.69% and +$71.56 walk-forward.",
-    "caveats": "Unlike ETH, this survived a walk-forward selection test: choosing the settings six months in advance rather than in hindsight still earned $97.90 against the old rule's $71.56 across the six out-of-sample windows, and the fixed choice (+$101.31) sits far closer to blind selection than to the $122.13 oracle. Mode C helped in 4 of 6 windows at every EMA length tested. Remaining weaknesses: the breakout rests on 19 trades in two years, and the most recent walk-forward window is the one this strategy lost (-$6.78 against the old rule's -$3.31).",
-    "pyramid_research": "stage2_backtesting/scripts/sol_pyramid.py",
-    "pyramid_backtest": "Oct 2024 - Sep 2026. On top of the 3 x $100 core, 2 x $100 add lots at +0.5% steps (max 2 adds, sold with the parent) earned +$29.95 in the honest walk-forward selection test, the best of every combination tried. Sharing the core's 3 lots instead, or letting adds hold their own Mode A exit, both earned less. Splitting one lot into two $50 halves made $23.79."
+    "research": "research/stage2/results/sol_ema_exit_grid.parquet, sol_consolidation_v4, sol_three_modes.py and sol_selection_test.py",
+    "backtest_bnb_fees": "Oct 2024 - Sep 2026 with 3 equal lots; percentages are of the starting money: +28.3% over 241 trades (222 dip, 19 breakout) at a 72.6% win rate, max drawdown -6.70%, walk-forward +33.8%. The earlier giveback-only rule made +19.1% at -6.69% and +23.9% walk-forward.",
+    "caveats": "Unlike ETH, this survived a walk-forward selection test: choosing the settings six months in advance rather than in hindsight still earned +32.6% of the money against the old rule's +23.9% across the six out-of-sample windows, and the fixed choice (+33.8%) sits far closer to blind selection than to the +40.7% oracle. The quiet-band breakout helped in 4 of 6 windows at every EMA length tested. Remaining weaknesses: the breakout rests on 19 trades in two years, and the most recent walk-forward window is the one this strategy lost (-2.3% against the old rule's -1.1%).",
+    "pyramid_research": "research/stage2/scripts/sol_pyramid.py",
+    "pyramid_backtest": "Oct 2024 - Sep 2026. On top of the 3-lot core, 2 add lots of the same size at +0.5% steps (max 2 adds, sold with the parent) earned +10.0% of the core's money in the honest walk-forward selection test, the best of every combination tried. Sharing the core's 3 lots instead, or letting adds hold their own trend exit, both earned less. Splitting one lot into two halves made +7.9%."
   }
 }

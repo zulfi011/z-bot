@@ -49,7 +49,7 @@
       "maximum_zone_pct": 2.5,
       "confirmation_wait_minutes": 30,
       "condition": "The 12 bars before the current one sit inside a band no wider than 2.5% (highest high / lowest low - 1). The first bar to close above that band's top is the break; 30 minutes later the 1-minute close must still be above the top, and the buy lands on the next minute's open. Only the first break of each quiet stretch counts.",
-      "market_filter": "Only the blocked hours are shared with the dip rule. The downtrend filter is deliberately NOT applied: requiring the averages to be stacked upward before a break screens out exactly the breaks that start a new trend, and cost -$7.39 on ETH (-$16.24 on SOL) in the backtest.",
+      "market_filter": "Only the blocked hours are shared with the dip rule. The downtrend filter is deliberately NOT applied: requiring the averages to be stacked upward before a break screens out exactly the breaks that start a new trend, and it lost money on both ETH and SOL in the backtest.",
       "exit": {
         "protective_stop_pct_from_entry_fill": 3.5,
         "activation_pct_from_entry_fill": 1.283,
@@ -66,7 +66,7 @@
       "lots": "Shares the coin's lots with the dip and Mode C, first come first served. Separate pullback lots were built and then removed: they only pay once the core is full (5 lots), and below that the reserved slots sit idle while the dip waits.",
       "exit": "The dip's exit: stop -4.5%, trail arms at +1.315%, and because it only buys in an uptrend it is a Mode A lot held against the 16-hour EMA."
     },
-    "pyramid_add_removed": "ETH had a pyramid add-on: while a lot was winning, another lot was added at +1% steps above its fill, up to three. It is removed, not switched off. Measured over Oct 2024 - Jul 2026 on 5 x $100 shared lots it added $73 across 172 adds at a 54.1% win rate, while dropping the whole strategy's win rate from 85.4% to 76.6% and deepening the worst mark-to-market dip from -9.66% to -14.06% - and it took 28 lots the dip would otherwise have used. Not worth the money or the noise. SOL keeps its own add-on, which is a different rule (+0.5% steps, sold with its parent)."
+    "pyramid_add_removed": "ETH had a pyramid add-on: while a lot was winning, another lot was added at +1% steps above its fill, up to three. It is removed, not switched off. Measured over Oct 2024 - Jul 2026 on 5 shared lots it added +14.6% of the money across 172 adds at a 54.1% win rate, while dropping the whole strategy's win rate from 85.4% to 76.6% and deepening the worst mark-to-market dip from -9.66% to -14.06% - and it took 28 lots the dip would otherwise have used. Not worth the money or the noise. SOL keeps its own add-on, which is a different rule (+0.5% steps, sold with its parent)."
   },
   "exit": {
     "protective_stop_pct_from_entry_fill": 4.5,
@@ -82,10 +82,10 @@
       "level": "entry_fill_price * (1 + break_even_floor_pct / 100)",
       "break_even_floor_pct": "Derived, never hard-coded: (bnb_fee_bps_per_side + slippage_bps_per_side) * 2 / 100 from this file's execution_model. At 7.5bps fee and 2bps slippage that is 0.19%.",
       "applies_to": "Mode A lots only - the ones opened in a clean uptrend and held against the line. Mode B lots keep the giveback trail and never get a floor.",
-      "requires_arming": "Yes. A lot that never reaches the trail activation keeps only its protective stop. Attaching the floor earlier - as soon as a lot has merely traded above its costs - was tested and is far worse: it turns a normal wobble on the way up into an exit (walk-forward $169 against $410, better in 0 of 6 windows).",
+      "requires_arming": "Yes. A lot that never reaches the trail activation keeps only its protective stop. Attaching the floor earlier - as soon as a lot has merely traded above its costs - was tested and is far worse: it turns a normal wobble on the way up into an exit (walk-forward +33.8% against +82.0% of the money, better in 0 of 6 windows).",
       "exit_reason": "break_even",
       "never_caps_a_winner": "A lot that trends does not return to its own buy price, so the floor is simply never reached and the line takes the lot out far above it.",
-      "evidence": "ETH, 5 x $100 shared, Oct 2024 - Jul 2026: losing lots 105 -> 67, win rate 77.1% -> 85.4%, profit $415.50 -> $430.16, better in 6 of 6 walk-forward windows. The two variants people reach for first were both rejected: a floor that rides 0.19% above the trend line instead of sitting at the buy price (walk-forward $325 against $410 - it is a moving level, so it sells the dips that trending lots recover from), and dropping the arming requirement. See stage2_backtesting/scripts/eth_line_gap.py and eth_floor_and_arm.py."
+      "evidence": "ETH, 5 shared lots, Oct 2024 - Jul 2026: losing lots 105 -> 67, win rate 77.1% -> 85.4%, profit +83.1% -> +86.0% of the money, better in 6 of 6 walk-forward windows. The two variants people reach for first were both rejected: a floor that rides 0.19% above the trend line instead of sitting at the buy price (walk-forward +65.0% against +82.0% - it is a moving level, so it sells the dips that trending lots recover from), and dropping the arming requirement. See research/stage2/scripts/eth_line_gap.py and eth_floor_and_arm.py."
     },
     "same_candle_activation_and_stop": "stop_wins",
     "gap_fill": "min(level, candle_open)",
@@ -97,13 +97,10 @@
     }
   },
   "portfolio": {
-    "reference_capital_usd": 700.0,
-    "default_lot_size_usd": 100.0,
-    "default_lots": 5,
     "minimum_lot_size_usd": 10.0,
     "maximum_lot_size_usd": 100000.0,
     "maximum_lots_per_coin": 20,
-    "sizing_rule": "Each coin gets lot size x lots from the free USDT in the Binance wallet, shared by every way in. A trade buys one full lot when the coin has a free slot and Binance has at least one lot of free USDT; when the pot holds less than a full lot, the buy uses what is left.",
+    "sizing_rule": "Every coin that is switched on shares one pot of equal lots, set in the dashboard. A trade buys one full lot when a lot is free and the wallet has the USDT for it; when less than a full lot is left, the buy uses what is left. Money is never set per coin.",
     "leverage_allowed": false,
     "short_selling_allowed": false
   },
@@ -119,8 +116,8 @@
     "maximum_drawdown_review_pct": 15.0
   },
   "provenance": {
-    "research": "stage2_backtesting/results/eth_ema_exit_grid.parquet, eth_consolidation_full, eth_three_modes.py, eth_pullback.py, eth_sleeves.py, eth_core_lots.py, eth_sleeves_core5.py; parity: verify_pullback_parity.py",
-    "backtest_bnb_fees": "Oct 2024 - Aug 2026, BNB fees, one shared wallet. Core only (dip + Mode C): 1 x $100 +$107.54, 3 x $100 +$280.52, 5 x $100 +$412.54, all 6/6 walk-forward windows. With the pullback sharing the same lots: 1 lot +$74.24, 3 lots +$265.41, 5 lots +$414.01 (walk-forward +$393.81 against +$378.43). The pullback pays for its slot only once the core is full; below that it costs the dip trades it displaces. Pyramid adds (+1% steps, up to 3, always Mode A) with 3 lots of their own on top of core 5 + pullback 2: $782.28 against $519.24, walk-forward +$279.76, 243 adds at a 58.4% win rate.",
-    "caveats": "The pullback's measured gain (+$91.47 honest on top of a 5-lot core) was earned with lots RESERVED for it; sharing lots is worse at small sizes, so on a small account the pullback is close to free optionality and at 1 lot it cost about $33 over 22 months. Its edge is also lumpy: $76 of that $91 came from one strong uptrend (April 2025). The 24h / 180-minute setting was chosen on this same history. The pyramid's honest figure is much smaller than its backtest: choosing its rule in advance gave +$122.75 at 3 lots (4/6 windows), and almost all of that came from one window (April 2025). It is worth its lots only once the core is at 5 and the pullback near 4 - roughly $1,000 in ETH."
+    "research": "research/stage2/results/eth_ema_exit_grid.parquet, eth_consolidation_full, eth_three_modes.py, eth_pullback.py, eth_sleeves.py, eth_core_lots.py, eth_sleeves_core5.py; parity: verify_pullback_parity.py",
+    "backtest_bnb_fees": "Oct 2024 - Aug 2026, BNB fees, one shared wallet; percentages are of the money in the lots. Core only (dip + quiet-band breakout): 1 lot +107.5%, 3 lots +93.5%, 5 lots +82.5%, all 6/6 walk-forward windows. With the pullback sharing the same lots: 1 lot +74.2%, 3 lots +88.5%, 5 lots +82.8% (walk-forward +78.8% against +75.7%). The pullback pays for its slot only once the core is full; below that it costs the dip trades it displaces. Pyramid adds (+1% steps, up to 3) with 3 lots of their own on top of core 5 + pullback 2 earned more in total but less per lot, 243 adds at a 58.4% win rate; it has since been removed.",
+    "caveats": "The pullback's measured gain (about +18% of a 5-lot core's money, honest) was earned with lots RESERVED for it; sharing lots is worse at small sizes, so on a small account the pullback is close to free optionality and at 1 lot it cost about a third of that lot over 22 months. Its edge is also lumpy: 83% of that gain came from one strong uptrend (April 2025). The 24h / 180-minute setting was chosen on this same history. The pyramid's honest figure was much smaller than its backtest: choosing its rule in advance gave +41% of its 3 lots' money (4/6 windows), and almost all of that came from one window (April 2025). It was worth its lots only once the core was at 5 and the pullback near 4 - about ten lots in ETH."
   }
 }

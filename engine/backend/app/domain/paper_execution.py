@@ -87,27 +87,12 @@ class ExecutionConfig:
 
 
 @dataclass(frozen=True)
-class AllocationLimits:
-    minimum_lot_usd: Decimal
-    maximum_lot_usd: Decimal
-    maximum_lots: int
-
-    @classmethod
-    def from_strategy(cls, strategy: dict) -> "AllocationLimits":
-        portfolio = strategy["portfolio"]
-        return cls(Decimal(str(portfolio["minimum_lot_size_usd"])), Decimal(str(portfolio["maximum_lot_size_usd"])),
-                   int(portfolio["maximum_lots_per_coin"]))
-
-
-@dataclass(frozen=True)
 class CoinAllocation:
-    """How much of the account a coin may use: `lots` lots of `lot_size_usd`, shared by every way in.
+    """Which ways in a coin may use. Money and lots belong to the shared pot, not to the coin.
 
-    There are no reserved lots. The dip, Mode C, the pullback and the pyramid adds all draw from the same set,
-    first come first served, and `entries` simply says which of the optional ways in are switched on.
+    There are no reserved lots: the dip, the quiet-band breakout, the pullback and the add-ons all draw from the
+    pot's lots, first come first served, and `entries` simply says which ways in are switched on.
     """
-    lot_size_usd: Decimal
-    lots: int
     entries: frozenset = field(default_factory=frozenset)
 
     def enabled(self, source: str) -> bool:
@@ -120,86 +105,12 @@ class CoinAllocation:
 
     def only_supported(self, supported: Mapping) -> "CoinAllocation":
         """The same allocation with any way in the coin's strategy does not have switched off."""
-        return CoinAllocation(self.lot_size_usd, self.lots,
-                              frozenset(name for name in self.entries if supported.get(name)))
-
-    @property
-    def target_capital_usd(self) -> Decimal:
-        return self.lot_size_usd * self.lots
+        return CoinAllocation(frozenset(name for name in self.entries if supported.get(name)))
 
     @classmethod
-    def default(cls, strategy: dict) -> "CoinAllocation":
-        portfolio = strategy["portfolio"]
-        return cls(Decimal(str(portfolio["default_lot_size_usd"])), int(portfolio["default_lots"]),
-                   frozenset({DIP, BREAKOUT, PULLBACK}))
-
-
-def validate_allocation(allocation: CoinAllocation, limits: AllocationLimits) -> list[str]:
-    problems = []
-    if allocation.lot_size_usd != allocation.lot_size_usd.quantize(Decimal("0.01")):
-        problems.append("Lot size can have at most 2 decimals")
-    if not limits.minimum_lot_usd <= allocation.lot_size_usd <= limits.maximum_lot_usd:
-        problems.append(f"Lot size must be between ${limits.minimum_lot_usd:,.2f} and ${limits.maximum_lot_usd:,.2f}")
-    if not 1 <= allocation.lots <= limits.maximum_lots:
-        problems.append(f"Number of lots must be between 1 and {limits.maximum_lots}")
-    return problems
-
-
-def lot_allocation(coin_cash: Decimal, open_lots: int, allocation: CoinAllocation) -> Decimal | None:
-    """Only full lots: buy exactly one lot when a slot is free and the coin's
-    free cash covers it. Anything less is never traded."""
-    if open_lots < allocation.lots and coin_cash >= allocation.lot_size_usd:
-        return allocation.lot_size_usd
-    return None
-
-
-@dataclass(frozen=True)
-class AllocationPlan:
-    """Effect of setting a coin to `allocation`, given its current state."""
-    current_capital_usd: Decimal      # coin free cash + cost of its open lots
-    target_capital_usd: Decimal
-    transfer_usd: Decimal             # + from unallocated into the coin, − back to unallocated
-    coin_cash_after_usd: Decimal
-    unallocated_after_usd: Decimal
-    problems: tuple[str, ...]
-
-    @property
-    def ok(self) -> bool:
-        return not self.problems
-
-
-def plan_allocation(allocation: CoinAllocation, limits: AllocationLimits, coin_cash: Decimal,
-                    open_lot_cost: Decimal, open_lots: int, unallocated: Decimal) -> AllocationPlan:
-    """Rebalance the coin to exactly lot size × lots. Money comes from (or goes
-    back to) unallocated cash; money inside open lots is never moved."""
-    problems = validate_allocation(allocation, limits)
-    current = coin_cash + open_lot_cost
-    target = allocation.target_capital_usd
-    transfer = target - current
-    if transfer > unallocated:
-        problems.append(f"Needs ${transfer:,.2f} from unallocated cash but only ${max(unallocated, ZERO):,.2f} is unallocated. "
-                        "Add funds first or choose a smaller size.")
-    if transfer < 0 and -transfer > coin_cash:
-        problems.append(f"${open_lot_cost:,.2f} is inside {open_lots} open lot(s); only ${coin_cash:,.2f} of this coin's cash "
-                        "is free to return. Choose at least "
-                        f"${current - coin_cash:,.2f} in total, or wait for lots to close.")
-    return AllocationPlan(current, target, transfer, coin_cash + transfer, unallocated - transfer, tuple(problems))
-
-
-def next_lot_status(coin_cash: Decimal, open_lots: int, allocation: CoinAllocation, unallocated: Decimal) -> dict:
-    """Plain description of what the next signal would buy, for the dashboard."""
-    lot = lot_allocation(coin_cash, open_lots, allocation)
-    shortfall = max(ZERO, allocation.lot_size_usd - coin_cash)
-    slot_free = open_lots < allocation.lots
-    return {
-        "next_lot_usd": lot,
-        "lot_number": open_lots + 1,
-        "slot_free": slot_free,
-        "shortfall_to_full_lot_usd": shortfall if slot_free and lot is None else ZERO,
-        "needs_top_up": slot_free and lot is None,
-        "top_up_from_unallocated_usd": min(shortfall, max(unallocated, ZERO)) if slot_free and lot is None else ZERO,
-        "top_up_deposit_needed_usd": max(ZERO, shortfall - max(unallocated, ZERO)) if slot_free and lot is None else ZERO,
-    }
+    def default(cls, strategy: dict | None = None) -> "CoinAllocation":
+        """A new coin: the tested core (dip + breakout) and the pullback on, add-ons off."""
+        return cls(frozenset({DIP, BREAKOUT, PULLBACK}))
 
 
 @dataclass(frozen=True)

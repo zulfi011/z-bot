@@ -24,8 +24,7 @@ def test_repository_strategy_is_valid() -> None:
     strategy = validate_strategy(copy.deepcopy(STRATEGY))
     assert strategy["averages"]["signal_average_days"] == 12
     assert strategy["exit"]["maximum_hold_minutes"] is None
-    assert strategy["portfolio"]["default_lot_size_usd"] == 100
-    assert strategy["portfolio"]["default_lots"] == 3
+    assert "default_lot_size_usd" not in strategy["portfolio"]  # money is set in the dashboard, never in a strategy
     assert strategy["entry"]["blocked_entry_hours_utc"] == {"start": 6, "end": 12}
 
 
@@ -38,8 +37,6 @@ def test_eth_strategy_is_valid_and_distinct() -> None:
     assert strategy["exit"]["trailing_stop"] == {**strategy["exit"]["trailing_stop"],
                                                  "activation_pct_from_entry_fill": 1.315, "giveback_of_open_profit_pct": 30.0}
     assert strategy["strategy_id"] != STRATEGY["strategy_id"]
-    # ETH's core fills up at five lots; money beyond that goes to its separate pullback lots.
-    assert strategy["portfolio"]["default_lot_size_usd"] == 100 and strategy["portfolio"]["default_lots"] == 5
     assert strategy["entry"]["pullback_to_trend"]["ema_minutes"] == 1440
     assert strategy["entry"]["pullback_to_trend"]["dwell_minutes"] == 180
     assert strategy["entry"]["pullback_to_trend"]["requires_uptrend"] is True
@@ -104,9 +101,8 @@ def test_trx_strategy_matches_its_research() -> None:
     (("entry", "trend_filter"), {"type": "moon_phase"}),
     (("entry", "trend_filter"), {"type": "confirmation_close_above_average_30d", "maximum_above_average_pct": -5}),
     (("averages", "signal_average_days"), 0),
-    (("portfolio", "minimum_lot_size_usd"), 150),
-    (("portfolio", "default_lots"), 0),
-    (("portfolio", "default_lot_size_usd"), 200),
+    (("portfolio", "minimum_lot_size_usd"), 1),
+    (("portfolio", "maximum_lots_per_coin"), 0),
 ])
 def test_invalid_strategies_are_refused(path, value) -> None:
     strategy = copy.deepcopy(STRATEGY)

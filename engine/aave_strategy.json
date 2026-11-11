@@ -72,13 +72,10 @@
     "gap_fill": "min(level, candle_open)"
   },
   "portfolio": {
-    "reference_capital_usd": 300.0,
-    "default_lot_size_usd": 100.0,
-    "default_lots": 3,
     "minimum_lot_size_usd": 10.0,
     "maximum_lot_size_usd": 100000.0,
     "maximum_lots_per_coin": 20,
-    "sizing_rule": "Each coin gets lot size x lots from the free USDT in the Binance wallet. A trade buys exactly one full lot when the coin has a free slot and Binance has at least one lot of free USDT; smaller amounts are never traded.",
+    "sizing_rule": "Every coin that is switched on shares one pot of equal lots, set in the dashboard. A trade buys one full lot when a lot is free and the wallet has the USDT for it; when less than a full lot is left, the buy uses what is left. Money is never set per coin.",
     "leverage_allowed": false,
     "short_selling_allowed": false
   },
@@ -94,10 +91,10 @@
     "maximum_drawdown_review_pct": 15.0
   },
   "provenance": {
-    "research": "stage2_backtesting/results/aave_consolidation_full, aave_three_modes.py and selection_test.py",
-    "backtest_bnb_fees": "Oct 2024 - Sep 2026 on $300 as 3 x $100 lots. With the deployed +1.276% arm: +$115.91 over 289 trades (255 dip, 34 breakout) at an 85.1% win rate, max drawdown -7.88%, five of six walk-forward windows. With the +1.75% arm now deployed, the same period gives +$116.37 over 271 trades at 79.3%, walk-forward +$123.62 against +$104.19, better in six of six windows, at a -10.23% mark-to-market drawdown. The breakout alone: 38 trades, +$24.44, an 89.5% win rate, six of six windows and a -1.36% drawdown.",
-    "caveats": "A trend exit (Mode A) was tested and deliberately left out. On paper it added about $100, but a walk-forward selection test put its honest contribution at $2: the gain came from a few large moves in the first year and the right line length could not have been chosen in advance (16h +$169, 24h +$206, 36h +$124 - a spike, not a plateau). AAVE wins small and often, which is what the giveback trailing stop is for. Mode C, by contrast, improved four of six windows at every setting tested.",
-    "arm_research": "stage2_backtesting/scripts/aave_settings_recheck.py and aave_atr_stop.py",
-    "arm_change": "Sept 2026 recheck: every other deployed setting was confirmed, but the dip's trail armed too early. Walk-forward rises steadily with the arming level - +1.276% $104.19, +1.5% $111.54, +1.75% $123.62, +2% $141.19, +2.25% $164.60, +2.5% $177.11 - and inside a pre-committed range of no more than double the deployed arm, choosing honestly beat leaving it alone ($126.02 against $104.19), the only setting change in the whole research programme to pass that gate. +1.75% was chosen as the conservative point: better in 6 of 6 walk-forward windows (+1.17, +0.28, +0.28, +2.50, +3.95, +11.24 = +$19.43 on $300) at a -10.23% mark-to-market drawdown against -9.62%. The cost is win rate: 85.2% -> 79.3%, fewer and larger wins. The gain is entirely in the dip lots ($100.78 -> $120.77 over the full window); Mode C is unaffected and its own arm was left alone. An ATR-scaled arm reaches the same place (0.4x ATR = about +2.9%) and adds nothing over a fixed number, so the fixed number is used."
+    "research": "research/stage2/results/aave_consolidation_full, aave_three_modes.py and selection_test.py",
+    "backtest_bnb_fees": "Oct 2024 - Sep 2026 with 3 equal lots; percentages are of the starting money. With the earlier +1.276% arm: +38.6% over 289 trades (255 dip, 34 breakout) at an 85.1% win rate, max drawdown -7.88%, five of six walk-forward windows. With the +1.75% arm now deployed, the same period gives +38.8% over 271 trades at 79.3%, walk-forward +41.2% against +34.7%, better in six of six windows, at a -10.23% mark-to-market drawdown. The breakout alone: 38 trades, +8.1%, an 89.5% win rate, six of six windows and a -1.36% drawdown.",
+    "caveats": "A trend exit was tested and deliberately left out. On paper it added about +33% of the money, but a walk-forward selection test put its honest contribution at +0.7%: the gain came from a few large moves in the first year and the right line length could not have been chosen in advance (16h +56%, 24h +69%, 36h +41% - a spike, not a plateau). AAVE wins small and often, which is what the giveback trailing stop is for. The quiet-band breakout, by contrast, improved four of six windows at every setting tested.",
+    "arm_research": "research/stage2/scripts/aave_settings_recheck.py and aave_atr_stop.py",
+    "arm_change": "Sept 2026 recheck: every other deployed setting was confirmed, but the dip's trail armed too early. Walk-forward rises steadily with the arming level (as % of the money) - +1.276% arm +34.7%, +1.5% +37.2%, +1.75% +41.2%, +2% +47.1%, +2.25% +54.9%, +2.5% +59.0% - and inside a pre-committed range of no more than double the deployed arm, choosing honestly beat leaving it alone (+42.0% against +34.7%), the only setting change in the whole research programme to pass that gate. +1.75% was chosen as the conservative point: better in 6 of 6 walk-forward windows (+0.39, +0.09, +0.09, +0.83, +1.32, +3.75 = +6.5 points of the money) at a -10.23% mark-to-market drawdown against -9.62%. The cost is win rate: 85.2% -> 79.3%, fewer and larger wins. The gain is entirely in the dip lots (+33.6% -> +40.3% over the full window); the breakout is unaffected and its own arm was left alone. An ATR-scaled arm reaches the same place (0.4x ATR = about +2.9%) and adds nothing over a fixed number, so the fixed number is used."
   }
 }

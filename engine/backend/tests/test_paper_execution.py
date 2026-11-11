@@ -4,7 +4,6 @@ from decimal import Decimal
 import pytest
 
 from app.domain.paper_execution import (
-    AllocationLimits,
     Candle,
     CoinAllocation,
     ExecutionConfig,
@@ -13,11 +12,8 @@ from app.domain.paper_execution import (
     create_entry,
     evaluate_exit,
     fill_exit,
-    lot_allocation,
     manual_exit_signal,
     mark_account,
-    next_lot_status,
-    plan_allocation,
     uses_trend_exit,
 )
 
@@ -28,8 +24,6 @@ NO_BNB = FeeContext(False, D("0"), D("600"))
 WITH_BNB = FeeContext(True, D("1"), D("600"))
 
 
-LIMITS = AllocationLimits(D("10"), D("100000"), 20)
-DEFAULT = CoinAllocation(D("100"), 3)
 
 
 def config(hold=None) -> ExecutionConfig:
@@ -50,59 +44,6 @@ def position(fee_asset="USDT") -> Position:
         entry_fill_price=D("100"), quantity=D("1"), allocation_usd=D("100"), entry_fee_usd=D("0.075"),
         entry_fee_asset=fee_asset,
     )
-
-
-@pytest.mark.parametrize("cash,open_lots,expected", [
-    (D("300"), 0, D("100")),      # first lot
-    (D("100"), 2, D("100")),      # third lot, full
-    (D("99.99"), 2, None),        # never less than a full lot
-    (D("87"), 2, None),
-    (D("400"), 3, None),          # all 3 lots open, extra cash stays idle
-    (D("124"), 1, D("100")),      # never more than one lot
-])
-def test_only_full_lots_trade(cash, open_lots, expected) -> None:
-    assert lot_allocation(cash, open_lots, DEFAULT) == expected
-
-
-def test_custom_allocation_uses_its_own_lot_size_and_count() -> None:
-    custom = CoinAllocation(D("250"), 2)
-    assert lot_allocation(D("500"), 1, custom) == D("250")
-    assert lot_allocation(D("500"), 2, custom) is None
-    assert custom.target_capital_usd == D("500")
-
-
-def test_next_lot_status_offers_a_top_up_when_a_slot_lacks_a_full_lot() -> None:
-    status = next_lot_status(D("80"), 2, DEFAULT, unallocated=D("5"))
-    assert status["next_lot_usd"] is None and status["needs_top_up"] is True
-    assert status["shortfall_to_full_lot_usd"] == D("20")
-    assert status["top_up_from_unallocated_usd"] == D("5")
-    assert status["top_up_deposit_needed_usd"] == D("15")
-    assert next_lot_status(D("80"), 3, DEFAULT, D("0"))["needs_top_up"] is False   # no free slot
-
-
-def test_plan_moves_money_from_unallocated_into_the_coin() -> None:
-    plan = plan_allocation(CoinAllocation(D("100"), 5), LIMITS, coin_cash=D("300"), open_lot_cost=D("0"),
-                           open_lots=0, unallocated=D("250"))
-    assert plan.ok and plan.transfer_usd == D("200")
-    assert plan.coin_cash_after_usd == D("500") and plan.unallocated_after_usd == D("50")
-
-
-def test_plan_refuses_to_overdraw_unallocated_cash() -> None:
-    plan = plan_allocation(CoinAllocation(D("100"), 5), LIMITS, D("300"), D("0"), 0, unallocated=D("100"))
-    assert not plan.ok and "only $100.00 is unallocated" in plan.problems[0]
-
-
-def test_plan_returns_profit_and_never_touches_open_lots() -> None:
-    back = plan_allocation(DEFAULT, LIMITS, coin_cash=D("120"), open_lot_cost=D("200"), open_lots=2, unallocated=D("0"))
-    assert back.ok and back.transfer_usd == D("-20") and back.unallocated_after_usd == D("20")
-    shrink = plan_allocation(CoinAllocation(D("100"), 1), LIMITS, D("50"), D("200"), 2, D("0"))
-    assert not shrink.ok and "inside 2 open lot(s)" in shrink.problems[0]
-
-
-@pytest.mark.parametrize("allocation", [CoinAllocation(D("5"), 3), CoinAllocation(D("100"), 0),
-                                        CoinAllocation(D("100"), 21), CoinAllocation(D("100.005"), 1)])
-def test_plan_validates_limits(allocation) -> None:
-    assert not plan_allocation(allocation, LIMITS, D("0"), D("0"), 0, D("1000000")).ok
 
 
 def test_usdt_entry_fee_comes_out_of_the_allocation() -> None:

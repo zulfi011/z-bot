@@ -89,12 +89,11 @@ def build(database, *, lots=3, pyramid=True, start=T0, add_exit=None, live=True)
                       "system_events", "control_requests", "engine_state", "daily_averages"):
             connection.execute(text(f"DELETE FROM {table}"))
         connection.execute(
-            text("""INSERT INTO coin_allocations (symbol, lot_size_usd, lots, pullback_enabled,
-                                                  pyramid_enabled, updated_at)
-                    VALUES (:s, 100, :lots, false, :pyramid, now())
-                    ON CONFLICT (symbol) DO UPDATE SET lot_size_usd=100, lots=:lots, pullback_enabled=false,
+            text("""INSERT INTO coin_allocations (symbol, pullback_enabled, pyramid_enabled, trading_enabled, updated_at)
+                    VALUES (:s, false, :pyramid, true, now())
+                    ON CONFLICT (symbol) DO UPDATE SET pullback_enabled=false,
                         pyramid_enabled=:pyramid, trading_enabled=true"""),
-            {"s": SYMBOL, "lots": lots, "pyramid": pyramid})
+            {"s": SYMBOL, "pyramid": pyramid})
         connection.execute(
             text("""INSERT INTO engine_state (key, value) VALUES ('account_settings', CAST(:v AS jsonb))
                     ON CONFLICT (key) DO UPDATE SET value=CAST(:v AS jsonb)"""),

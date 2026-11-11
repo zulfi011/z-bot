@@ -1,16 +1,14 @@
 """The dip and the quiet-band breakout can be switched off per coin; they start on."""
 
-from decimal import Decimal
-
 from app.domain.paper_execution import CoinAllocation
 
 
 def allocation(*entries):
-    return CoinAllocation(Decimal("100"), 3, frozenset(entries))
+    return CoinAllocation(frozenset(entries))
 
 
 def test_new_coins_start_with_the_core_on():
-    default = CoinAllocation.default({"portfolio": {"default_lot_size_usd": 100, "default_lots": 3}})
+    default = CoinAllocation.default()
     assert default.allows("signal") and default.allows("breakout")
 
 
