@@ -11,10 +11,14 @@ from decimal import Decimal
 # How a lot was opened. "signal" is the dip rule, "breakout" is Mode C, "manual" is a button press; "pullback"
 # and "pyramid" are the two extra ways in, each of which can be switched on or off. Every way in draws from the
 # SAME set of lots, first come first served - there are no reserved lots.
+DIP = "dip"
 BREAKOUT = "breakout"
 PULLBACK = "pullback"
 PYRAMID = "pyramid"
-MODULES = (PULLBACK, PYRAMID)
+# Every way in can be switched off per coin. The dip and the breakout start on (they are the tested core).
+MODULES = (DIP, BREAKOUT, PULLBACK, PYRAMID)
+# The dip's lots are recorded as "signal"; every other way in uses its own name.
+MODULE_OF_SOURCE = {"signal": DIP}
 
 HUNDRED = Decimal("100")
 TEN_THOUSAND = Decimal("10000")
@@ -111,7 +115,8 @@ class CoinAllocation:
 
     def allows(self, entry_source: str) -> bool:
         """May this way in open a lot at all?"""
-        return entry_source not in MODULES or entry_source in self.entries
+        module = MODULE_OF_SOURCE.get(entry_source, entry_source)
+        return module not in MODULES or module in self.entries
 
     def only_supported(self, supported: Mapping) -> "CoinAllocation":
         """The same allocation with any way in the coin's strategy does not have switched off."""
@@ -126,7 +131,7 @@ class CoinAllocation:
     def default(cls, strategy: dict) -> "CoinAllocation":
         portfolio = strategy["portfolio"]
         return cls(Decimal(str(portfolio["default_lot_size_usd"])), int(portfolio["default_lots"]),
-                   frozenset({PULLBACK}))
+                   frozenset({DIP, BREAKOUT, PULLBACK}))
 
 
 def validate_allocation(allocation: CoinAllocation, limits: AllocationLimits) -> list[str]:

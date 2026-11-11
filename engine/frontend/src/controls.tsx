@@ -7,6 +7,7 @@ import { Info, Sheet } from "./ui";
 type SheetState =
   | { kind: "pot" }
   | { kind: "entry-module"; coin: CoinView; module: "pullback" | "pyramid" }
+  | { kind: "entry-off"; coin: CoinView; module: "dip" | "breakout" }
   | { kind: "buy-now"; coin: CoinView }
   | { kind: "close"; position: Position }
   | { kind: "trading"; coin: CoinView; enable: boolean }
@@ -26,10 +27,16 @@ type Controls = {
   locked: () => void;
   /** Whether a Binance key is attached (null until known). */
   binance: BinanceCredentials | null;
+  /** Switch one way in on or off for a coin, straight away. */
+  setEntry: (coin: CoinView, module: EntryKey, enabled: boolean) => void;
 };
+
+export type EntryKey = "dip" | "breakout" | "pullback" | "pyramid";
+export const ENTRY_NAME: Record<EntryKey, string> = { dip: "Dip", breakout: "Quiet-band breakout", pullback: "Pullback", pyramid: "Add-ons" };
 
 const ControlsContext = createContext<Controls>({
   open: () => undefined, flash: null, dismissFlash: () => undefined, session: null, locked: () => undefined, binance: null,
+  setEntry: () => undefined,
 });
 export const useControls = () => useContext(ControlsContext);
 
@@ -48,9 +55,9 @@ export const EXPLAIN = {
   modeOff: "Nothing is bought. Open lots keep their stop orders on Binance and are still managed, so they can still be sold.",
 };
 
-function ConfirmSheet({ text, note, confirmLabel, run, onDone, onCancel, danger }:
+function ConfirmSheet({ text, note, confirmLabel, run, onDone, onCancel, danger, cancelLabel = "Cancel", cancelPrimary }:
   { text: ReactNode; note?: ReactNode; confirmLabel: string; run: () => Promise<string>; onDone: (message: string) => void;
-    onCancel?: () => void; danger?: boolean }) {
+    onCancel?: () => void; danger?: boolean; cancelLabel?: string; cancelPrimary?: boolean }) {
   const { locked } = useControls();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -59,7 +66,7 @@ function ConfirmSheet({ text, note, confirmLabel, run, onDone, onCancel, danger 
     {note && <div className="sheet-note">{note}</div>}
     {error && <p className="form-error" role="alert">{error}</p>}
     <div className="sheet-actions">
-      {onCancel && <button className="ghost" onClick={onCancel} disabled={busy}>Cancel</button>}
+      {onCancel && <button className={cancelPrimary ? "primary" : "ghost"} onClick={onCancel} disabled={busy}>{cancelLabel}</button>}
       <button className={danger ? "danger" : "primary"} disabled={busy} onClick={async () => {
         setBusy(true); setError(null);
         try { onDone(await run()); } catch (reason) {
@@ -318,7 +325,7 @@ export function DeviceLockButton() {
     {session.unlocked ? UNLOCKED_ICON : LOCKED_ICON}</button>;
 }
 
-const NEEDS_UNLOCK = new Set<SheetState["kind"]>(["pot", "entry-module", "buy-now", "close", "trading", "trading-mode", "cancel", "binance", "amount"]);
+const NEEDS_UNLOCK = new Set<SheetState["kind"]>(["pot", "entry-module", "entry-off", "buy-now", "close", "trading", "trading-mode", "cancel", "binance", "amount"]);
 
 export function ControlsProvider({ data, refresh, children }: { data: Dashboard | null; refresh: () => void; children: ReactNode }) {
   const [sheet, setSheet] = useState<SheetState | null>(null);
@@ -353,7 +360,17 @@ export function ControlsProvider({ data, refresh, children }: { data: Dashboard 
     setPending(sheet && NEEDS_UNLOCK.has(sheet.kind) ? sheet : null);
     setSheet({ kind: "unlock" });
   }, [sheet]);
-  const value = useMemo(() => ({ open, flash, dismissFlash, session, locked, binance }), [open, flash, dismissFlash, session, locked, binance]);
+  const setEntry = useCallback(async (coin: CoinView, module: EntryKey, enabled: boolean) => {
+    try {
+      await control(`/api/v1/coins/${coin.symbol}/entries/${module}`, "PUT", { enabled });
+      done(`${ENTRY_NAME[module]} ${enabled ? "is on" : "is off"} for ${coin.label}.`);
+    } catch (reason) {
+      if (reason instanceof LockedError) { locked(); return; }
+      showFlash(reason instanceof Error ? reason.message : "Could not change it");
+    }
+  }, [done, locked, showFlash]);
+  const value = useMemo(() => ({ open, flash, dismissFlash, session, locked, binance, setEntry }),
+    [open, flash, dismissFlash, session, locked, binance, setEntry]);
 
   let title = "";
   let body: ReactNode = null;
@@ -384,6 +401,23 @@ export function ControlsProvider({ data, refresh, children }: { data: Dashboard 
     title = binance?.attached ? "Your Binance account" : "Attach your Binance account";
     body = <BinanceSheet credentials={binance} live={data?.trading.mode === "live"} onCancel={close}
       onChanged={(next, message) => { setBinance(next); done(message); }} />;
+  } else if (sheet?.kind === "entry-off") {
+    const name = sheet.coin.label;
+    const days = sheet.coin.strategy.signal_average_days;
+    const what = ENTRY_NAME[sheet.module];
+    title = `Switch off the ${what.toLowerCase()} for ${name}?`;
+    body = <ConfirmSheet danger
+      text={sheet.module === "dip"
+        ? `The dip is how ${name} mostly trades: it buys when the price comes back into its ${days}-day average. ${name}'s tested results assume it is on.`
+        : `The breakout catches the moves where ${name} never comes back to its average. It was tested together with the dip, sharing the same lots.`}
+      note={<>Switched off, {name} trades less and its results are no longer the tested ones. Open lots keep running to
+        their stop or trailing stop. You can switch it back on at any time.</>}
+      confirmLabel="Switch off" cancelLabel="Keep it on" cancelPrimary onCancel={close}
+      run={async () => {
+        await control(`/api/v1/coins/${sheet.coin.symbol}/entries/${sheet.module}`, "PUT", { enabled: false });
+        return `${what} is off for ${name}.`;
+      }}
+      onDone={done} />;
   } else if (sheet?.kind === "entry-module") {
     title = `${MODULE_TEXT[sheet.module].title} · ${sheet.coin.label}`;
     body = <EntryModuleSheet coin={sheet.coin} module={sheet.module} data={data} onDone={done} />;

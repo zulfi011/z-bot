@@ -242,9 +242,10 @@ def _budget(connection, usdt_free: Decimal) -> dict:
 
 @lru_cache(maxsize=None)
 def supports(symbol: str) -> dict[str, bool]:
-    """Which extra ways in this coin's strategy actually has."""
+    """Which ways in this coin's strategy actually has."""
     strategy = load_strategy(symbol)
-    return {"pullback": PullbackConfig.from_strategy(strategy) is not None,
+    return {"dip": True, "breakout": ConsolidationConfig.from_strategy(strategy) is not None,
+            "pullback": PullbackConfig.from_strategy(strategy) is not None,
             "pyramid": PyramidConfig.from_strategy(strategy) is not None}
 
 
@@ -309,7 +310,7 @@ def set_pot(body: PotRequest, key: str | None = Header(default=None, alias="X-Co
 def set_entry_module(symbol: str, module: str, body: ModuleRequest,
                      key: str | None = Header(default=None, alias="X-Control-Key"),
                      session: str | None = Cookie(default=None, alias=control_session.COOKIE)) -> dict:
-    """Switch one extra way in on or off. It always shares the pot's lots; there are no reserved lots."""
+    """Switch one way in on or off. Every way in shares the pot's lots; there are no reserved lots."""
     _authorize(key, session)
     symbol = _coin_symbol(symbol)
     if module not in MODULES:
@@ -334,14 +335,16 @@ def _save_allocation(connection, symbol: str, target: CoinAllocation, event: str
     connection.execute(
         text(
             """
-            INSERT INTO coin_allocations (symbol, lot_size_usd, lots, pullback_enabled, pyramid_enabled,
-                                          trading_enabled, revision, request_id, updated_at)
-            VALUES (:symbol, :lot, :lots, :pullback, :pyramid, false, 1, NULL, now())
-            ON CONFLICT (symbol) DO UPDATE SET pullback_enabled=EXCLUDED.pullback_enabled,
-                pyramid_enabled=EXCLUDED.pyramid_enabled, revision=coin_allocations.revision + 1, updated_at=now()
+            INSERT INTO coin_allocations (symbol, lot_size_usd, lots, dip_enabled, breakout_enabled, pullback_enabled,
+                                          pyramid_enabled, trading_enabled, revision, request_id, updated_at)
+            VALUES (:symbol, :lot, :lots, :dip, :breakout, :pullback, :pyramid, false, 1, NULL, now())
+            ON CONFLICT (symbol) DO UPDATE SET dip_enabled=EXCLUDED.dip_enabled, breakout_enabled=EXCLUDED.breakout_enabled,
+                pullback_enabled=EXCLUDED.pullback_enabled, pyramid_enabled=EXCLUDED.pyramid_enabled,
+                revision=coin_allocations.revision + 1, updated_at=now()
             """
         ),
         {"symbol": symbol, "lot": target.lot_size_usd, "lots": target.lots,
+         "dip": target.enabled("dip"), "breakout": target.enabled("breakout"),
          "pullback": target.enabled("pullback"), "pyramid": target.enabled("pyramid")},
     )
     connection.execute(
@@ -1064,10 +1067,11 @@ def _coin_view(connection, strategy: dict, usdt_free: Decimal, open_rows: list[d
                     if trading_enabled and free_slots and pot.lot_size_usd > ZERO else None)
 
     # Every way in is simply on or off, and they all share the coin's lots, first come first served.
-    supported = {"pullback": pullback_rule is not None, "pyramid": pyramid_rule is not None}
+    supported = {"dip": True, "breakout": breakout_rule is not None,
+                 "pullback": pullback_rule is not None, "pyramid": pyramid_rule is not None}
     entries = {name: {"supported": supported[name],
                       "enabled": supported[name] and allocation.enabled(name),
-                      "open_lots": open_by_source.get(name, 0)}
+                      "open_lots": open_by_source.get("signal" if name == "dip" else name, 0)}
                for name in MODULES}
 
     # One row per lot the coin owns, in the order they were bought, so the page can draw the pool rather than

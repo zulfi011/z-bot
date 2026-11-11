@@ -5,7 +5,7 @@ import { ago, amount, duration, label, n, pct, price, signedUsd, time, tone, usd
 import { useControls } from "./controls";
 import { BnbCard, LotsCard, PositionCard, TradeList } from "./panels";
 import { EXIT, SOURCE, sourceOf } from "./sources";
-import { Card, CoinToken, Empty, Info, ScrollList, Stat, Tabs, Tip } from "./ui";
+import { Card, CoinToken, Empty, Info, ScrollList, Stat, Tabs, Tip, Toggle } from "./ui";
 
 const INTERVALS: { value: Interval; label: string }[] = [
   { value: "3m", label: "3m" }, { value: "15m", label: "15m" }, { value: "1h", label: "1h" },
@@ -160,103 +160,90 @@ function RightNow({ coin }: { coin: CoinView }) {
   </Card>;
 }
 
-/** Every way in, what it is set to, and the lots it is using. The core is always on; the rest can be switched. */
-function WaysIn({ coin }: { coin: CoinView }) {
-  const { open } = useControls();
+/** Every way the coin can buy, each with its own switch. The dip and the breakout are on by default: the tested core. */
+function HowItBuys({ coin }: { coin: CoinView }) {
+  const { open, setEntry } = useControls();
   const name = coin.label;
-  const lots = coin.lots;
   const entries = coin.entries ?? {};
-  const modules = (["pullback", "pyramid"] as const).filter(key => entries[key]?.supported);
-  if (!modules.length) return null;
-  const chip = (key: "pullback" | "pyramid") =>
-    entries[key]?.enabled ? <span className="tag applied">On</span> : <span className="tag">Off</span>;
-  const used = (key: "pullback" | "pyramid") => {
-    const module = entries[key]!;
-    if (!module.enabled) return "no new lots";
-    return `${module.open_lots} of the pot's ${lots.max_lots} lot${lots.max_lots === 1 ? "" : "s"} open`;
+  const keys = (["dip", "breakout", "pullback", "pyramid"] as const).filter(key => entries[key]?.supported);
+  if (!keys.length) return null;
+  const source = { dip: SOURCE.signal, breakout: SOURCE.breakout, pullback: SOURCE.pullback, pyramid: SOURCE.pyramid };
+  const core = (key: string) => key === "dip" || key === "breakout";
+  const status = (key: typeof keys[number]) => {
+    const entry = entries[key]!;
+    if (!entry.enabled) return core(key) ? "off · not the tested setup" : "off · no new lots";
+    const lots = entry.open_lots ? `${entry.open_lots} lot${entry.open_lots === 1 ? "" : "s"} open` : "no lots open";
+    if (core(key)) return `on by default · ${lots}`;
+    if (key === "pullback" && coin.pullback) return `on · ${lots} · ${coin.pullback.state === "armed" ? "armed now"
+      : coin.pullback.state === "dipping" ? `${duration(coin.pullback.below_minutes)} under the line` : "waiting for a pullback"}`;
+    if (key === "pyramid" && coin.pyramid) return `on · ${coin.pyramid.adds_open} add${coin.pyramid.adds_open === 1 ? "" : "s"} open`;
+    return `on · ${lots}`;
   };
-  const pyramid = coin.pyramid;
-  const nextAdd = pyramid?.parents.find(parent => parent.adds_left > 0 && parent.next_add_price != null);
-  return <Card title="Ways in" className="ways-in"
-    info={`Which ways in are switched on for ${name}. They all draw on the same lots, first come first served — the core (the dip and the quiet-band breakout) is always on.`}>
-    <ul className="ways">
-      <li>
-        <div><b><span className="src-swatch src-dip">D</span><span className="src-swatch src-breakout">Q</span> Core · dip + quiet-band breakout</b>
-          <small>{lots.open_lots}/{lots.max_lots} lot{lots.max_lots === 1 ? "" : "s"} open · always on</small></div>
-        <span className="tag applied">Always on</span>
-      </li>
-      {modules.map(key => <li key={key}>
-        <div><b><span className={`src-swatch ${sourceOf(key).cls}`}>{sourceOf(key).letter}</span>{" "}
-          {key === "pullback" ? "Pullback" : "Add-ons"}</b>
-          <small>{used(key)}
-            {key === "pyramid" && nextAdd && entries.pyramid?.enabled
-              ? ` · next add at ${price(nextAdd.next_add_price)} (${pct(nextAdd.distance_to_add_pct, 2, false)} away)`
-              : ""}
-            {key === "pullback" && coin.pullback && entries.pullback?.enabled
-              ? ` · ${coin.pullback.state === "armed" ? "armed now" : coin.pullback.state === "dipping"
-                ? `${duration(coin.pullback.below_minutes)} under the line` : "waiting for a pullback"}`
-              : ""}</small></div>
-        <div className="right">{chip(key)}
-          <button className="ghost small" onClick={() => open({ kind: "entry-module", coin, module: key })}>Change</button></div>
+  const tips: Record<typeof keys[number], string> = {
+    dip: `${SOURCE.signal.tip} On by default: it is ${name}'s main way in and the one its results were tested with.`,
+    breakout: `${SOURCE.breakout.tip} On by default: it was tested together with the dip on ${name}, sharing the same lots.`,
+    pullback: `${SOURCE.pullback.tip} Optional. It shares the pot's lots with the other ways in.`,
+    pyramid: `${SOURCE.pyramid.tip} Optional. It puts more money into a move that is already working, so it can deepen a drop too.`,
+  };
+  const flip = (key: typeof keys[number], on: boolean) => {
+    // Switching the tested core off asks first and explains why it is on; everything else changes straight away.
+    if (!on && core(key)) open({ kind: "entry-off", coin, module: key as "dip" | "breakout" });
+    else setEntry(coin, key, on);
+  };
+  return <Card title="How it buys" className="how-buys"
+    info={`Each way in can buy one lot from the shared pot when its signal comes. The dip${keys.includes("breakout") ? " and the quiet-band breakout are" : " is"} on by default — that is ${name}'s tested strategy.`}>
+    <ul className="entry-list">
+      {keys.map(key => <li key={key} className={entries[key]!.enabled ? "" : "off"}>
+        <span className={`src-swatch ${source[key].cls}`} title={source[key].tip}>{source[key].letter}</span>
+        <div><b>{source[key].name}{key === "pyramid" ? "s" : ""}<Info text={tips[key]} /></b><small>{status(key)}</small></div>
+        <Toggle checked={entries[key]!.enabled} label={`${source[key].name} ${entries[key]!.enabled ? "on" : "off"}`}
+          onChange={on => flip(key, on)} />
       </li>)}
     </ul>
-    {coin.pyramid && entries.pyramid?.enabled && (coin.pyramid.parents.length
-      ? <p className="card-note">Adds so far: {coin.pyramid.adds_total} ({coin.pyramid.adds_open} open). A lot gets
-        another lot every +{n(coin.pyramid.step_pct)}% above its buy price, up to {coin.pyramid.maximum_adds}, while price
-        holds above the {n(coin.exit_plan.ema_minutes) / 60}-hour line. {coin.pyramid.add_exit === "with_parent"
-          ? "Each add is sold the moment the lot it was added to is sold."
-          : "Each add is then held against that line on its own."}</p>
-      : <p className="card-note">Nothing to add to yet — an add needs an open {name} lot that is climbing.</p>)}
   </Card>;
 }
 
-function ExitMode({ coin }: { coin: CoinView }) {
+/** How a lot takes profit or limits a loss, as a small price ladder for the next lot. */
+function HowItSells({ coin }: { coin: CoinView }) {
   const plan = coin.exit_plan;
-  // Worth showing whenever there is something to say: two exit modes, or two ways in.
-  if (!plan.has_trend_exit && !coin.consolidation) return null;
-  const hours = plan.ema_minutes ? n(plan.ema_minutes) / 60 : null;
   const name = coin.label;
-  const riding = plan.next_lot_mode === "trend";
-  const openModes = coin.positions.reduce(
-    (count, position) => ({ ...count, [position.exit_mode]: (count[position.exit_mode] ?? 0) + 1 }),
-    {} as Record<string, number>);
-  const bySource = coin.positions.reduce((count, position) =>
-    ({ ...count, [position.entry_source]: (count[position.entry_source] ?? 0) + 1 }), {} as Record<string, number>);
-  return <Card title="How a win would be taken" className="exit-mode"
-    info={hours
-      ? `Both ways in — the dip and the quiet-band breakout — end the same way. Every lot keeps its stop and starts trailing once it is up. What happens after that depends on the trend at the moment of buying: in a clean uptrend the lot is held against the ${hours}-hour average line (trend ride), otherwise it hands back a share of its best profit (trailing stop). The mode is fixed when the lot opens and never changes, so two lots open at once can be in different modes.`
-      : `Every ${name} lot takes profit the same way: once it is up ${n(plan.activation_pct)}%, a trailing stop follows the peak and sells after giving back ${n(plan.giveback_pct)}% of it. A trend-riding exit was tested on ${name} and left out — on paper it added money, but a walk-forward test showed the gain could not have been found in advance, and ${name} wins small and often, which is what this exit is for.`}>
-    <div className={`mode-now ${hours ? (riding ? "mode-a" : "mode-b") : "mode-b"}`}>
-      <span className={`mode-chip ${hours && riding ? "mode-a" : "mode-b"}`}>{hours && riding ? EXIT.trend.name : EXIT.giveback.name}</span>
-      <div>
-        <b>{riding && hours ? `Ride the trend line` : `Give back ${n(plan.giveback_pct)}% of the gain`}</b>
-        <small>{!hours
-          ? `Every ${name} lot keeps ${100 - n(plan.giveback_pct)}% of its best profit — both the dip and the quiet-band breakout, every time. ${name} wins small and often, so nothing is held for a bigger move.`
-          : riding
-            ? `The market is in a clean uptrend, so the next ${name} lot would be held until a minute closes below the ${hours}-hour line — letting a big move run instead of capping it near +1%.`
-            : `The 7-, 15- and 30-day averages are not stacked upward, so the next ${name} lot would use the ordinary trailing stop and keep ${100 - n(plan.giveback_pct)}% of its best profit.`}</small>
-      </div>
+  const hours = plan.has_trend_exit && plan.ema_minutes ? n(plan.ema_minutes) / 60 : null;
+  const riding = !!hours && plan.next_lot_mode === "trend";
+  const exit = riding ? EXIT.trend : EXIT.giveback;
+  const modes = coin.positions.reduce((count, position) =>
+    ({ ...count, [position.exit_mode]: (count[position.exit_mode] ?? 0) + 1 }), {} as Record<string, number>);
+  const breakout = coin.consolidation;
+  const rows: { cls: string; icon: string; label: string; value: string; note: string; tip: string }[] = [
+    riding
+      ? { cls: "profit", icon: "▲", label: "Takes profit", value: `+${n(plan.activation_pct)}%`, note: `then rides the ${hours}h trend line`,
+          tip: `Once the lot is up ${n(plan.activation_pct)}%, it is held while ${name} stays above the ${hours}-hour trend line and sold when a minute closes below it.` }
+      : { cls: "profit", icon: "▲", label: "Takes profit", value: `+${n(plan.activation_pct)}%`, note: `then keeps ${100 - n(plan.giveback_pct)}% of the best gain`,
+          tip: `Once the lot is up ${n(plan.activation_pct)}%, a trailing stop follows the best price and sells after it gives back ${n(plan.giveback_pct)}% of the gain.` },
+    ...(riding ? [{ cls: "floor", icon: "◆", label: "Break-even floor", value: "0%", note: "can no longer close at a loss",
+      tip: "When a trend-ride lot starts taking profit, its stop moves up to the buy price plus costs." }] : []),
+    { cls: "buy", icon: "●", label: "Buy", value: price(coin.market.price), note: "the next lot's price, roughly", tip: "Where the next lot would be bought if it filled now." },
+    { cls: "stop", icon: "▼", label: "Stop-loss", value: `−${n(plan.stop_pct)}%`, note: "parked on Binance from the first minute",
+      tip: `If ${name} falls ${n(plan.stop_pct)}% below the buy price, the stop sells. It sits on Binance itself, so it works even if the bot is offline.`
+        + (breakout ? ` Breakout lots use their own: stop −${n(breakout.stop_pct)}%, profit from +${n(breakout.trail_activation_pct)}%.` : "") },
+  ];
+  return <Card title="How it sells" className="how-sells"
+    info={`Every lot has a stop-loss from the moment it is bought. Profit is taken ${hours ? "with a trailing stop, or — in a clean uptrend — by riding the trend line" : "with a trailing stop"}. The way out is fixed when the lot opens.`}>
+    <div className="sell-next">
+      <span>Next lot</span>
+      <span className={`mode-chip ${riding ? "mode-a" : "mode-b"}`} title={exit.tip}>{exit.name}</span>
+      <small>{!hours ? `${name} always uses the trailing stop` : riding ? "clean uptrend" : "trend not clean, so the ordinary stop"}</small>
     </div>
-    <dl className="mode-facts">
-      {hours && <div><dt>Trend line now<Info text={`The ${hours}-hour exponential average of ${name}'s 1-minute closes. A trend-ride lot is sold at the next minute's open once a minute closes below this line.`} /></dt>
-        <dd>{plan.trend_line == null ? "—" : price(plan.trend_line)}</dd></div>}
-      {hours && <div><dt>Price vs line</dt>
-        <dd className={plan.trend_line == null || coin.market.price == null ? "" : n(coin.market.price) >= n(plan.trend_line) ? "up" : "down"}>
-          {plan.trend_line == null || coin.market.price == null ? "—"
-            : pct((n(coin.market.price) / n(plan.trend_line) - 1) * 100, 2)}</dd></div>}
-      {!hours && <div><dt>Keeps<Info text={`The share of the best profit a lot holds on to when the trailing stop sells it.`} /></dt>
-        <dd>{100 - n(plan.giveback_pct)}% of the peak gain</dd></div>}
-      <div><dt>Open lots</dt>
-        <dd>{!coin.positions.length ? "none" : hours
-          ? `${openModes.trend ?? 0} riding · ${openModes.giveback ?? 0} giving back`
-          : `${coin.positions.length} open`}</dd></div>
-      {coin.consolidation && <div><dt>Bought by<Info text={`Which way in each open lot came through: the dip into the average, a quiet-band break out of a quiet band${coin.pullback ? ", or the pullback entry" : ""}.`} /></dt>
-        <dd>{coin.positions.length
-          ? (Object.keys(SOURCE) as (keyof typeof SOURCE)[]).filter(key => bySource[key] || (key !== "manual" && (key !== "pullback" || coin.pullback)
-              && (key !== "pyramid" || coin.pyramid)))
-            .map(key => `${bySource[key] ?? 0} ${SOURCE[key].name.toLowerCase()}`).join(" · ")
-          : "none"}</dd></div>}
-    </dl>
+    <ol className="sell-ladder">
+      {rows.map(row => <li key={row.label} className={row.cls}>
+        <i aria-hidden="true">{row.icon}</i>
+        <span className="sell-label">{row.label}<Info text={row.tip} /></span>
+        <b>{row.value}</b>
+        <small>{row.note}</small>
+      </li>)}
+    </ol>
+    <p className="card-note">Open lots: {coin.positions.length
+      ? hours ? `${modes.giveback ?? 0} trailing · ${modes.trend ?? 0} riding the trend` : `${coin.positions.length} trailing`
+      : "none"}{hours && plan.trend_line != null ? ` · trend line ${price(plan.trend_line)}` : ""}</p>
   </Card>;
 }
 
@@ -436,10 +423,7 @@ export function CoinPage({ data, coin, interval, onInterval, chartMode, onChartM
         pullbackHours={coin.pullback?.ema_hours ?? null} pullbackDwell={coin.pullback?.dwell_minutes ?? null} />
     </Card>
 
-    <WaysIn coin={coin} />
-    <ExitMode coin={coin} />
-
-    <Card title={`Open ${name} lots (${coin.positions.length})`} info="Every open lot with its live stop, trailing-stop start and profit. Close sells a lot at the next minute.">
+    <Card className="coin-open-lots" title={`Open ${name} lots (${coin.positions.length})`} info="Every open lot with its live stop, trailing-stop start and profit. Close sells a lot at the next minute.">
       {coin.positions.length
         ? <ScrollList visible={2}><div className="positions">{coin.positions.map(position =>
             <PositionCard key={position.position_id} position={position} data={data} />)}</div></ScrollList>
@@ -447,6 +431,8 @@ export function CoinPage({ data, coin, interval, onInterval, chartMode, onChartM
     </Card>
 
     <LotsCard data={data} coin={coin} />
+    <HowItBuys coin={coin} />
+    <HowItSells coin={coin} />
     {binance?.attached && <BnbCard data={data} compact />}
     <Activity coin={coin} />
 

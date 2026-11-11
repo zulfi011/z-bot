@@ -123,7 +123,7 @@ def read_settings(connection: Connection) -> dict:
 
 def read_allocation(connection: Connection, symbol: str) -> CoinAllocation | None:
     row = connection.execute(
-        text("""SELECT lot_size_usd, lots, pullback_enabled, pyramid_enabled
+        text("""SELECT lot_size_usd, lots, dip_enabled, breakout_enabled, pullback_enabled, pyramid_enabled
                 FROM coin_allocations WHERE symbol=:symbol"""),
         {"symbol": symbol},
     ).mappings().one_or_none()

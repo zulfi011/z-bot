@@ -56,7 +56,7 @@ class FakeConnection:
         self.answers = {
             "FROM engine_state": {"trading_mode": "shadow", "daily_loss_limit_usd": "25",
                                   "maximum_open_value_usd": "0"},
-            "lot_size_usd, lots, pullback_enabled": {"lot_size_usd": Decimal("100"), "lots": 3,
+            "lot_size_usd, lots, dip_enabled": {"lot_size_usd": Decimal("100"), "lots": 3, "dip_enabled": True, "breakout_enabled": True,
                                                       "pullback_enabled": True, "pyramid_enabled": False},
             "trading_enabled FROM coin_allocations": True,
             # every way in shares one set of lots, so there is a single number to count
@@ -167,7 +167,7 @@ ROW = {"stop_order_id": None, "entry_source": "signal"}
     ({"count(*) FROM paper_positions": 3}, "All 3 shared lots are open"),
     ({"FROM engine_state": {"trading_mode": "shadow", "pot_lots": 5}, "count(*) FROM paper_positions": 5},
      "All 5 shared lots are open"),
-    ({"lot_size_usd, lots, pullback_enabled": {"lot_size_usd": Decimal("100"), "lots": 3, "pullback_enabled": False,
+    ({"lot_size_usd, lots, dip_enabled": {"lot_size_usd": Decimal("100"), "lots": 3, "dip_enabled": True, "breakout_enabled": True, "pullback_enabled": False,
                                                "pyramid_enabled": False}}, "pullback entry is switched off"),
     ({"FROM engine_state": {"trading_mode": "shadow", "maximum_open_value_usd": "150"},
       "sum(allocation_usd),0) FROM paper_positions": Decimal("100")}, "limit on money in open trades"),
