@@ -1,7 +1,7 @@
 import { useState } from "react";
-import type { CoinView, Dashboard, Interval } from "./api";
+import type { CoinView, Dashboard, Interval, PullbackView } from "./api";
 import { PriceChart } from "./charts";
-import { ago, amount, duration, label, n, pct, price, signedUsd, time, tone, until, usd } from "./format";
+import { ago, amount, duration, label, n, pct, price, signedUsd, time, tone, usd } from "./format";
 import { useControls } from "./controls";
 import { BnbCard, LotsCard, PositionCard, TradeList } from "./panels";
 import { EXIT, SOURCE, sourceOf } from "./sources";
@@ -12,96 +12,151 @@ const INTERVALS: { value: Interval; label: string }[] = [
   { value: "4h", label: "4h" }, { value: "1d", label: "1D" },
 ];
 
-function Check({ ok, title, text, info }: { ok: boolean | null; title: string; text: string; info: string }) {
-  return <li className={ok == null ? "wait" : ok ? "ok" : "no"}>
-    <i aria-hidden>{ok == null ? "…" : ok ? "✓" : "✕"}</i>
-    <div><b>{title}<Info text={info} /></b><span>{text}</span></div>
-  </li>;
+type StepState = "done" | "block" | "todo" | "now";
+type Step = { state: StepState; label: string; detail?: string; progress?: number };
+type WayStatus = { text: string; tone: "good" | "warn" | "bad" | "muted" };
+
+const STEP_ICON: Record<StepState, string> = { done: "✓", block: "✕", todo: "○", now: "●" };
+const clamp01 = (value: number) => Math.max(0, Math.min(1, value));
+
+/** One way in as a short list of steps that end in a buy: ✓ done, ✕ blocking, ○ not reached yet, ● happening now. */
+function WayCard({ source, title, status, steps, info }:
+  { source: keyof typeof SOURCE; title: string; status: WayStatus; steps: Step[]; info: string }) {
+  const badge = SOURCE[source];
+  return <section className={`way-card ${status.tone}`} aria-label={`${title}: ${status.text}`}>
+    <header>
+      <span className={`src-swatch ${badge.cls}`} title={badge.tip}>{badge.letter}</span>
+      <b>{title}<Info text={info} /></b>
+      <span className={`way-status ${status.tone}`}>{status.text}</span>
+    </header>
+    <ol className="way-steps">
+      {steps.map(step => <li key={step.label} className={`way-step ${step.state}`}>
+        <i aria-hidden="true">{STEP_ICON[step.state]}</i>
+        <div><span>{step.label}</span>{step.detail && <small>{step.detail}</small>}
+          {step.progress != null && <div className="way-progress"><i style={{ width: `${clamp01(step.progress) * 100}%` }} /></div>}</div>
+      </li>)}
+      <li className="way-step buy"><i aria-hidden="true">→</i><div><span>Buy</span></div></li>
+    </ol>
+  </section>;
 }
+
+/** Card status from its steps: anything blocking wins, then anything happening now. */
+const statusOf = (steps: Step[], off = false): WayStatus => off ? { text: "Off", tone: "muted" }
+  : steps.some(step => step.state === "block") ? { text: "Blocked", tone: "bad" }
+    : steps.some(step => step.state === "now") ? { text: "Buying soon", tone: "good" }
+      : { text: "Waiting", tone: "warn" };
 
 const hh = (hour: number) => `${String(hour).padStart(2, "0")}:00`;
 // "3 hours" reads better than "3h 0m" in a rule; anything uneven falls back to the usual duration.
 const span = (minutes: number) => minutes % 60 === 0 ? `${minutes / 60} hour${minutes === 60 ? "" : "s"}` : duration(minutes);
 
+function dipSteps(coin: CoinView): Step[] {
+  const setup = coin.setup, strategy = coin.strategy;
+  const candle = `${strategy.signal_timeframe.replace("m", "")}-min`;
+  const steps: Step[] = [{
+    state: setup.regime === "missing" ? "todo" : setup.trend_allows_entries ? "done" : "block",
+    label: "Trend allows buying",
+    detail: setup.regime === "missing" ? "needs 30 days of prices" : setup.trend_allows_entries ? `trend is ${setup.regime}` : "strong downtrend",
+  }];
+  if (strategy.requires_close_above_30d) {
+    const above = setup.average_30d != null && coin.market.price != null;
+    const stretch = above ? (n(coin.market.price) / n(setup.average_30d) - 1) * 100 : 0;
+    const limit = strategy.maximum_above_30d_pct == null ? null : n(strategy.maximum_above_30d_pct);
+    steps.push({
+      state: !above ? "todo" : stretch > 0 && (limit == null || stretch <= limit) ? "done" : "block",
+      label: limit == null ? "Above its 30-day average" : `Above its 30-day average, by ${limit}% at most`,
+      detail: !above ? "needs 30 days of prices" : `${stretch >= 0 ? "+" : ""}${stretch.toFixed(1)}% vs ${price(setup.average_30d)}`,
+    });
+  }
+  const distance = n(setup.distance_to_zone_pct);
+  steps.push(setup.pending_episode_since ? { state: "done", label: "Price rises into the zone", detail: `touched at ${time(setup.pending_episode_since)}` }
+    : setup.zone_state === "below" ? { state: "todo", label: "Price rises into the zone",
+      detail: `${pct(distance, 2, false)} below ${price(setup.zone_lower)}–${price(setup.zone_upper)}`, progress: 1 - distance / 10 }
+      : setup.zone_state === "above" ? { state: "todo", label: "Price rises into the zone",
+        detail: `${pct(distance, 2, false)} above — must drop below ${price(setup.zone_lower)} first` }
+        : setup.zone_state === "inside" ? { state: "todo", label: "Price rises into the zone", detail: "inside now, but came from above" }
+          : { state: "todo", label: "Price rises into the zone", detail: "average still warming up" });
+  const deadline = setup.pending_episode_since
+    ? time(new Date(new Date(setup.pending_episode_since).getTime() + strategy.confirmation_wait_minutes * 60000).toISOString()) : null;
+  steps.push({ state: setup.pending_episode_since ? "now" : "todo", label: `A green ${candle} candle confirms`,
+    detail: deadline ? `waiting — before ${deadline}` : `within ${strategy.confirmation_wait_minutes} min of the touch` });
+  return steps;
+}
+
+function breakoutSteps(c: NonNullable<CoinView["consolidation"]>): Step[] {
+  const width = n(c.zone_width_pct), limit = n(c.maximum_zone_pct);
+  const steps: Step[] = [
+    c.state === "warming_up" ? { state: "todo", label: "Price goes quiet", detail: "measuring the band" }
+      : c.state === "too_wide" ? { state: "block", label: "Price goes quiet",
+        detail: `${c.zone_hours}h range is ${pct(width, 2, false)} — needs ${pct(limit, 1, false)} or less`, progress: limit / Math.max(width, 0.0001) }
+        : { state: "done", label: "Price goes quiet", detail: `${c.zone_hours}h in ${price(c.zone_bottom)}–${price(c.zone_top)}` },
+    c.pending_break ? { state: "done", label: "Closes above the band", detail: `broke out at ${time(c.pending_break.broke_at)}` }
+      : c.state === "breaking" ? { state: "now", label: "Closes above the band", detail: `above ${price(c.zone_top)} now` }
+        : { state: "todo", label: "Closes above the band", detail: c.zone_top != null && c.state === "quiet" ? `top is ${price(c.zone_top)}` : undefined },
+    c.pending_break ? { state: "now", label: `Still above after ${c.confirmation_wait_minutes} min`,
+      detail: c.pending_break.confirm_at ? `checked at ${time(c.pending_break.confirm_at)}` : "checking" }
+      : { state: "todo", label: `Still above after ${c.confirmation_wait_minutes} min` },
+  ];
+  // Without a confirmation wait the close above the band is the buy, so the last step is left out.
+  return c.confirmation_wait_minutes > 0 ? steps : steps.slice(0, 2);
+}
+
+function pullbackSteps(p: PullbackView): Step[] {
+  const dwell = span(p.dwell_minutes);
+  return [
+    p.state === "warming_up" ? { state: "todo", label: "In a clean uptrend", detail: "warming up the line" }
+      : p.state === "no_uptrend" ? { state: "block", label: "In a clean uptrend", detail: "7-, 15- and 30-day averages not stacked upward" }
+        : { state: "done", label: "In a clean uptrend" },
+    p.state === "armed" ? { state: "done", label: `${dwell} under the ${p.ema_hours}h line`, detail: `${duration(p.below_minutes)} under` }
+      : p.state === "dipping" ? { state: "todo", label: `${dwell} under the ${p.ema_hours}h line`,
+        detail: `${duration(p.below_minutes)} so far, ${duration(p.minutes_to_arm)} to go`, progress: p.below_minutes / Math.max(p.dwell_minutes, 1) }
+        : { state: "todo", label: `${dwell} under the ${p.ema_hours}h line`,
+          detail: p.state === "above" ? `${pct(p.distance_to_line_pct, 2, false)} above the line now` : undefined, progress: p.state === "above" ? 0 : undefined },
+    { state: p.state === "armed" ? "now" : "todo", label: "Closes back above the line",
+      detail: p.state === "armed" ? `a close above ${price(p.line)} buys` : undefined },
+  ];
+}
+
 function RightNow({ coin }: { coin: CoinView }) {
-  const setup = coin.setup;
-  const strategy = coin.strategy;
+  const setup = coin.setup, strategy = coin.strategy, name = coin.label;
   const days = strategy.signal_average_days;
-  const name = coin.label;
-  const candle = `${strategy.signal_timeframe.replace("m", "")}-minute`;
-  const zoneText = setup.zone_state === "below"
-    ? `${name} is ${pct(setup.distance_to_zone_pct, 2, false)} below the zone. A rise into it (${price(setup.zone_lower)}–${price(setup.zone_upper)}) is the setup.`
-    : setup.zone_state === "inside"
-      ? `${name} is inside the zone now. If it came from below, the strategy waits for a green ${candle} candle.`
-      : setup.zone_state === "above"
-        ? `${name} is ${pct(setup.distance_to_zone_pct, 2, false)} above the zone. It must drop below ${price(setup.zone_lower)} first, then come back up.`
-        : "Waiting for enough price history to compute the average.";
   const block = strategy.blocked_entry_hours_utc;
-  const next = coin.lots;
-  // How far the price is above the 30-day average, in % (used by the capped trend rule).
-  const stretch = setup.average_30d && coin.market.price ? (n(coin.market.price) / n(setup.average_30d) - 1) * 100 : 0;
-  let headline = "Waiting for a setup";
-  if (!coin.trading_enabled) headline = `Switched off — no new ${name} trades`;
-  else if (setup.pending_episode_since) headline = "Touch detected — waiting for a green candle";
-  else if (!setup.entry_window_open) headline = `Paused: no new entries until ${block ? hh(block.end) : ""} UTC`;
-  else if (!setup.trend_allows_entries) headline = `Paused: ${name} is in a strong downtrend`;
-  else if (coin.pullback?.state === "armed" && next.next_lot_usd != null)
-    headline = `Pullback armed — a close back above ${price(coin.pullback.line)} buys`;
-  else if (next.next_lot_usd == null) headline = "Signals would be skipped — no free lot";
-  else if (setup.zone_state === "below") headline = "Ready — watching for a rise into the zone";
-  return <Card title="What the strategy sees now" className="right-now"
-    info={`A live checklist of the ${name} entry rules. A buy happens only when every item is green and a green ${candle} candle confirms a touch from below.`}>
-    <p className="headline">{headline}</p>
-    <ul className="checks">
-      <Check ok={setup.zone_state === "below" || setup.zone_state === "inside" ? true : setup.zone_state === "above" ? false : null}
-        title={`Price vs ${days}-day zone`} text={zoneText}
-        info={`The ${days}-day average is the mean of the last ${days} daily closing prices (UTC). The entry zone is ±${strategy.touch_zone_pct}% around it. A buy needs ${name} to reach the zone from below.`} />
-      <Check ok={setup.regime === "missing" ? null : setup.trend_allows_entries} title="Trend filter"
-        text={setup.regime === "bearish" ? "Strong downtrend (7-day < 15-day < 30-day average) — entries are skipped."
-          : setup.regime === "missing" ? "Needs 30 days of history." : `Trend is ${setup.regime} — entries allowed.`}
-        info="Skips buys when the 7-, 15- and 30-day averages are stacked downward, which marks a strong downtrend." />
-      {strategy.requires_close_above_30d && <Check ok={setup.average_30d == null || coin.market.price == null ? null
-          : n(coin.market.price) > n(setup.average_30d) && (strategy.maximum_above_30d_pct == null || stretch <= n(strategy.maximum_above_30d_pct))}
-        title={strategy.maximum_above_30d_pct == null ? "Above 30-day average" : `Above 30-day average, by at most ${n(strategy.maximum_above_30d_pct)}%`}
-        text={setup.average_30d == null ? "Needs 30 days of history."
-          : n(coin.market.price) <= n(setup.average_30d) ? `${name} is below its 30-day average (${price(setup.average_30d)}).`
-            : strategy.maximum_above_30d_pct != null && stretch > n(strategy.maximum_above_30d_pct)
-              ? `${name} is ${stretch.toFixed(1)}% above its 30-day average (${price(setup.average_30d)}) — too stretched to buy.`
-              : `${name} is ${stretch.toFixed(1)}% above its 30-day average (${price(setup.average_30d)}).`}
-        info={`The confirming candle must close above the 30-day average, so ${name} only buys dips inside an uptrend. In the backtest this filter was what kept the later period profitable.`} />}
-      {block ? <Check ok={setup.entry_window_open} title="Time window"
-        text={setup.entry_window_open ? `Open. Entries pause ${hh(block.start)}–${hh(block.end)} UTC in ${until(setup.entry_window_changes_at)}.`
-          : `Paused until ${hh(block.end)} UTC (${until(setup.entry_window_changes_at)}).`}
-        info={`In the ${name} backtest, buys placed between ${hh(block.start)} and ${hh(block.end)} UTC did worse, so the strategy skips them. Open lots are still managed during this window.`} />
-        : <Check ok title="Time window" text="Open all day — this strategy buys at any hour."
-          info={`In the ${name} backtest, skipping any hours of the day did not help, so it trades around the clock.`} />}
-      <Check ok={next.next_lot_usd != null} title="Money for the next lot"
-        text={!coin.trading_enabled ? `${name} is switched off — switch it on to let it take lots from the shared pot.`
-          : next.next_lot_usd != null
-          ? n(next.next_lot_usd) < n(next.lot_size_usd)
-            ? `Lot ${next.lot_number} of ${next.max_lots} would use ${usd(next.next_lot_usd)} — all that is left of its ${usd(next.lot_size_usd)}.`
-            : `Lot ${next.lot_number} of ${next.max_lots} would use ${usd(next.next_lot_usd)}.`
-          : !next.slot_free ? `All ${next.max_lots} shared lots are open.` : `No free USDT left on Binance.`}
-        info={`Each buy spends one lot of the shared pot, whichever coin or way in fired. When the pot holds less than a full lot, the buy uses whatever is left. A signal is skipped if every shared lot is open or no USDT is free.`} />
-      {coin.consolidation && <Check
-        ok={coin.consolidation.state === "breaking" || coin.consolidation.pending_break != null ? true
-          : coin.consolidation.state === "quiet" ? null : false}
-        title={`Quiet-band breakout`}
-        text={coin.consolidation.pending_break
-          ? `Broke out at ${time(coin.consolidation.pending_break.broke_at)}. If ${name} is still above ${price(coin.consolidation.pending_break.zone_top)} at ${time(coin.consolidation.pending_break.confirm_at)}, it buys.`
-          : coin.consolidation.state === "breaking"
-            ? `${name} has pushed above the quiet band's top of ${price(coin.consolidation.zone_top)} — a close above it starts the ${coin.consolidation.confirmation_wait_minutes}-minute wait.`
-            : coin.consolidation.state === "quiet"
-              ? `${name} has been quiet for ${coin.consolidation.zone_hours} hours, inside ${price(coin.consolidation.zone_bottom)}–${price(coin.consolidation.zone_top)} (${pct(coin.consolidation.zone_width_pct, 2, false)} wide). A close above the top is the signal.`
-              : coin.consolidation.state === "too_wide"
-                ? `Not quiet enough: the last ${coin.consolidation.zone_hours} hours span ${pct(coin.consolidation.zone_width_pct, 2, false)}, and a breakout needs ${pct(coin.consolidation.maximum_zone_pct, 1, false)} or tighter.`
-                : "Waiting for enough price history to measure the band."}
-        info={`The quiet-band breakout is the second way in, for when ${name} never comes back down to its average. When the last ${coin.consolidation.zone_bars} bars of the ${coin.consolidation.chart_minutes / 60}-hour chart (${coin.consolidation.zone_hours} hours) all sit inside a band no wider than ${pct(coin.consolidation.maximum_zone_pct, 1, false)}, a close above that band's top starts a ${coin.consolidation.confirmation_wait_minutes}-minute wait. If the price is still above the top when the wait ends, the next minute buys. These lots use a tighter −${n(coin.consolidation.stop_pct)}% stop.`} />}
-      {coin.pullback && <PullbackCheck coin={coin} />}
-      {setup.pending_episode_since && <Check ok={null} title="Waiting for confirmation"
-        text={`Touch at ${time(setup.pending_episode_since)}. A green ${candle} candle before ${time(new Date(new Date(setup.pending_episode_since).getTime() + strategy.confirmation_wait_minutes * 60000).toISOString())} triggers the buy.`}
-        info={`After a touch from below, the first ${candle} candle that closes higher than it opened (within ${strategy.confirmation_wait_minutes} minutes) confirms the entry. If ${name} leaves the zone first, the setup is cancelled.`} />}
+  const lots = coin.lots;
+  const freeLot = lots.next_lot_usd != null;
+  const ways: { key: keyof typeof SOURCE; title: string; steps: Step[]; off?: boolean; info: string }[] = [
+    { key: "signal", title: "Dip", steps: dipSteps(coin),
+      info: `Buys when ${name} rises from below into a ±${strategy.touch_zone_pct}% zone around its ${days}-day average (the mean of the last ${days} daily closes, UTC), and a green candle confirms within ${strategy.confirmation_wait_minutes} minutes. Skipped in a strong downtrend (7-, 15- and 30-day averages stacked downward).` },
+  ];
+  if (coin.consolidation) ways.push({ key: "breakout", title: "Quiet-band breakout", steps: breakoutSteps(coin.consolidation),
+    info: `For when ${name} never comes back to its average. When the last ${coin.consolidation.zone_hours} hours stay inside a band no wider than ${pct(coin.consolidation.maximum_zone_pct, 1, false)}, a close above the top starts a ${coin.consolidation.confirmation_wait_minutes}-minute wait; if it is still above when the wait ends, it buys. These lots use a tighter −${n(coin.consolidation.stop_pct)}% stop.` });
+  if (coin.pullback) ways.push({ key: "pullback", title: "Pullback", steps: pullbackSteps(coin.pullback),
+    off: coin.entries?.pullback?.enabled === false,
+    info: `In a clean uptrend, when ${name} spends at least ${span(coin.pullback.dwell_minutes)} under its ${coin.pullback.ema_hours}-hour line, the first minute that closes back above it buys. The lot then rides the trend.` });
+  const cards = ways.map(way => ({ ...way, status: statusOf(way.steps, way.off) }));
+
+  const gates = [
+    { ok: coin.trading_enabled, label: coin.trading_enabled ? "Switched on" : "Switched off" },
+    // A switched-off coin gets no next lot from the server, so the money chip would mislead: show it only when on.
+    ...(coin.trading_enabled ? [{ ok: freeLot, label: freeLot ? `Free lot · ${usd(lots.next_lot_usd, 0)}` : lots.slot_free ? "No money for a lot" : "All lots open" }] : []),
+    { ok: setup.entry_window_open, label: !block ? "Open all day"
+      : setup.entry_window_open ? `Open · pauses ${hh(block.start)} UTC` : `Paused · opens ${hh(block.end)} UTC` },
+  ];
+  const soon = cards.find(card => card.status.text === "Buying soon");
+  const verdict: WayStatus = !coin.trading_enabled ? { text: `Not buying — ${name} is switched off`, tone: "bad" }
+    : !freeLot ? { text: `Not buying — ${lots.slot_free ? "no money left for a lot" : "every lot is open"}`, tone: "bad" }
+      : !setup.entry_window_open ? { text: `Paused until ${block ? hh(block.end) : ""} UTC`, tone: "warn" }
+        : soon ? { text: `About to buy — ${soon.title.toLowerCase()} is confirming`, tone: "good" }
+          : cards.every(card => card.status.text !== "Waiting") ? { text: "Waiting — every way in is blocked for now", tone: "warn" }
+            : { text: "Watching — waiting for a setup", tone: "muted" };
+
+  return <Card title="What the strategy sees now" className="right-now">
+    <p className={`rn-verdict ${verdict.tone}`}>{verdict.text}</p>
+    <ul className="rn-gates" aria-label="Needed for any buy">
+      {gates.map(gate => <li key={gate.label} className={gate.ok ? "ok" : "no"}><i aria-hidden="true">{gate.ok ? "✓" : "✕"}</i>{gate.label}</li>)}
     </ul>
+    <div className="rn-ways">
+      {cards.map(card => <WayCard key={card.key} source={card.key} title={card.title} status={card.status} steps={card.steps} info={card.info} />)}
+    </div>
   </Card>;
 }
 
@@ -155,25 +210,6 @@ function WaysIn({ coin }: { coin: CoinView }) {
   </Card>;
 }
 
-/** The third way in, live: is ETH in an uptrend, under its pullback line, and for how long. */
-function PullbackCheck({ coin }: { coin: CoinView }) {
-  const p = coin.pullback!;
-  const name = coin.label;
-  const hours = p.ema_hours;
-  const dwell = span(p.dwell_minutes);
-  // It buys from the coin's one set of lots, like the dip and the quiet-band breakout.
-  const lots = coin.lots.next_lot_usd == null ? " No free lot right now, so a signal would be skipped." : "";
-  const text = p.state === "warming_up" ? `Warming up the ${hours}-hour line from stored prices.`
-    : p.state === "no_uptrend" ? `Waiting for an uptrend: the 7-, 15- and 30-day averages must be stacked upward. The pullback entry only buys pauses inside a climb.`
-      : p.state === "above" ? `${name} is ${pct(p.distance_to_line_pct, 2, false)} above its ${hours}-hour line (${price(p.line)}). A pullback starts when a minute closes below it.`
-        : p.state === "dipping" ? `${name} has been under its ${hours}-hour line for ${duration(p.below_minutes)} — ${duration(p.minutes_to_arm)} more and a close back above ${price(p.line)} buys.`
-          : `Armed: under the ${hours}-hour line for ${duration(p.below_minutes)}. The next minute that closes above ${price(p.line)} buys at the following minute's open.`;
-  return <Check ok={p.state === "armed" ? true : p.state === "no_uptrend" ? false : null}
-    title="Pullback in the uptrend" text={text + (p.state === "warming_up" ? "" : lots)}
-    info={`The third way in, for when ${name} trends up in a wide range and never comes back to its ${coin.strategy.signal_average_days}-day average or goes quiet enough for a breakout. In an uptrend, when ${name} spends at least ${dwell} under its ${hours}-hour average line, the first minute that closes back above it buys. It takes a lot from the same set the dip and the breakout use, first come first served, and because it is always bought in an uptrend the lot rides the trend line (trend ride).`} />;
-}
-
-/** Which of the two profit-taking modes a lot bought right now would use, and why. */
 function ExitMode({ coin }: { coin: CoinView }) {
   const plan = coin.exit_plan;
   // Worth showing whenever there is something to say: two exit modes, or two ways in.

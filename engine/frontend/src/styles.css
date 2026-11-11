@@ -637,3 +637,43 @@ button.link.inline { padding: 0; font-size: inherit; }
 
 .hero-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .hero-top .eyebrow { margin: 0; }
+
+/* What the strategy sees now: one verdict, the shared gates, then one step card per way in */
+.rn-verdict { margin: 2px 0 10px; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.rn-verdict::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--muted); flex: none; }
+.rn-verdict.good::before { background: var(--up); box-shadow: 0 0 0 4px color-mix(in srgb, var(--up) 22%, transparent); }
+.rn-verdict.warn::before { background: var(--warn); } .rn-verdict.bad::before { background: var(--down); }
+.rn-gates { list-style: none; margin: 0 0 12px; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.rn-gates li { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px 5px 7px; border-radius: 999px; font-size: 12.5px;
+  font-weight: 600; border: 1px solid var(--line); background: var(--panel-2); }
+.rn-gates li i { width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 11px; }
+.rn-gates li.ok i { background: color-mix(in srgb, var(--up) 22%, transparent); color: var(--up); }
+.rn-gates li.no { border-color: color-mix(in srgb, var(--down) 40%, var(--line)); }
+.rn-gates li.no i { background: color-mix(in srgb, var(--down) 22%, transparent); color: var(--down); }
+.rn-ways { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+.way-card { background: var(--panel-2); border: 1px solid var(--line); border-radius: 14px; padding: 12px; display: grid; gap: 10px; align-content: start; }
+.way-card.good { border-color: color-mix(in srgb, var(--up) 55%, var(--line)); box-shadow: 0 0 0 3px color-mix(in srgb, var(--up) 12%, transparent); }
+.way-card.muted { opacity: .6; }
+.way-card header { display: flex; align-items: center; gap: 8px; }
+.way-card header b { display: flex; align-items: center; font-size: 14px; }
+.way-status { margin-left: auto; font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--panel); color: var(--muted); }
+.way-status.good { color: var(--up); background: color-mix(in srgb, var(--up) 16%, transparent); }
+.way-status.warn { color: var(--warn); background: color-mix(in srgb, var(--warn) 14%, transparent); }
+.way-status.bad { color: var(--down); background: color-mix(in srgb, var(--down) 14%, transparent); }
+.way-steps { list-style: none; margin: 0; padding: 0; display: grid; }
+.way-step { position: relative; display: grid; grid-template-columns: 20px 1fr; gap: 9px; padding: 0 0 10px; font-size: 13px; }
+.way-step:not(:last-child)::after { content: ""; position: absolute; left: 9.5px; top: 21px; bottom: 1px; width: 1px; background: var(--line); }
+.way-step > i { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 11px; font-weight: 700;
+  border: 1px solid var(--line); color: var(--muted); background: var(--panel); position: relative; z-index: 1; }
+.way-step > div { min-width: 0; padding-top: 1px; }
+.way-step span { font-weight: 600; } .way-step small { display: block; color: var(--muted); font-size: 12px; margin-top: 1px; }
+.way-step.done > i { color: var(--up); border-color: color-mix(in srgb, var(--up) 45%, transparent); background: color-mix(in srgb, var(--up) 16%, var(--panel)); }
+.way-step.block > i { color: var(--down); border-color: color-mix(in srgb, var(--down) 45%, transparent); background: color-mix(in srgb, var(--down) 16%, var(--panel)); }
+.way-step.block small { color: color-mix(in srgb, var(--down) 70%, var(--muted)); }
+.way-step.now > i { color: var(--up); border-color: var(--up); background: var(--panel); }
+.way-step.now span { color: var(--up); }
+.way-step.todo span { color: var(--muted); }
+.way-step.buy { padding-bottom: 0; } .way-step.buy > i { border-style: dashed; } .way-step.buy span { color: var(--muted); font-weight: 500; }
+.way-progress { height: 4px; border-radius: 999px; background: var(--panel); overflow: hidden; margin-top: 5px; max-width: 180px; }
+.way-progress i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--accent), var(--up)); }
+.way-step.block .way-progress i { background: var(--down); }
