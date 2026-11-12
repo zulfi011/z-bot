@@ -155,11 +155,10 @@ tr.blank td { color: transparent; }
   <section>
     <h2>Account return</h2>
     <div class="panel"><svg class="chart" id="chart" role="img" aria-label="Account return over time"></svg></div>
-    <p class="chart-note"><b>Why it can be red.</b> The strategy takes many small wins and accepts a bigger loss now and
-      then, when a stop-loss sells a lot that kept falling (see average win and average loss above). A few stops close
-      together pull the line down. In the two-year backtests the same rules went through deeper drops, about −7% (SOL)
-      to −10% (AAVE), and still finished the period ahead. A few months live is a short window; it is shown as it is,
-      red included. Past results don't predict future ones.</p>
+    <p class="chart-note" id="red-note" hidden><b>Why it is red.</b> The account is at <b id="return-now"></b> because
+      crypto has been in a strong downtrend: from mid-October to mid-November 2026 AAVE fell 32%, SOL 25%, ETH 18% and
+      BTC 11%. The bot buys spot only and every lot has its stop-loss on Binance, so it lost far less than the coins did.
+      Past results don't predict future ones.</p>
   </section>
 
   <section class="two">
@@ -210,6 +209,12 @@ const month = s => new Date(`${s}-01T00:00:00Z`).toLocaleDateString(undefined, {
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
 function tiles(s, data) {
+  // The note under the chart explains a red account, with today's figure; it stays hidden while the account is up.
+  const note = document.getElementById("red-note");
+  if (note && s.total_return_pct != null && s.total_return_pct < 0) {
+    document.getElementById("return-now").textContent = pct(s.total_return_pct);
+    note.hidden = false;
+  }
   const items = [
     ["Account return", pct(s.total_return_pct), cls(s.total_return_pct), `${data.days_live} days live`],
     ["Win rate", s.win_rate_pct == null ? "—" : `${s.win_rate_pct.toFixed(1)}%`, "", `${s.wins} won · ${s.losses} lost`],
