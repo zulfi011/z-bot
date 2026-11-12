@@ -15,7 +15,7 @@ OUT = grid.ROOT / "results" / "eth_mode_c_research_entries.csv"
 
 
 def main() -> None:
-    strategy = json.loads((grid.ROOT.parent / "live_bot" / "eth_strategy.json").read_text())
+    strategy = json.loads((grid.ROOT.parent.parent / "engine" / "eth_strategy.json").read_text())
     setting = strategy["entry"]["consolidation_breakout"]
     raw = replay.load_raw("ETHUSDT", include_holdout=True)
     raw = raw[raw.open_time < research.T("2026-09-11")].reset_index(drop=True)

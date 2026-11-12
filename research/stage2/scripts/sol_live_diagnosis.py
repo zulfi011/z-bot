@@ -15,7 +15,7 @@ import run_eth_full_research as research
 import run_sol_stage3_space_grid as grid
 import stage3_replay as replay
 
-STRATEGY = replay.ROOT.parent / "live_bot" / "sol_strategy.json"
+STRATEGY = replay.ROOT.parent.parent / "engine" / "sol_strategy.json"
 STOP, ACTIVATION, GIVEBACK = 2.0, 1.251, 12.0
 
 

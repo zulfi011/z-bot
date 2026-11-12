@@ -144,6 +144,6 @@ def write_report(
         "",
         "## Reproduction",
         "",
-        "Run from `stage1_research`: `.env/bin/python -B -m src.research.eth_stage15_freeze.run`.",
+        "Run from `research/stage1`: `.env/bin/python -B -m src.research.eth_stage15_freeze.run`.",
     ]
     path.write_text("\n".join(lines) + "\n")

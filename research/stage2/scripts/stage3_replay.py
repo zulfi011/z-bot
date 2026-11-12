@@ -2,7 +2,7 @@
 
 The signal state machine (`FrozenSignalEngine`) and the fill/exit rules
 (`create_entry`, `evaluate_exit`) are imported unchanged from
-`live_bot/backend/app/domain`, and the per-minute ordering below
+`engine/backend/app/domain`, and the per-minute ordering below
 mirrors `PaperExecutionService._process_next`. Any strategy dict in the Stage 3
 JSON schema can be replayed, so candidate strategies are measured with exactly
 the same machinery as the live baseline.
@@ -22,7 +22,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 PROJECT = ROOT.parent
-STAGE3 = PROJECT / "live_bot"
+STAGE3 = PROJECT.parent / "engine"
 LEGACY = Path(__file__).resolve().parent / "stage3_legacy"
 ARCHIVED = ROOT / "config/archived_stage3_v1"
 sys.path.insert(0, str(LEGACY))
@@ -37,7 +37,7 @@ from app.domain.execution import (  # noqa: E402
 )
 from app.domain.signal_engine import FrozenSignalEngine, SignalCandle  # noqa: E402
 
-RAW_DIR = PROJECT / "stage1_research/data/raw"
+RAW_DIR = PROJECT / "stage1/data/raw"
 HOLDOUT_DIR = ROOT / "data/holdout_downloads"
 STRATEGY_FILES = {
     "SOLUSDT": ARCHIVED / "sol_frozen_strategy.json",

@@ -1,6 +1,6 @@
 """Does the live engine reproduce the Stage 2 backtest of ETH's trend exit, trade for trade?
 
-Replays ETH history through the CURRENT live_bot domain code - the same `evaluate_exit`, `create_entry`,
+Replays ETH history through the CURRENT engine domain code - the same `evaluate_exit`, `create_entry`,
 `fill_exit` and `app.domain.trend` the server runs - and compares with `eth_optimal.py`, which produced the
 numbers the strategy was chosen on. A mismatch means the live implementation does something the research did
 not, and must be fixed before this goes anywhere near real money.

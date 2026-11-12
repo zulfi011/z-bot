@@ -19,7 +19,7 @@ from src.backtesting.engine import ChronologicalBacktester  # noqa: E402
 from src.backtesting.entries import EntryReplayStrategy, SignalFeed, SignalSpec  # noqa: E402
 
 
-STAGE1 = ROOT.parent / "stage1_research"
+STAGE1 = ROOT.parent / "stage1"
 RUN_ID = "step3_entries_v1"
 DATA = ROOT / "data" / RUN_ID
 RESULTS = ROOT / "results" / RUN_ID

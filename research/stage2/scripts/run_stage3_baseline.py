@@ -1,7 +1,7 @@
 """Replay the live Stage 3 SOL/ETH/BTC strategies over the full history.
 
 This is the fixed benchmark every new strategy is compared against. The
-strategy JSON files are read from live_bot and never modified.
+strategy JSON files are read from engine/ and never modified.
 """
 
 from __future__ import annotations
@@ -92,7 +92,7 @@ def build_report(summary: pd.DataFrame) -> str:
 ## What this is
 
 The benchmark every new strategy must beat. It replays the three live paper strategies exactly as
-`live_bot/*_frozen_strategy.json` define them, using Stage 3's own signal engine and exit
+`*_frozen_strategy.json` define them, using Stage 3's own signal engine and exit
 code (imported, not re-implemented): 2 lots × 25% of equity, −4% stop, trail from +4% with 10%
 giveback, 24-hour maximum hold, 10 bps fee + 2 bps slippage per side, $100 per coin.
 

@@ -4,7 +4,7 @@ The research generates entries with a vectorised sweep (`run_sol_consolidation_v
 bars one at a time in `app.domain.consolidation`. They must agree minute for minute, or the strategy that was
 measured is not the strategy that will trade.
 
-Run in its own process: it imports live_bot's domain, which must not share a process with stage3_replay.
+Run in its own process: it imports the engine's domain, which must not share a process with stage3_replay.
 """
 
 from __future__ import annotations

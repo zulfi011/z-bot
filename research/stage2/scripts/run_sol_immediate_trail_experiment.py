@@ -22,8 +22,8 @@ from src.backtesting.entries import SignalCandle, SignalSpec, TouchSignalGenerat
 CONFIG_PATH = ROOT / "config/experiments/sol_15d_touch_immediate_trail_v1.json"
 OUTPUT = ROOT / "results/sol_15d_touch_immediate_trail_v1"
 DATA = ROOT / "data/sol_15d_touch_immediate_trail_v1"
-RAW_PATH = PROJECT / "stage1_research/data/raw/SOLUSDT/SOLUSDT_1m.parquet"
-SIGNAL_PATH = PROJECT / "stage1_research/data/processed/SOLUSDT/SOLUSDT_3m_with_averages.parquet"
+RAW_PATH = PROJECT / "stage1/data/raw/SOLUSDT/SOLUSDT_1m.parquet"
+SIGNAL_PATH = PROJECT / "stage1/data/processed/SOLUSDT/SOLUSDT_3m_with_averages.parquet"
 
 
 def generate_fills(signal: pd.DataFrame, slippage_bps: float) -> tuple[pd.DataFrame, dict]:

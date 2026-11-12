@@ -1,6 +1,6 @@
 """Parity gate for the pullback entry: the live rule must reproduce the research entries minute for minute.
 
-Runs every ETH minute through `live_bot/backend/app/domain/pullback.step` (Decimal, as live does), applies the
+Runs every ETH minute through `engine/backend/app/domain/pullback.step` (Decimal, as live does), applies the
 same uptrend test and blocked hours the live service applies, and compares the buy minutes with
 `eth_pullback.pullback_entries` - the function every pullback backtest in this project used.
 
@@ -25,7 +25,7 @@ import run_sol_stage3_space_grid as grid
 
 # The research imports a frozen copy of the bot under the same package name (`app`), so the live rule is loaded
 # straight from its file, with the live `trend` module it depends on slotted in beside it.
-LIVE_DOMAIN = Path(__file__).resolve().parents[2] / "live_bot" / "backend" / "app" / "domain"
+LIVE_DOMAIN = Path(__file__).resolve().parents[3] / "engine" / "backend" / "app" / "domain"
 
 
 def _load(name: str, path: Path):

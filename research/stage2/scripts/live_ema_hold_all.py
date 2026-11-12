@@ -25,7 +25,7 @@ import run_sol_stage3_space_grid as grid
 import sol_trend_ride as ride
 import stage3_replay as replay
 
-LIVE = Path(__file__).resolve().parents[2] / "live_bot"
+LIVE = Path(__file__).resolve().parents[3] / "engine"
 HOURS = list(range(1, 11))
 WF = ride.WF
 EDGE = 1e-12

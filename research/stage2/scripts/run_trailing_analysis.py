@@ -21,7 +21,7 @@ from src.backtesting.trailing import (  # noqa: E402
 )
 
 
-STAGE1 = ROOT.parent / "stage1_research"
+STAGE1 = ROOT.parent / "stage1"
 RUN_ID = "trailing_activation_grid_v1"
 RESULTS = ROOT / "results" / RUN_ID
 DATA = ROOT / "data" / RUN_ID

@@ -17,7 +17,7 @@ OUT = None  # results/<coin>_mode_c_research_entries.csv
 
 def main() -> None:
     coin = (sys.argv[1] if len(sys.argv) > 1 else "eth").lower()
-    strategy = json.loads((grid.ROOT.parent / "live_bot" / f"{coin}_strategy.json").read_text())
+    strategy = json.loads((grid.ROOT.parent.parent / "engine" / f"{coin}_strategy.json").read_text())
     setting = strategy["entry"]["consolidation_breakout"]
     raw = replay.load_raw(f"{coin.upper()}USDT", include_holdout=True)
     raw = raw[raw.open_time < research.T("2026-09-11")].reset_index(drop=True)

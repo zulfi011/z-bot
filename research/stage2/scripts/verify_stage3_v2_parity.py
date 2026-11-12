@@ -3,7 +3,7 @@ compare with the Stage 2 backtest of the same strategy.
 
 Usage: verify_stage3_v2_parity.py [SOLUSDT|ETHUSDT|BTCUSDT|AAVEUSDT|LINKUSDT|TRXUSDT]
 
-Imports live_bot/backend/app directly (not the frozen v1 copy), so
+Imports engine/backend/app directly (not the frozen v1 copy), so
 run it in its own process, never alongside stage3_replay.
 """
 
@@ -20,7 +20,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 PROJECT = ROOT.parent
-STAGE3 = PROJECT / "live_bot"
+STAGE3 = PROJECT.parent / "engine"
 sys.path.insert(0, str(STAGE3 / "backend"))
 
 from app.domain.execution import (  # noqa: E402
@@ -60,7 +60,7 @@ STRATEGY_FILES = {"SOLUSDT": "sol_strategy.json", "ETHUSDT": "eth_strategy.json"
 
 
 def load_raw(symbol: str) -> pd.DataFrame:
-    raw = pd.read_parquet(PROJECT / f"stage1_research/data/raw/{symbol}/{symbol}_1m.parquet",
+    raw = pd.read_parquet(PROJECT / f"stage1/data/raw/{symbol}/{symbol}_1m.parquet",
                           columns=["open_time", "open", "high", "low", "close"])
     parts = []
     for path in sorted((ROOT / "data/holdout_downloads").glob(f"{symbol}-1m-*.zip")):

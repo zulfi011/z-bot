@@ -22,7 +22,7 @@ DATA = ROOT / "data" / RUN_ID
 RESULTS = ROOT / "results" / RUN_ID
 CONFIG = ROOT / "config/strategies/sol_15d_touch_v1.yaml"
 OUTCOMES = ROOT / "data/step6b_concurrent_positions_v1/all_signal_outcomes.parquet"
-RAW = ROOT.parent / "stage1_research/data/raw/SOLUSDT/SOLUSDT_1m.parquet"
+RAW = ROOT.parent / "stage1/data/raw/SOLUSDT/SOLUSDT_1m.parquet"
 
 
 def sha256(path: Path) -> str:
