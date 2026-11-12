@@ -57,7 +57,23 @@ SELECT json_build_object(
         FROM positions p
         LEFT JOIN LATERAL (SELECT close FROM candles_1m WHERE symbol = p.symbol
                            ORDER BY open_time DESC LIMIT 1) c ON true
-        WHERE p.status = 'open' AND p.entry_order_id IS NOT NULL), '[]'::json)
+        WHERE p.status = 'open' AND p.entry_order_id IS NOT NULL), '[]'::json),
+    -- Buy-and-hold benchmark: each coin's first close after going live, then its last close of every day.
+    'prices', COALESCE((
+        WITH start AS (SELECT min(timestamp) AS t0 FROM account_snapshots WHERE trading_mode = 'live'),
+        first AS (
+            SELECT DISTINCT ON (c.symbol) c.symbol, c.open_time AS t, c.close
+            FROM candles_1m c, start
+            WHERE c.symbol = ANY(ARRAY['SOLUSDT','ETHUSDT','BTCUSDT','AAVEUSDT','TRXUSDT']) AND c.open_time >= start.t0
+            ORDER BY c.symbol, c.open_time
+        ), daily AS (
+            SELECT DISTINCT ON (c.symbol, date_trunc('day', c.open_time)) c.symbol, c.open_time AS t, c.close
+            FROM candles_1m c, start
+            WHERE c.symbol = ANY(ARRAY['SOLUSDT','ETHUSDT','BTCUSDT','AAVEUSDT','TRXUSDT']) AND c.open_time >= start.t0
+            ORDER BY c.symbol, date_trunc('day', c.open_time), c.open_time DESC
+        )
+        SELECT json_agg(json_build_object('symbol', symbol, 't', t, 'close', close) ORDER BY t)
+        FROM (SELECT * FROM first UNION ALL SELECT * FROM daily) price_rows), '[]'::json)
 );
 """
 
@@ -67,7 +83,7 @@ ALLOWED_KEYS = {
     "symbol", "entry", "exit", "exit_style", "opened", "closed", "minutes", "return_pct", "account_pct",
     "entry_order", "exit_order", "unrealized_pct", "t", "pct", "month", "wins", "losses", "win_rate_pct",
     "avg_win_pct", "avg_loss_pct", "profit_factor", "total_return_pct", "max_drawdown_pct", "best_pct",
-    "worst_pct", "avg_hold_hours", "open_lots", "avg_return_pct", "return_contribution_pct", "note",
+    "worst_pct", "avg_hold_hours", "open_lots", "avg_return_pct", "return_contribution_pct", "note", "hold",
 }
 FORBIDDEN_FRAGMENTS = ("usd", "quantity", "wallet", "balance", "allocation", "cash", "pot", "lot_size")
 
@@ -129,6 +145,35 @@ def summarize(trades: list[dict]) -> dict:
     }
 
 
+HOLD_SYMBOLS = ("SOLUSDT", "ETHUSDT", "BTCUSDT", "AAVEUSDT", "TRXUSDT")
+
+
+def buy_and_hold(prices: list[dict]) -> dict | None:
+    """Equal parts of each coin bought when the account went live and never sold: the market to compare with.
+
+    Uses each coin's first close after going live, then the last close of every day (and the latest one).
+    Only the percentage curve is published, never a price.
+    """
+    by_symbol: dict[str, list[tuple[str, float]]] = {}
+    for row in prices:
+        by_symbol.setdefault(row["symbol"], []).append((row["t"], float(row["close"])))
+    if not all(by_symbol.get(symbol) for symbol in HOLD_SYMBOLS):
+        return None
+    start = {symbol: rows[0][1] for symbol, rows in by_symbol.items()}
+    days = sorted({t[:10] for rows in by_symbol.values() for t, _ in rows})
+    began = min(rows[0][0] for rows in by_symbol.values())
+    curve, last = [{"t": began, "pct": 0.0}], dict(start)
+    for day in days:
+        for symbol, rows in by_symbol.items():
+            for t, close in rows:
+                if t[:10] == day:
+                    last[symbol] = close          # rows are in time order: the day's last close wins
+        stamp = max(t for rows in by_symbol.values() for t, _ in rows if t[:10] == day)
+        value = sum(last[s] / start[s] for s in HOLD_SYMBOLS) / len(HOLD_SYMBOLS)
+        curve.append({"t": stamp, "pct": r((value - 1) * 100, 3)})
+    return {"total_return_pct": r(curve[-1]["pct"]), "curve": curve} if curve else None
+
+
 def build(raw: dict) -> dict:
     trades = raw["trades"]
     for t in trades:
@@ -176,6 +221,7 @@ def build(raw: dict) -> dict:
         "days_live": (now - parse_time(live_since)).days if live_since else 0,
         "summary": summary, "curve": curve, "monthly": months, "coins": coins,
         "open": raw["open"], "trades": trades,
+        "hold": buy_and_hold(raw.get("prices") or []),
         "note": "Live Binance spot trades only, after fees. Percentages only. Not financial advice.",
     }
 
