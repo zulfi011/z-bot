@@ -15,6 +15,12 @@ from experiments.eth_canonical_v1.engine import (
 )
 
 
+# Some tests rebuild the real ETH history: they need `python research/download_data.py ETHUSDT` first.
+ETH_RAW = Path(__file__).resolve().parents[2] / "stage1" / "data" / "raw" / "ETHUSDT" / "ETHUSDT_1m.parquet"
+needs_eth_data = pytest.mark.skipif(not ETH_RAW.exists(),
+                                    reason="needs the ETH price data: python research/download_data.py ETHUSDT")
+
+
 def market(minutes: int = 10, price: float = 100.0) -> MarketData:
     times = pd.date_range("2026-01-01", periods=minutes, freq="min", tz="UTC")
     return MarketData(times, np.full(minutes, price), np.full(minutes, price))
@@ -174,6 +180,7 @@ def test_economic_trade_classes_keep_boundary_values_flat() -> None:
     assert list(classify_returns(returns, 0.25)) == ["loser", "flat", "flat", "flat", "winner"]
 
 
+@needs_eth_data
 def test_fee_floor_builder_restores_the_canonical_floor() -> None:
     from experiments.eth_canonical_v1 import baseline as baseline_module
     from experiments.eth_canonical_v1.fee_floor import build_with_floor
@@ -315,6 +322,7 @@ def test_drop_entries_emit_only_first_crossing_and_buy_next_minute() -> None:
     assert drop_entries(close, 5, 2.0).tolist() == [6, 9]
 
 
+@needs_eth_data
 def test_reproduces_the_frozen_eth_v5_baseline() -> None:
     from experiments.eth_canonical_v1.baseline import STAGE2_ROOT, build_baseline
 
@@ -351,6 +359,7 @@ def test_stronger_confirmation_predicates_are_distinct() -> None:
     assert confirmation_passes("close_above_previous_5m_high", 2, open_, close, high, 100.5, 100.75)
 
 
+@needs_eth_data
 def test_current_confirmation_rebuilds_canonical_dip_entries() -> None:
     from experiments.eth_canonical_v1 import baseline as baseline_module
     from experiments.eth_canonical_v1.confirmation_quality import build_candidates
@@ -402,6 +411,7 @@ def test_pullback_quality_predicates_are_distinct() -> None:
     assert not filter_passes("reclaim_above_previous_5m_high", 100.0, 99.9, 99.8, 100.1, 100.2)
 
 
+@needs_eth_data
 def test_current_pullback_signal_rebuild_matches_canonical_entries() -> None:
     from experiments.eth_canonical_v1 import baseline as baseline_module
     from experiments.eth_canonical_v1.pullback_quality import (
@@ -415,6 +425,7 @@ def test_current_pullback_signal_rebuild_matches_canonical_entries() -> None:
     assert allowed_entries(CONTROL, pullback_signal_table()) == expected
 
 
+@needs_eth_data
 def test_current_mode_c_rebuild_matches_canonical_entries() -> None:
     from experiments.eth_canonical_v1 import baseline as baseline_module
     from experiments.eth_canonical_v1.mode_c_retest import (
@@ -446,6 +457,7 @@ def test_protective_reentry_confirmation_requires_all_three_conditions() -> None
     assert not strong_reentry_confirmation(99.0, 100.4, 100.0, 100.5)
 
 
+@needs_eth_data
 def test_dip_stop_episodes_have_frozen_zone_metadata() -> None:
     from experiments.eth_canonical_v1 import baseline as baseline_module
     from experiments.eth_canonical_v1.protective_reentry import dip_stop_episodes
