@@ -152,7 +152,7 @@ export default function App() {
             <i /><span className="live-text">{live ? "Live" : error ? "Offline" : "Waiting"}</span></span>
           <DeviceLockButton />
           <button className="icon-button refresh-button" aria-label="Refresh" onClick={load} disabled={loading}><span className={loading ? "spin" : ""}>↻</span></button>
-          <button className="icon-button" aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+          <button className="icon-button theme-toggle" aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>{theme === "dark" ? "☀" : "☾"}</button>
           <LiveResultsLink />
           <BinanceButton />

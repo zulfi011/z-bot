@@ -11,7 +11,7 @@ a phone too.
 | Status dot | Green when prices are arriving. Red if the dashboard cannot reach the bot. |
 | ↻ | Refresh now. The page also refreshes itself every 15 seconds. |
 | ☀ / ☾ | Light or dark theme. |
-| Chart icon | **Learn & live results**: opens the guide and the public live results. The **How it buys** and **How it sells** cards also link to the matching part of the guide. |
+| **Live results ↗** | Opens the public live results: every trade on a real account, after fees, updated daily. The guide is in the same site's menu, and cards on the coin pages link to the matching part of it. |
 | **Attach Binance account** | Connects your own Binance account (see [Attaching Binance](#attaching-binance)). After that it shows a small "Binance" chip. |
 
 Scrolling down hides the top bar; the coin bar stays. Scrolling up brings it back.
@@ -43,7 +43,7 @@ Scrolling down hides the top bar; the coin bar stays. Scrolling up brings it bac
 | **How it sells** | How the next lot would take profit and limit a loss, as a small ladder. |
 | **Activity** | Every signal and what was decided, plus trades and orders. |
 | **Performance** | This coin's closed trades: win rate, best, worst, costs. |
-| **Strategy rules** | The exact rules for this coin, in words. |
+| **This coin's rules** | The exact rules this bot runs for the coin, read from its strategy file, with a link to the coin's section on the [Strategies](STRATEGIES.md) page. |
 
 ## The tested defaults
 

@@ -254,7 +254,7 @@ function Activity({ coin }: { coin: CoinView }) {
   const [tab, setTab] = useState<"signals" | "trades" | "orders">("signals");
   const counts = coin.signal_counts;
   const name = coin.label;
-  return <Card title="Activity" info="Signals are every touch of the zone and what the strategy decided. Trades are closed lots. Orders are every simulated buy and sell with its fee.">
+  return <Card title="Activity" className="activity-card" info="Signals are every touch of the zone and what the strategy decided. Trades are closed lots. Orders are every simulated buy and sell with its fee.">
     <Tabs label="Activity" value={tab} onChange={setTab}
       options={[{ value: "signals", label: "Signals" }, { value: "trades", label: "Trades" }, { value: "orders", label: "Orders" }]} />
     {tab === "signals" && (coin.signals.length ? <>
@@ -302,8 +302,10 @@ function Rules({ coin }: { coin: CoinView }) {
   const COUNTS = ["", "One", "Two", "Three", "Four"];
   const ways = count > 1 ? `${COUNTS[count]} ways in` : "How it buys";
 
-  return <Card title="Strategy rules" className="rules-card"
-    info="The fixed rules the bot follows for this coin. They were chosen from backtests; changing them would restart the evaluation.">
+  const file = `${coin.label.toLowerCase()}_strategy.json`;
+  return <Card title="This coin's rules" className="rules-card"
+    info={`The exact rules this bot runs for ${name} right now, read from its strategy file. The website explains each one for every coin.`}>
+    <p className="card-note rules-source">What this bot runs now, read from <code>{file}</code>.</p>
     <div className="rules-scroll">
     <h4 className="rule-group">{ways}</h4>
     <dl className="rules">
@@ -383,6 +385,7 @@ function Rules({ coin }: { coin: CoinView }) {
       <Rule label="Costs">{n(s.usdt_fee_bps) / 100}% per side in USDT, or {n(s.bnb_fee_bps) / 100}% with BNB, plus {n(s.slippage_bps) / 100}% slippage.</Rule>
     </dl>
     </div>
+    <LearnMore page="strategies" anchor={`coin-${coin.label.toLowerCase()}`}>{name} on the strategies page</LearnMore>
   </Card>;
 }
 
@@ -438,7 +441,7 @@ export function CoinPage({ data, coin, interval, onInterval, chartMode, onChartM
     {binance?.attached && <BnbCard data={data} compact />}
     <Activity coin={coin} />
 
-    <Card title={`${name} performance`} info={`Results of closed ${name} trades, after all costs.`}>
+    <Card title={`${name} performance`} className="performance-card" info={`Results of closed ${name} trades, after all costs.`}>
       <div className="stat-grid four">
         <Stat label="Trades" value={stats.trades} sub={`${stats.trailing_exits} trail · ${stats.stop_exits} stop`} />
         <Stat label="Win rate" value={stats.win_rate_pct == null ? "—" : pct(stats.win_rate_pct, 0, false)} sub={`${stats.wins}/${stats.wins + stats.losses}`} />

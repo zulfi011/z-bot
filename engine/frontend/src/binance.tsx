@@ -1,15 +1,15 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { attachBinance, detachBinance, reachability, type BinanceCredentials, type Reachability } from "./api";
-import { Tip } from "./ui";
 
 const LIVE_RESULTS = "https://zulfi011.github.io/z-bot/";
 const CHART_ICON = <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M2 13.5h12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><path d="M2.5 10.5l3.5-3.5 2.5 2.5 5-5.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-/** Top-bar link to the public page with Z-Bot's own live track record. */
+/** Top-bar button to the public page with Z-Bot's own live track record. A label, not a bare icon, so it reads at once. */
 export function LiveResultsLink() {
-  return <Tip text="Learn & live results: how Z-Bot works, its strategies and research, and how it trades on a real Binance account.">
-    <a className="icon-button" href={LIVE_RESULTS} target="_blank" rel="noreferrer" aria-label="Learn and live results (opens in a new tab)">{CHART_ICON}</a>
-  </Tip>;
+  return <a className="live-results" href={`${LIVE_RESULTS}#results`} target="_blank" rel="noreferrer"
+    title="Every trade on a real Binance account, after fees, updated daily" aria-label="Live results (opens in a new tab)">
+    {CHART_ICON}<span className="long">Live results</span><span className="short">Results</span><span className="arrow" aria-hidden="true">↗</span>
+  </a>;
 }
 
 /** A page of the online guide, e.g. guideUrl("strategies", "dip"). */

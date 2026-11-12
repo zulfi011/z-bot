@@ -30,6 +30,8 @@ How a lot will sell is fixed the moment it is bought.
 
 ## Per coin
 
+<a id="coin-sol"></a>
+
 ### Solana (SOL)
 
 | Rule | Setting |
@@ -44,6 +46,8 @@ How a lot will sell is fixed the moment it is bought.
 | Takes profit | from +1.251%: a trailing stop keeps 88% of the best gain |
 | Trend ride | a lot bought in a clean uptrend is instead held while the price stays above the 8h trend line, with a break-even floor once it is in profit |
 | Costs assumed | 0.075% fee per side with BNB (0.1% without), plus 0.02% slippage |
+
+<a id="coin-eth"></a>
 
 ### Ethereum (ETH)
 
@@ -60,6 +64,8 @@ How a lot will sell is fixed the moment it is bought.
 | Trend ride | a lot bought in a clean uptrend is instead held while the price stays above the 16h trend line, with a break-even floor once it is in profit |
 | Costs assumed | 0.075% fee per side with BNB (0.1% without), plus 0.02% slippage |
 
+<a id="coin-btc"></a>
+
 ### Bitcoin (BTC)
 
 | Rule | Setting |
@@ -71,6 +77,8 @@ How a lot will sell is fixed the moment it is bought.
 | Stop-loss | −3% below the buy price, parked on Binance |
 | Takes profit | from +1.257%: a trailing stop keeps 86% of the best gain |
 | Costs assumed | 0.075% fee per side with BNB (0.1% without), plus 0.02% slippage |
+
+<a id="coin-aave"></a>
 
 ### Aave (AAVE)
 
@@ -84,6 +92,8 @@ How a lot will sell is fixed the moment it is bought.
 | Stop-loss | −4% below the buy price, parked on Binance |
 | Takes profit | from +1.75%: a trailing stop keeps 80% of the best gain |
 | Costs assumed | 0.075% fee per side with BNB (0.1% without), plus 0.02% slippage |
+
+<a id="coin-trx"></a>
 
 ### Tron (TRX)
 

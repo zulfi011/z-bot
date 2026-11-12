@@ -74,7 +74,7 @@ def coin_section(code: str, name: str, s: dict) -> str:
     rows.append(("Costs assumed", f"{costs['bnb_fee_bps_per_side'] / 100:g}% fee per side with BNB "
                  f"({costs['usdt_fee_bps_per_side'] / 100:g}% without), plus {costs['slippage_bps_per_side'] / 100:g}% slippage"))
     table = "\n".join(f"| {label} | {text} |" for label, text in rows)
-    return f"### {name} ({code})\n\n| Rule | Setting |\n|---|---|\n{table}\n"
+    return f"<a id=\"coin-{code.lower()}\"></a>\n\n### {name} ({code})\n\n| Rule | Setting |\n|---|---|\n{table}\n"
 
 
 def main() -> None:
