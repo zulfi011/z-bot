@@ -1,0 +1,66 @@
+{
+  "experiment": {
+    "name": "stage15_v2_step3_atr_exits_v1",
+    "scope": "spot_long_volatility_adjusted_exits"
+  },
+  "source_candidates": "data/research/stage15/step5_exits_v1/SOLUSDT",
+  "universe": {
+    "asset": "SOLUSDT",
+    "configurations": 27,
+    "entry_policy": "bullish_candle_30m",
+    "approach": "from_below",
+    "market_variants": [
+      "all_market_conditions",
+      "avoid_strong_bearish"
+    ]
+  },
+  "spot_constraints": {
+    "direction": "long_only",
+    "leverage": "none",
+    "short_selling": false,
+    "funding_and_liquidation": "not_applicable",
+    "equal_notional_per_trade": true
+  },
+  "atr": {
+    "source": "completed_1h_candles_resampled_from_raw_1m",
+    "method": "wilder",
+    "periods": 14,
+    "entry_reference": "last_completed_1h_candle"
+  },
+  "exit_grid": {
+    "stop_atr_multipliers": [
+      1.5,
+      2.0,
+      2.5
+    ],
+    "reward_risk_multipliers": [
+      1.5,
+      2.0,
+      2.5
+    ],
+    "benchmark": "fixed_target_4_stop_4",
+    "maximum_hold_minutes": 1440,
+    "same_minute_target_and_stop": "stop_wins",
+    "gap_handling": "adverse_stop_and_favorable_target_open_fill"
+  },
+  "execution": {
+    "one_position_per_configuration": true,
+    "round_trip_cost_pct": 0.2
+  },
+  "robustness": {
+    "periods": [
+      "earlier",
+      "later"
+    ],
+    "split_utc": "2025-09-01",
+    "minimum_entries_per_period": 100,
+    "minimum_nonoverlap_trades_per_period": 40,
+    "minimum_positive_quarters_pct": 60,
+    "expected_shortfall_floor_pct": -5.0,
+    "bootstrap_block_days": 7,
+    "bootstrap_repetitions": 2000,
+    "bootstrap_seed": 1506,
+    "require_positive_block_ci_both_periods": true,
+    "note": "historical_refinement_only_not_untouched_out_of_sample"
+  }
+}

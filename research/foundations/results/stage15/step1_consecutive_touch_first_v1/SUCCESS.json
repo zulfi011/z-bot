@@ -1,0 +1,9 @@
+{
+  "rule": "consecutive_touch_first_v1",
+  "configurations": 81,
+  "stage1_events": 6199294,
+  "episodes": 150313,
+  "protected_files": 268,
+  "validation": "PASS",
+  "scope": "Step 1 only"
+}

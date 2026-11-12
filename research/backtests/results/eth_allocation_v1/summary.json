@@ -1,0 +1,35 @@
+{
+  "baseline": {
+    "profit": 430.1634322398789,
+    "trades": 459,
+    "win_rate_pct": 85.40305010893246,
+    "average_loss": -4.550529934749674,
+    "max_drawdown_pct": -9.66215811329656,
+    "walk_forward_profit": 410.1432061146667,
+    "post_selection_profit": 15.518625852006494,
+    "blocked_signals": 147,
+    "simultaneous_conflict_minutes": 1
+  },
+  "best": {
+    "variant": "reserve_final_slot_for_pullback",
+    "profit": 435.5709961113755,
+    "profit_change": 5.40756387149662,
+    "trades": 449,
+    "trade_change": -10,
+    "win_rate_pct": 85.74610244988864,
+    "average_win": 1.8895276912209567,
+    "average_loss": -4.560893203260824,
+    "profit_factor": 2.492207010980748,
+    "max_drawdown_pct": -9.66215811329656,
+    "walk_forward_profit": 413.4459593517562,
+    "walk_forward_change": 3.3027532370894335,
+    "wf_windows_improved": 2,
+    "post_selection_profit": 15.520917814462607,
+    "post_selection_change": 0.0022919624561126284,
+    "allocation_blocks": 66,
+    "additional_trades": 10,
+    "additional_trade_pnl": 59.54454405635158,
+    "displaced_trades": 20,
+    "displaced_baseline_pnl": 54.13698018485502
+  }
+}

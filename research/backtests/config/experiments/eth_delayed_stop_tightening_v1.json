@@ -1,0 +1,44 @@
+{
+  "experiment_id": "eth_delayed_stop_tightening_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "scope": ["dip", "pullback"],
+  "checkpoint_hours": 12,
+  "eligibility": {
+    "must_be_unarmed": true,
+    "maximum_favorable_excursion_pct_lt": 0.5,
+    "setup_reference_must_have_failed": true
+  },
+  "variants": [
+    {"name": "tighten_to_minus_3_0", "type": "fixed_from_entry", "stop_pct": 3.0},
+    {"name": "tighten_to_minus_2_5", "type": "fixed_from_entry", "stop_pct": 2.5},
+    {
+      "name": "swing_low_buffer_capped_3_0",
+      "type": "post_entry_swing_low",
+      "buffer_pct": 0.25,
+      "maximum_stop_distance_pct": 3.0
+    }
+  ],
+  "activation": "The tightened stop becomes active on the minute after the completed 12-hour checkpoint candle. It never loosens the original stop. A same-minute stop beats another modeled exit.",
+  "execution": "Stop fill is the worse of the tightened level and that minute's open, followed by unchanged modeled exit slippage and fees.",
+  "unchanged": [
+    "all_entries",
+    "mode_c_stop_and_exit",
+    "trail_arming",
+    "trend_exit",
+    "break_even_floor",
+    "five_shared_100_usd_slots",
+    "fees_and_slippage",
+    "06_12_utc_block"
+  ],
+  "economic_winner_threshold_pct": 0.25,
+  "acceptance": {
+    "full_profit_change_gt": 0,
+    "walk_forward_change_gt": 0,
+    "minimum_walk_forward_windows_improved": 4,
+    "economic_win_rate_not_lower": true,
+    "average_loss_not_worse": true,
+    "drawdown_not_worse": true
+  },
+  "notes": "The three stop rules are tested separately. August-September 2026 is diagnostic only and excluded from acceptance."
+}

@@ -1,0 +1,23 @@
+{
+  "experiment_id": "eth_mode_c_economics_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "market_episode": {
+    "maximum_gap_minutes": 360,
+    "maximum_anchor_distance_pct": 1.0
+  },
+  "failed_breakout_cooldown_minutes": 360,
+  "variants": [
+    "without_mode_c",
+    "mode_c_no_active_dip_pullback_episode",
+    "mode_c_one_lot_per_frozen_band",
+    "mode_c_fresh_band_after_failed_breakout",
+    "mode_c_failed_breakout_cooldown_6h"
+  ],
+  "definitions": {
+    "active_dip_pullback_episode": "A filled Dip or Pullback from the same causal market episode is still open when Mode C asks to enter.",
+    "frozen_band": "Overlapping shifted Mode C bands are one setup until the prior breakout bar is outside the rolling band.",
+    "failed_breakout": "A filled Mode C trade exits through its unarmed protective stop."
+  },
+  "notes": "Five alternatives frozen before viewing results. Each is tested alone against the unchanged five-lot ETH control. Post-selection Aug-Sep 2026 data is diagnostic only."
+}

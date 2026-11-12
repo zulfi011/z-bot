@@ -1,0 +1,52 @@
+{
+  "rank": 1.0,
+  "activation_pct": 3.0,
+  "giveback_pct_of_open_profit": 25.0,
+  "completed_trades": 82.0,
+  "ignored_signals_while_open": 329.0,
+  "wins_after_costs": 44.0,
+  "losses_after_costs": 38.0,
+  "win_rate_after_costs_pct": 53.65853658536586,
+  "loss_rate_after_costs_pct": 46.34146341463415,
+  "trailing_activations": 35.0,
+  "trailing_exits": 33.0,
+  "protective_and_ambiguous_stops": 11.0,
+  "time_exits": 38.0,
+  "mean_net_trade_return_pct": 0.3437059913170704,
+  "median_net_trade_return_pct": 0.4085036362210248,
+  "mean_duration_minutes": 1016.2926829268292,
+  "median_duration_minutes": 1192.5,
+  "fees_usd": 18.141939660534184,
+  "slippage_usd": 3.6283899295097353,
+  "profit_factor_on_dollars": 1.295790285944595,
+  "ending_equity_usd": 128.16475138317145,
+  "total_return_pct": 28.16475138317145,
+  "max_closed_equity_drawdown_pct": -23.51094861106253,
+  "max_mark_to_market_drawdown_pct": -25.444195040604644,
+  "lowest_marked_equity_usd": 82.69482421152033,
+  "data_start_utc": "2024-09-01 00:01:00+00:00",
+  "data_end_utc": "2026-08-01 00:00:00+00:00",
+  "entry_diagnostics": {
+    "touch_episodes": 1355,
+    "from_below_episodes": 651,
+    "market_rejections": 208,
+    "eligible_candidates": 443,
+    "confirmed_signals": 411,
+    "unconfirmed_candidates": 32
+  },
+  "period_split_utc": "2025-09-01 00:00:00+00:00",
+  "earlier_period": {
+    "trades": 46,
+    "wins": 23,
+    "losses": 23,
+    "win_rate_pct": 50.0,
+    "independent_compounded_return_pct": 10.77847305998565
+  },
+  "later_period": {
+    "trades": 36,
+    "wins": 21,
+    "losses": 15,
+    "win_rate_pct": 58.333333333333336,
+    "independent_compounded_return_pct": 15.694636189624411
+  }
+}

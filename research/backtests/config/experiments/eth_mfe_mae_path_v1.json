@@ -1,0 +1,31 @@
+{
+  "experiment_id": "eth_mfe_mae_path_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "scope": "all_entry_families",
+  "variants": [
+    {
+      "name": "path_failure_6h",
+      "checkpoint_hours": 6,
+      "maximum_favorable_excursion_below_pct": 0.25,
+      "maximum_adverse_excursion_at_least_pct": 2.0
+    },
+    {
+      "name": "path_failure_12h",
+      "checkpoint_hours": 12,
+      "maximum_favorable_excursion_below_pct": 0.5,
+      "maximum_adverse_excursion_at_least_pct": 2.0
+    }
+  ],
+  "rule": "At the completed five-minute checkpoint, exit at the next one-minute open only if the trade is still open and unarmed, MFE is below the frozen ceiling, and MAE has reached the frozen adverse threshold.",
+  "economic_winner_threshold_pct": 0.25,
+  "acceptance": {
+    "full_profit_change_gt": 0.0,
+    "walk_forward_profit_change_gt": 0.0,
+    "minimum_walk_forward_windows_improved": 4,
+    "economic_win_rate_not_worse": true,
+    "average_loss_not_worse": true,
+    "drawdown_not_worse": true
+  },
+  "notes": "Two broad, predeclared path signatures only; no threshold search after results."
+}

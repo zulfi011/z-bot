@@ -1,0 +1,7 @@
+rule,top_n,median_earlier_return_pct,median_later_return_pct,share_positive_later_pct,share_beating_baseline_later_pct
+A_highest_earlier_return,10,65.71602863549562,-23.279484947846527,0.0,0.0
+A_highest_earlier_return,100,50.80506672102993,-22.83284700454395,0.0,0.0
+A_highest_earlier_return,1000,40.75835760733818,-18.843435144306326,0.0,0.0
+B_best_earlier_return_per_drawdown,10,28.84333760707692,-6.088230955856254,0.0,0.0
+B_best_earlier_return_per_drawdown,100,28.655891859497217,-8.422674197032109,1.0,0.0
+B_best_earlier_return_per_drawdown,1000,32.31992799939243,-9.538949093061468,1.7999999999999998,0.0

@@ -1,0 +1,21 @@
+{
+  "experiment_id": "eth_fee_floor_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "floor_formula": "2 * (expected_fee_bps_per_side + expected_slippage_bps_per_side) / 100",
+  "scenarios": [
+    {"name": "bnb_reserve_control", "floor_pct": 0.19, "actual_fee_bps": 7.5, "actual_slippage_bps": 2.0},
+    {"name": "bnb_missing_current_floor", "floor_pct": 0.19, "actual_fee_bps": 10.0, "actual_slippage_bps": 2.0},
+    {"name": "usdt_fee_aware_floor", "floor_pct": 0.24, "actual_fee_bps": 10.0, "actual_slippage_bps": 2.0},
+    {"name": "usdt_fee_plus_2bps_buffer", "floor_pct": 0.26, "actual_fee_bps": 10.0, "actual_slippage_bps": 2.0},
+    {"name": "usdt_slippage_stress_current_floor", "floor_pct": 0.19, "actual_fee_bps": 10.0, "actual_slippage_bps": 5.0},
+    {"name": "usdt_slippage_stress_aware_floor", "floor_pct": 0.30, "actual_fee_bps": 10.0, "actual_slippage_bps": 5.0}
+  ],
+  "bnb_reserve": {
+    "lot_size_usd": 100.0,
+    "simultaneous_eth_lots": 5,
+    "minimum_round_trips": 5,
+    "recommended_round_trips_with_safety_margin": 10
+  },
+  "notes": "Local ETH-only sensitivity test. No live fee or stop behavior is changed."
+}

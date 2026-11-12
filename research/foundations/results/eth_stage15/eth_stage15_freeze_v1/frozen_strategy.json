@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "strategy_id": "eth_15d_bullish_bounce_3m_v1",
+  "status": "FROZEN_FOR_PAPER_VALIDATION_ONLY",
+  "paper_trade_only": true,
+  "asset": "ETHUSDT",
+  "venue_type": "spot",
+  "direction": "long_only",
+  "signal": {
+    "timeframe": "3m",
+    "daily_average_source": "completed_UTC_daily_closes_only",
+    "averages": {
+      "type": "simple",
+      "days": [
+        7,
+        15,
+        30
+      ]
+    },
+    "regime": "average_7d > average_15d > average_30d",
+    "reference_average": "15d",
+    "touch_zone_pct": 1.0,
+    "touch_definition": "candle_high >= average*(1-zone) and candle_low <= average*(1+zone)",
+    "deduplication": "one_episode_for_consecutive_touching_candles",
+    "confirmation": "first_3m_candle_with_close_greater_than_open_within_30_minutes",
+    "confirmation_expiry": "first_non_touch_candle_included_or_30_minutes_whichever_first"
+  },
+  "execution": {
+    "entry": "next_raw_1m_open_after_confirmation_close",
+    "maximum_open_positions": 1,
+    "position_selection": "earliest_eligible_signal_when_flat",
+    "protective_stop_pct_from_actual_entry_fill": 5.0,
+    "stop_gap_fill": "worse_of_stop_price_or_raw_1m_open",
+    "profit_target": null,
+    "trailing_stop": null,
+    "maximum_hold_minutes": 480,
+    "time_exit": "raw_1m_close_at_end_of_480th_minute",
+    "same_candle_conflict": "protective_stop_wins"
+  },
+  "position_sizing": {
+    "risk_budget_pct_of_net_liquidation": 1.0,
+    "modeled_stop_loss_including_costs_pct": 5.25,
+    "maximum_position_notional_pct_of_net_liquidation": 19.0,
+    "formula": "min(available_quote_balance, net_liquidation*0.19)",
+    "leverage": "none",
+    "insufficient_balance_action": "reduce_to_available_quote_balance_or_skip_if_below_exchange_minimum"
+  },
+  "paper_cost_model": {
+    "fee_bps_per_side": 10.0,
+    "slippage_bps_per_side": 2.0,
+    "adverse_slippage_on_entry_and_exit": true
+  },
+  "historical_audit": {
+    "data_start_utc": "2024-09-01",
+    "data_end_utc": "2026-07-31",
+    "split_utc": "2025-09-01",
+    "earlier_trades": 69,
+    "later_trades": 48,
+    "realistic_mean_pct_earlier": 0.046513043596841525,
+    "realistic_mean_pct_later": 0.02938570543502299,
+    "realistic_ci95_earlier": [
+      -0.6320418544255005,
+      0.6268470988746021
+    ],
+    "realistic_ci95_later": [
+      -0.35391714388573964,
+      0.31396053938733626
+    ],
+    "strict_historical_validation_pass": false
+  },
+  "immutability": {
+    "rule_changes_require_new_strategy_id": true,
+    "historical_source_manifest": {
+      "data/research/stage15/step5_exits_v1/ETHUSDT/ETHUSDT_1m_exit_candidates.parquet": {
+        "size": 25110644,
+        "sha256": "451a7341119f0cba12d47063ae6c7ec080d1ea541ee8b4cfa75c5dd96c0c7052"
+      },
+      "data/research/stage15/step5_exits_v1/ETHUSDT/ETHUSDT_3m_exit_candidates.parquet": {
+        "size": 14547724,
+        "sha256": "ad09666ce07b94da244dd53adc8bf2bf5e5175bb47b42e6e9d930fc2498802df"
+      },
+      "data/research/stage15/step5_exits_v1/ETHUSDT/ETHUSDT_5m_exit_candidates.parquet": {
+        "size": 11270651,
+        "sha256": "5bf743e728e22618bb86f7350bcefbf76f71bd78d2cd8a91d36941af0c90d77e"
+      },
+      "data/processed/ETHUSDT/ETHUSDT_1m_with_averages.parquet": {
+        "size": 60539389,
+        "sha256": "c46083282733e673c027041a52e54527fbb0d3fd87c246ad551fe20eb9425b9d"
+      }
+    }
+  }
+}

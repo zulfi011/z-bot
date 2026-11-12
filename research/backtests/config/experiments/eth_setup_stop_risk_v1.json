@@ -1,0 +1,47 @@
+{
+  "experiment_id": "eth_setup_stop_risk_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "scope": "dip_only",
+  "structure": "Lowest raw one-minute low from the original five-minute touch candle through the confirmation candle, before entry.",
+  "variants": [
+    {"name": "episode_low_buffer_0_20", "buffer_pct": 0.20},
+    {"name": "episode_low_buffer_0_25", "buffer_pct": 0.25},
+    {"name": "episode_low_buffer_0_30", "buffer_pct": 0.30}
+  ],
+  "minimum_stop_distance_pct": 1.5,
+  "maximum_stop_distance_pct": 4.5,
+  "planned_risk_usd": 4.5,
+  "maximum_order_usd": 130.0,
+  "initial_capital_usd": 500.0,
+  "maximum_open_lots": 5,
+  "execution": "Stop fill is the worse of the structural level and the hit minute's open, followed by unchanged modeled exit slippage and fees.",
+  "constraints": [
+    "reject a Dip candidate when its structural stop is wider than 4.5%",
+    "use a 1.5% minimum distance when structure is closer",
+    "order size is min(4.5 dollars / stop fraction, 130 dollars)",
+    "available wallet cash is a hard limit",
+    "no leverage",
+    "no borrowing"
+  ],
+  "unchanged": [
+    "dip_entries_and_confirmation",
+    "mode_c_and_pullback_entries_exits_and_100_usd_sizes",
+    "trail_arming",
+    "trend_exit",
+    "break_even_floor",
+    "five_shared_slots",
+    "fees_and_slippage",
+    "06_12_utc_block"
+  ],
+  "economic_winner_threshold_pct": 0.25,
+  "acceptance": {
+    "full_profit_change_gt": 0,
+    "walk_forward_change_gt": 0,
+    "minimum_walk_forward_windows_improved": 4,
+    "economic_win_rate_not_lower": true,
+    "average_loss_not_worse": true,
+    "drawdown_not_worse": true
+  },
+  "notes": "All three buffers are frozen and tested separately. August-September 2026 is diagnostic only and excluded from acceptance."
+}

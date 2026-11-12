@@ -1,0 +1,105 @@
+name: z-bot
+
+x-backend: &backend
+  build:
+    context: .
+    dockerfile: backend/Dockerfile
+  environment:
+    DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-zbot}:${POSTGRES_PASSWORD:-zbot_local}@db:5432/${POSTGRES_DB:-zbot}
+    STRATEGY_CONFIG_PATH: /app/config/sol_strategy.json
+    ETH_STRATEGY_CONFIG_PATH: /app/config/eth_strategy.json
+    BTC_STRATEGY_CONFIG_PATH: /app/config/btc_strategy.json
+    AAVE_STRATEGY_CONFIG_PATH: /app/config/aave_strategy.json
+    TRX_STRATEGY_CONFIG_PATH: /app/config/trx_strategy.json
+    # Leave empty on your own computer. On a server others can reach, set it: the dashboard then asks for it.
+    STRATEGY_EDIT_TOKEN: ${STRATEGY_EDIT_TOKEN:-}
+    LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    BINANCE_API_URL: ${BINANCE_API_URL:-https://api.binance.com}
+    BINANCE_API_KEY: ${BINANCE_API_KEY:-}
+    BINANCE_API_SECRET: ${BINANCE_API_SECRET:-}
+    BINANCE_REST_URL: ${BINANCE_REST_URL:-https://data-api.binance.vision}
+    BINANCE_WEBSOCKET_URL: ${BINANCE_WEBSOCKET_URL:-wss://data-stream.binance.vision:443/ws}
+    MARKET_DATA_BACKFILL_DAYS: ${MARKET_DATA_BACKFILL_DAYS:-32}
+    MARKET_DATA_RECONNECT_SECONDS: ${MARKET_DATA_RECONNECT_SECONDS:-5}
+    MARKET_DATA_STALE_AFTER_SECONDS: ${MARKET_DATA_STALE_AFTER_SECONDS:-180}
+  volumes:
+    # The Binance key attached from the dashboard (never stored in the database).
+    - secrets:/app/secrets
+  restart: unless-stopped
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-zbot}
+      POSTGRES_USER: ${POSTGRES_USER:-zbot}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-zbot_local}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-zbot} -d ${POSTGRES_DB:-zbot}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+    stop_grace_period: 30s
+
+  migrate:
+    <<: *backend
+    command: ["alembic", "upgrade", "head"]
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    <<: *backend
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      # Liveness, not readiness: readiness queries the database and loads five strategies, which on a shared
+      # CPU can take longer than any sane probe timeout. Compose only needs to know the server is answering.
+      test:
+        ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health/live', timeout=8)"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      # One shared CPU also builds the dashboard during a deploy, so give the API a long grace period:
+      # a rebuild on a small server can leave it starved for several minutes before it answers.
+      start_period: 300s
+    restart: unless-stopped
+
+  worker:
+    <<: *backend
+    command: ["python", "-m", "app.worker"]
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  web:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "${WEB_BIND_ADDRESS:-127.0.0.1}:${WEB_PORT:-3000}:80"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+      start_period: 20s
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  secrets:

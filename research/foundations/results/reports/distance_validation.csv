@@ -1,0 +1,10 @@
+symbol,timeframe,source_rows,distance_rows,row_count_match,required_columns_present,missing_columns,utc,sorted,duplicate_timestamps,distance_7d_matches_formula,distance_15d_matches_formula,distance_30d_matches_formula,distance_7d_nan_pattern_correct,distance_15d_nan_pattern_correct,distance_30d_nan_pattern_correct,distance_7d_no_infinite_values,distance_15d_no_infinite_values,distance_30d_no_infinite_values,overall_pass
+BTCUSDT,1m,1006560,1006560,True,True,,True,True,0,True,True,True,True,True,True,True,True,True,True
+BTCUSDT,3m,335520,335520,True,True,,True,True,0,True,True,True,True,True,True,True,True,True,True
+BTCUSDT,5m,201312,201312,True,True,,True,True,0,True,True,True,True,True,True,True,True,True,True
+ETHUSDT,1m,1006560,1006560,True,True,,True,True,0,True,True,True,True,True,True,True,True,True,True
+ETHUSDT,3m,335520,335520,True,True,,True,True,0,True,True,True,True,True,True,True,True,True,True
+ETHUSDT,5m,201312,201312,True,True,,True,True,0,True,True,True,True,True,True,True,True,True,True
+SOLUSDT,1m,1006560,1006560,True,True,,True,True,0,True,True,True,True,True,True,True,True,True,True
+SOLUSDT,3m,335520,335520,True,True,,True,True,0,True,True,True,True,True,True,True,True,True,True
+SOLUSDT,5m,201312,201312,True,True,,True,True,0,True,True,True,True,True,True,True,True,True,True

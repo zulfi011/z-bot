@@ -1,0 +1,4 @@
+symbol,rows,first_candle,last_candle,timestamp_dtype,timezone,timestamps_sorted,duplicate_rows,duplicate_timestamps,gap_count,largest_gap,invalid_high_low,invalid_open,invalid_close,invalid_prices,negative_volume,overall_status
+BTCUSDT,1006560,2024-09-01 00:00:00+00:00,2026-07-31 23:59:00+00:00,"datetime64[us, UTC]",UTC,True,0,0,0,0 days 00:00:00,0,0,0,0,0,PASS
+ETHUSDT,1006560,2024-09-01 00:00:00+00:00,2026-07-31 23:59:00+00:00,"datetime64[us, UTC]",UTC,True,0,0,0,0 days 00:00:00,0,0,0,0,0,PASS
+SOLUSDT,1006560,2024-09-01 00:00:00+00:00,2026-07-31 23:59:00+00:00,"datetime64[us, UTC]",UTC,True,0,0,0,0 days 00:00:00,0,0,0,0,0,PASS

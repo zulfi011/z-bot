@@ -1,0 +1,27 @@
+registry_id,recorded_on,scope,status,preregistered,trial_count,trial_count_kind,data_end,retired_holdout_viewed,artifact,notes,artifact_exists,observed_rows,count_matches_artifact
+eth_full_research_v1,2026-09-30,entry_exit_grid,historical,unknown,356400,exact,2026-08-01,False,results/eth_full_research_v1/all_combinations.parquet,Historical grid backfill,True,356400.0,True
+eth_full_research_v2,2026-09-30,entry_exit_grid,selected,unknown,475200,exact,2026-09-11,True,results/eth_full_research_v2/all_combinations.parquet,Historical grid that selected the core ETH candidate,True,475200.0,True
+eth_consolidation_full,2026-09-30,mode_c_grid,historical,unknown,395920,exact,2026-09-11,True,results/eth_consolidation_full/all_combinations.parquet,Historical Mode C grid backfill,True,395920.0,True
+eth_ema_exit_grid,2026-09-30,trend_exit_grid,historical,unknown,2664,exact,2026-09-11,True,results/eth_ema_exit_grid.parquet,Historical exit grid backfill,True,2664.0,True
+eth_ema_exit_grid_long,2026-09-30,trend_exit_grid,historical,unknown,1656,exact,2026-09-11,True,results/eth_ema_exit_grid_long.parquet,Historical longer exit grid backfill,True,1656.0,True
+eth_ema_exit_grid_wf,2026-09-30,trend_exit_grid,historical,unknown,4992,exact,2026-09-11,True,results/eth_ema_exit_grid_wf.parquet,Historical walk-forward exit grid backfill,True,4992.0,True
+eth_bearish_filters_v1,2026-09-30,filter_grid,historical,unknown,84,exact,2026-09-11,True,results/eth_bearish_filters_v1/results.csv,Historical filter variants backfill,True,84.0,True
+eth_consolidation_families,2026-09-30,mode_c_grid,historical,unknown,538,exact,2026-09-11,True,results/eth_consolidation_families.csv,Historical consolidation families backfill,True,538.0,True
+eth_consolidation_sizing,2026-09-30,sizing_grid,historical,unknown,36,exact,2026-09-11,True,results/eth_consolidation_sizing.csv,Historical sizing variants backfill,True,36.0,True
+eth_optimal,2026-09-30,combined_rules,historical,unknown,7,exact,2026-09-11,True,results/eth_optimal.csv,Historical optimized candidates backfill,True,7.0,True
+eth_optimal_tune,2026-09-30,combined_rules,historical,unknown,40,exact,2026-09-11,True,results/eth_optimal_tune.csv,Historical tuning variants backfill,True,40.0,True
+eth_research_exits,2026-09-30,exit_grid,historical,unknown,492,exact,2026-09-11,True,results/eth_research_exits.csv,Historical exit variants backfill,True,492.0,True
+eth_canonical_v1,2026-09-30,control,control,true,1,exact,2026-09-11,True,config/experiments/eth_canonical_v1.json,Frozen local ETH control,True,,True
+eth_failure_exit_v1,2026-09-30,conditional_exit,rejected,true,9,exact,2026-09-11,True,config/experiments/eth_failure_exit_v1.json,Nine individually frozen variants,True,,True
+eth_repeated_exposure_v1,2026-09-30,exposure_limits,rejected,true,6,exact,2026-09-11,True,config/experiments/eth_repeated_exposure_v1.json,Six individually frozen variants,True,,True
+eth_allocation_v1,2026-09-30,allocation,rejected,true,2,exact,2026-09-11,True,config/experiments/eth_allocation_v1.json,Two individually frozen variants,True,,True
+eth_profit_concentration_v1,2026-09-30,robustness_audit,audit,true,0,exact,2026-09-11,True,config/experiments/eth_profit_concentration_v1.json,Diagnostic only and not a strategy trial,True,,True
+eth_trade_quality_v1,2026-09-30,reporting_audit,audit,true,0,exact,2026-09-11,True,config/experiments/eth_trade_quality_v1.json,Reporting only and not a strategy trial,True,,True
+eth_fee_floor_v1,2026-09-30,execution_costs,tested,true,5,exact,2026-09-11,True,config/experiments/eth_fee_floor_v1.json,Five fee and floor alternatives plus the control,True,,True
+eth_risk_throttle_v1,2026-09-30,portfolio_risk,tested,true,9,exact,2026-09-11,True,config/experiments/eth_risk_throttle_v1.json,Nine separately frozen risk throttles including one bundle,True,,True
+crypto_portfolio_risk_v1,2026-09-30,cross_coin_portfolio_risk,rejected,true,4,exact,2026-09-11,True,config/experiments/crypto_portfolio_risk_v1.json,Four frozen correlated-exposure limits; stop-slippage cases are stress diagnostics,True,,True
+eth_mode_c_economics_v1,2026-09-30,mode_c_marginal_economics,tested,true,5,exact,2026-09-11,True,config/experiments/eth_mode_c_economics_v1.json,Five separately frozen Mode C alternatives plus unchanged control,True,,True
+eth_pullback_revalidation_v1,2026-09-30,pullback_neighbourhood,tested,true,9,exact,2026-09-11,True,config/experiments/eth_pullback_revalidation_v1.json,No-pullback plus eight frozen neighbours against the unchanged 24h-180m control,True,,True
+eth_blocked_hours_v1,2026-10-01,entry_session_filter,tested,true,5,exact,2026-09-11,True,config/experiments/eth_blocked_hours_v1.json,Four fixed alternatives plus one causal six-month selector against deployed 06-12 UTC control,True,,True
+eth_equal_stop_risk_v1,2026-10-01,position_sizing,tested,true,3,exact,2026-09-11,True,config/experiments/eth_equal_stop_risk_v1.json,Three frozen equal-stop-risk schedules; gap cases are stress diagnostics,True,,True
+eth_execution_calibration_v1,2026-10-01,execution_cost_calibration,audit,true,0,exact,2026-09-11,True,config/experiments/eth_execution_calibration_v1.json,Observed calibration pending live execution export; provisional cases are sensitivity diagnostics,True,,True

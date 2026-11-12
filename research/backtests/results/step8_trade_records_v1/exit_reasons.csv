@@ -1,0 +1,7 @@
+strategy,exit_reason,trades,net_profit_usd
+control,profit_target,60,54.37311896161064
+control,protective_stop,46,-47.44850952012799
+control,time,103,-4.188587065442617
+primary,protective_stop,30,-31.809182326288585
+primary,time,80,0.08290463985743735
+primary,trailing_stop,42,40.05912838285448

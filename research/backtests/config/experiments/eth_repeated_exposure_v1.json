@@ -1,0 +1,20 @@
+{
+  "experiment_id": "eth_repeated_exposure_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "market_episode": {
+    "maximum_gap_minutes": 360,
+    "maximum_anchor_distance_pct": 1.0,
+    "description": "A new episode starts when the next signal is more than six hours after the previous signal or more than 1% from the current episode's first entry price."
+  },
+  "cooldown_hours": 6,
+  "variants": [
+    "setup_max_1",
+    "setup_max_2",
+    "market_max_1",
+    "market_max_2",
+    "family_stop_cooldown_6h",
+    "two_correlated_stops_cooldown_6h"
+  ],
+  "notes": "Every rule is tested alone against the unchanged five-lot ETH baseline."
+}

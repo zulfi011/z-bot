@@ -1,0 +1,36 @@
+{
+  "experiment_id": "eth_overfitting_audit_v1",
+  "symbol": "ETHUSDT",
+  "registry": "config/experiments/eth_research_registry_v1.csv",
+  "retired_holdout": {
+    "old_name": "unseen",
+    "new_name": "post_selection_2026_08_09",
+    "start": "2026-08-01T00:00:00Z",
+    "end": "2026-09-11T00:00:00Z",
+    "allowed_use": "diagnostic_only"
+  },
+  "forward_acceptance": {
+    "freeze_timestamp": "2026-09-11T00:00:00Z",
+    "minimum_complete_utc_months": 3,
+    "earliest_possible_decision": "2027-01-01T00:00:00Z",
+    "rule": "No parameter or rule changes may use these months before the final acceptance decision."
+  },
+  "uncertainty": {
+    "seed": 20260930,
+    "samples": 10000,
+    "contiguous_month_block_length": 3,
+    "contiguous_episode_block_length": 12,
+    "confidence_pct": 95
+  },
+  "pbo": {
+    "artifact": "results/eth_full_research_v2/all_combinations.parquet",
+    "blocks": 6,
+    "selection_metric": "sum_profit",
+    "warning": "Only six test blocks are available and the configurations are highly dependent."
+  },
+  "deflated_sharpe": {
+    "artifact": "results/eth_full_research_v2/all_combinations.parquet",
+    "trial_count_scenarios": [32, 100, 1000, 475200],
+    "warning": "Sensitivity diagnostic only because the independent trial count is unknown and T is only six blocks."
+  }
+}

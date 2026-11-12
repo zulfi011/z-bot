@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Z-Bot · Guide</title>
+<meta name="description" content="How Z-Bot works, its strategies, how to use the dashboard, safety, running it on a server, and the research behind it.">
+<meta property="og:title" content="Z-Bot · Guide">
+<meta property="og:image" content="social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<style>
+:root {
+  --bg: #050c17; --panel: #0c1622; --panel-2: #111e2d; --line: #1c2a3b; --text: #e6edf0; --muted: #8a99ad;
+  --cyan: #0bf6fa; --up: #2fd48a; --down: #ff6b7d;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root { --bg: #f4f6fa; --panel: #ffffff; --panel-2: #f1f4f9; --line: #dfe5ee; --text: #0b1424; --muted: #5f6c7d;
+    --cyan: #0891b2; --up: #0f9d63; --down: #d6394f; color-scheme: light; }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 16px; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.6 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+a { color: var(--cyan); }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 28px 16px 48px; }
+nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.word { font-size: 24px; font-weight: 700; letter-spacing: -.6px; line-height: 1; white-space: nowrap; color: var(--text); text-decoration: none; }
+.word img { height: 1.02em; width: auto; vertical-align: baseline; }
+.z-light { display: none; }
+@media (prefers-color-scheme: light) { .z-dark { display: none; } .z-light { display: inline; } }
+.links { display: flex; gap: 18px; font-size: 14px; flex-wrap: wrap; }
+.links a { color: var(--muted); text-decoration: none; }
+.links a:hover, .links a.on { color: var(--text); }
+.layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 32px; margin-top: 36px; align-items: start; }
+.side { position: sticky; top: 16px; display: grid; gap: 2px; }
+.side a { display: block; padding: 8px 12px; border-radius: 10px; color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 500; }
+.side a:hover { background: var(--panel); color: var(--text); }
+.side a.on { background: var(--panel); color: var(--text); box-shadow: inset 2px 0 0 var(--cyan); }
+.side .sep { height: 1px; background: var(--line); margin: 8px 12px; }
+article { min-width: 0; }
+article h1 { font-size: 34px; line-height: 1.15; letter-spacing: -.8px; margin: 0 0 14px; }
+article h2 { font-size: 21px; letter-spacing: -.3px; margin: 34px 0 10px; }
+article h3 { font-size: 17px; margin: 26px 0 8px; }
+article p, article li { color: var(--text); }
+article p { margin: 10px 0; }
+article ul, article ol { padding-left: 22px; }
+article li { margin: 4px 0; }
+article strong { font-weight: 650; }
+article code { font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--panel-2); border: 1px solid var(--line);
+  border-radius: 6px; padding: 1px 5px; }
+article pre { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; overflow-x: auto; }
+article pre code { background: none; border: 0; padding: 0; }
+article hr { border: 0; border-top: 1px solid var(--line); margin: 28px 0; }
+.table-wrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; margin: 12px 0; }
+article table { width: 100%; border-collapse: collapse; font-size: 14px; }
+article th, article td { padding: 9px 12px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+article th { color: var(--muted); font-weight: 600; font-size: 12.5px; background: var(--panel-2); }
+article tr:last-child td { border-bottom: 0; }
+article td:first-child { font-weight: 600; white-space: nowrap; }
+.pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 36px; }
+.pager a { flex: 1; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; text-decoration: none;
+  color: var(--text); font-weight: 600; }
+.pager a small { display: block; color: var(--muted); font-weight: 500; font-size: 12px; }
+.pager a.next { text-align: right; }
+.loading, .error { color: var(--muted); padding: 30px 0; }
+footer { margin-top: 44px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); padding-top: 16px; }
+footer p { margin: 6px 0; }
+@media (max-width: 820px) {
+  .layout { grid-template-columns: 1fr; gap: 18px; margin-top: 22px; }
+  .side { position: static; display: flex; overflow-x: auto; gap: 6px; padding-bottom: 4px; scrollbar-width: none; }
+  .side a { white-space: nowrap; background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 13px; }
+  .side a.on { box-shadow: none; border-color: var(--cyan); }
+  .side .sep { display: none; }
+  article h1 { font-size: 28px; }
+  .links { gap: 14px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="word" href="./" aria-label="Z-Bot home"><img class="z-dark" src="zbot-z-dark.svg" alt=""><img class="z-light" src="zbot-z-light.svg" alt="">-Bot</a>
+    <div class="links">
+      <a href="guide.html?p=how-it-works" data-page="how-it-works">How it works</a>
+      <a href="guide.html?p=strategies" data-page="strategies">Strategies</a>
+      <a href="guide.html?p=research" data-page="research">Research</a>
+      <a href="./#results">Live results</a>
+      <a href="https://github.com/zulfi011/z-bot">GitHub</a>
+    </div>
+  </nav>
+
+  <div class="layout">
+    <aside class="side" id="side" aria-label="Guide pages"></aside>
+    <article id="doc"><p class="loading">Loading…</p></article>
+  </div>
+
+  <footer>
+    <p>Z-Bot is open-source software, built by Zulfi · <a href="https://github.com/zulfi011/z-bot">GitHub</a> ·
+      <a href="https://www.linkedin.com/in/zulfi0">LinkedIn</a> · <a href="./">Live results</a></p>
+    <p>Not financial advice. These are past results from one account and from backtests; they don't predict future
+      returns, and crypto trading can lose money.</p>
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script>
+// The guide is the Markdown in docs/guide/ (the same files GitHub shows); this page only renders it.
+const PAGES = [
+  ["how-it-works", "How it works", "HOW-IT-WORKS"],
+  ["strategies", "Strategies", "STRATEGIES"],
+  ["user-guide", "Using the dashboard", "USER-GUIDE"],
+  ["safety", "Safety", "SAFETY"],
+  ["deploy", "Run it on a server", "DEPLOY"],
+  ["research", "Research", "RESEARCH"],
+];
+const REPO = "https://github.com/zulfi011/z-bot/blob/main/";
+const byFile = Object.fromEntries(PAGES.map(([id, , file]) => [file, id]));
+const current = PAGES.find(([id]) => id === new URLSearchParams(location.search).get("p")) || PAGES[0];
+
+const side = document.getElementById("side");
+side.innerHTML = PAGES.map(([id, name]) =>
+  `<a href="guide.html?p=${id}" class="${id === current[0] ? "on" : ""}">${name}</a>`).join("")
+  + `<span class="sep"></span><a href="./#results">Live results</a>`
+  + `<a href="https://github.com/zulfi011/z-bot#quickstart-5-minutes-no-account-needed">Quickstart on GitHub</a>`;
+const onChip = side.querySelector(".on");
+if (onChip && side.scrollWidth > side.clientWidth) side.scrollLeft = onChip.offsetLeft - 16;
+for (const a of document.querySelectorAll(".links a[data-page]")) if (a.dataset.page === current[0]) a.classList.add("on");
+
+const slug = text => text.toLowerCase().replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, "-");
+
+/** Links written for GitHub (relative .md files) become site links or GitHub links. */
+function fixLink(href) {
+  if (/^(https?:|mailto:|#)/.test(href)) return href;
+  const [path, hash = ""] = href.split("#");
+  const anchor = hash ? `#${hash}` : "";
+  const guide = path.match(/^([A-Z-]+)\.md$/);
+  if (guide) return byFile[guide[1]] ? `guide.html?p=${byFile[guide[1]]}${anchor}` : `guide.html${anchor}`;
+  if (path === "README.md" || path === "") return `guide.html${anchor}`;
+  if (path.startsWith("../../")) return REPO + path.slice(6).replace(/\/$/, "") + anchor;
+  return href;
+}
+
+async function render() {
+  const doc = document.getElementById("doc");
+  try {
+    const response = await fetch(`guide/${current[2]}.md`, { cache: "no-cache" });
+    if (!response.ok) throw new Error(response.status);
+    doc.innerHTML = marked.parse(await response.text());
+  } catch (error) {
+    doc.innerHTML = `<p class="error">This page could not be loaded. Read it on <a href="${REPO}docs/guide/${current[2]}.md">GitHub</a>.</p>`;
+    return;
+  }
+  for (const table of doc.querySelectorAll("table")) {
+    const box = document.createElement("div"); box.className = "table-wrap";
+    table.replaceWith(box); box.appendChild(table);
+  }
+  for (const heading of doc.querySelectorAll("h1, h2, h3")) if (!heading.id) heading.id = slug(heading.textContent);
+  for (const a of doc.querySelectorAll("a[href]")) {
+    const fixed = fixLink(a.getAttribute("href"));
+    a.setAttribute("href", fixed);
+    if (/^https?:/.test(fixed) && !fixed.includes("zulfi011.github.io")) { a.target = "_blank"; a.rel = "noopener"; }
+  }
+  const index = PAGES.indexOf(current), prev = PAGES[index - 1], next = PAGES[index + 1];
+  doc.insertAdjacentHTML("beforeend", `<div class="pager">${prev ? `<a href="guide.html?p=${prev[0]}"><small>Previous</small>${prev[1]}</a>` : "<span></span>"}`
+    + `${next ? `<a class="next" href="guide.html?p=${next[0]}"><small>Next</small>${next[1]}</a>` : "<span></span>"}</div>`);
+  document.title = `Z-Bot · ${current[1]}`;
+  if (location.hash) document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView();
+}
+render();
+</script>
+</body>
+</html>

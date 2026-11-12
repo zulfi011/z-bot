@@ -1,0 +1,12 @@
+{
+  "decision": "REJECT",
+  "sample_pass": false,
+  "positive_mean_both": true,
+  "positive_median_both": true,
+  "profit_factor_both": true,
+  "drawdown_pass_both": true,
+  "quarter_consistency": true,
+  "neighbor_stability": false,
+  "positive_ci95_both": false,
+  "strict_historical_validation_pass": false
+}

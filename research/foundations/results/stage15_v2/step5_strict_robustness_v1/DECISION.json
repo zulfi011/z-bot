@@ -1,0 +1,8 @@
+{
+  "strict_robust_candidates": [],
+  "provisional_candidates": [
+    "refined_primary"
+  ],
+  "official_stage2_approved": false,
+  "reason_if_not_approved": "positive confidence lower bound required in both periods"
+}

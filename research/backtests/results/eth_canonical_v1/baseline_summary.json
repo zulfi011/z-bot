@@ -1,0 +1,19 @@
+{
+  "initial_capital": 500.0,
+  "ending_equity": 930.1634322398788,
+  "net_profit": 430.1634322398789,
+  "return_pct": 86.03268644797578,
+  "trades": 459,
+  "wins": 392,
+  "losses": 67,
+  "win_rate_pct": 85.40305010893246,
+  "average_win": 1.875124841500273,
+  "average_loss": -4.550529934749674,
+  "profit_factor": 2.410901549266866,
+  "maximum_drawdown_pct": -9.66215811329656,
+  "maximum_drawdown_usd": -48.6618068187139,
+  "blocked_candidates": 147,
+  "endpoint_closed_trades": 1,
+  "candidate_count": 606,
+  "ending_wallet": 930.1634322398788
+}

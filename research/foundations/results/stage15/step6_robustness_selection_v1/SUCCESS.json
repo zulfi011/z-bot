@@ -1,0 +1,11 @@
+{
+  "step": 6,
+  "scope": "robustness_and_selection",
+  "evaluated_combinations": 24624,
+  "provisional_candidates": 19,
+  "robust_candidates": 0,
+  "stage2_shortlist_candidates": 4,
+  "candidate_event_rows": 2533,
+  "protected_files_unchanged": 439,
+  "validation": "PASS"
+}

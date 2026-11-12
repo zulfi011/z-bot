@@ -1,0 +1,25 @@
+{
+  "step": 4,
+  "scope": "fixed_stop_downside_protection",
+  "configurations": 81,
+  "entry_policies": [
+    "first_touch_0m",
+    "bullish_candle_30m"
+  ],
+  "stop_levels_pct": [
+    0.5,
+    1.0,
+    1.5,
+    2.0,
+    2.5,
+    3.0,
+    4.0,
+    5.0
+  ],
+  "candidate_rows": 300626,
+  "summary_rows": 8748,
+  "stable_combinations": 102,
+  "positive_block_ci_both": 0,
+  "protected_files_unchanged": 383,
+  "validation": "PASS"
+}

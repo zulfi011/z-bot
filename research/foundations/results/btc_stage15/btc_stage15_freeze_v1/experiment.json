@@ -1,0 +1,53 @@
+{
+  "experiment": {
+    "name": "btc_stage15_freeze_v1"
+  },
+  "source_period": {
+    "start_utc": "2024-09-01",
+    "end_utc": "2026-07-31",
+    "split_utc": "2025-09-01"
+  },
+  "predeclared_candidate": {
+    "asset": "BTCUSDT",
+    "timeframe": "5m",
+    "average_type": "30d",
+    "touch_zone_pct": 1.5,
+    "confirmation": "bullish_candle_30m",
+    "market_filter": "bullish_regime",
+    "profit_target_pct": 1.0,
+    "maximum_hold_minutes": 1440
+  },
+  "execution_scenarios": {
+    "gross": {
+      "fee_bps_per_side": 0.0,
+      "slippage_bps_per_side": 0.0
+    },
+    "fee_only": {
+      "fee_bps_per_side": 10.0,
+      "slippage_bps_per_side": 0.0
+    },
+    "realistic": {
+      "fee_bps_per_side": 10.0,
+      "slippage_bps_per_side": 2.0
+    },
+    "stressed": {
+      "fee_bps_per_side": 10.0,
+      "slippage_bps_per_side": 5.0
+    },
+    "severe": {
+      "fee_bps_per_side": 10.0,
+      "slippage_bps_per_side": 10.0
+    }
+  },
+  "bootstrap": {
+    "repetitions": 10000,
+    "seed": 20260909
+  },
+  "decision_gates": {
+    "minimum_trades_each_period": 30,
+    "minimum_positive_quarters_pct": 60.0,
+    "maximum_drawdown_pct": 15.0,
+    "minimum_profit_factor": 1.0,
+    "minimum_positive_neighbors_fraction": 0.5
+  }
+}

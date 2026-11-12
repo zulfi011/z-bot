@@ -1,0 +1,8 @@
+{
+  "experiment": "btc_stage15_freeze_v1",
+  "source_rows": 98208,
+  "realistic_events": 58,
+  "bootstrap_repetitions": 10000,
+  "historical_decision": "REJECT",
+  "pipeline_validation": "PASS"
+}

@@ -1,0 +1,7 @@
+variant,source,source_candidates,survived_to_checkpoint,unarmed,low_progress,reference_failed,tightened_stop_hit
+tighten_to_minus_3_0,dip,492,271,210,111,94,38
+tighten_to_minus_3_0,pullback,136,98,76,30,23,9
+tighten_to_minus_2_5,dip,492,271,210,111,94,40
+tighten_to_minus_2_5,pullback,136,98,76,30,23,14
+swing_low_buffer_capped_3_0,dip,492,271,210,111,94,68
+swing_low_buffer_capped_3_0,pullback,136,98,76,30,23,15

@@ -1,0 +1,4 @@
+candidate,trade_counts_match_events,quarter_trade_counts_match,pass
+refined_primary,True,True,True
+current_control,True,True,True
+rising_average_secondary,True,True,True

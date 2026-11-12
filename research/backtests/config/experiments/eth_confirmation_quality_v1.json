@@ -1,0 +1,33 @@
+{
+  "experiment_id": "eth_confirmation_quality_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "scope": "dip_only",
+  "rules": [
+    "current_green",
+    "close_above_zone_midpoint",
+    "close_above_zone_top",
+    "close_above_previous_5m_high"
+  ],
+  "confirmation_wait_minutes": 30,
+  "signal_timeframe_minutes": 5,
+  "execution": "next_1m_open_after_confirmation_boundary",
+  "unchanged": [
+    "mode_c_entries",
+    "pullback_entries",
+    "all_exits",
+    "five_shared_100_usd_slots",
+    "fees_and_slippage",
+    "06_12_utc_block"
+  ],
+  "economic_winner_threshold_pct": 0.25,
+  "acceptance": {
+    "full_profit_change_gt": 0,
+    "walk_forward_change_gt": 0,
+    "minimum_walk_forward_windows_improved": 4,
+    "economic_win_rate_not_lower": true,
+    "average_loss_not_worse": true,
+    "drawdown_not_worse": true
+  },
+  "notes": "Each stronger confirmation is tested alone. The retired August-September 2026 period is diagnostic only and is excluded from acceptance."
+}

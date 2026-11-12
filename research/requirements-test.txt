@@ -1,0 +1,8 @@
+# What the research tests need (CI installs only this). For running experiments use backtests/requirements.txt.
+numpy==2.5.3
+pandas==3.0.5
+pyarrow==25.0.1
+PyYAML==6.0.3
+requests==2.34.2
+scipy==1.18.1
+pytest==9.1.1

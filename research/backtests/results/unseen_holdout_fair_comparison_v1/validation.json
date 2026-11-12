@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "holdout_start": "2026-08-01 00:00:00+00:00",
+  "holdout_end_exclusive": "2026-09-10 00:00:00+00:00",
+  "holdout_minutes": 57600,
+  "holdout_gaps": 0,
+  "training_data_last_minute": "2026-07-31 23:59:00+00:00",
+  "frozen_entry_diagnostics_full_warmup": {
+    "touch_episodes": 1520,
+    "from_below_episodes": 708,
+    "eligible_after_market_filter": 465,
+    "confirmed_signals": 426
+  },
+  "candidate_entry_diagnostics_full_warmup": {
+    "touch_episodes": 1748,
+    "from_below_episodes": 875,
+    "eligible_after_market_filter": 763,
+    "confirmed_signals": 711
+  },
+  "download_sha256": {
+    "SOLUSDT-1m-2026-08.zip": "138412edb2c86df6109e0800b7b7399c6f7d2b4483d0e35ddf5921e70c0d08b6",
+    "SOLUSDT-1m-2026-09-01.zip": "60b15fee63ef8c5c07e91d72336f609f61c7379bb4a347831a53bd91e68d9c1e",
+    "SOLUSDT-1m-2026-09-02.zip": "efdb5596cf1f44d597f6a229885dda502276cca8d912b9ed16e162fa902b0198",
+    "SOLUSDT-1m-2026-09-03.zip": "8d4fd006ef5c5b1cb49422360d879f7b2794b8d6f0f724073f58d5100ba7ceea",
+    "SOLUSDT-1m-2026-09-04.zip": "48fedb88762a555f01554a2ea2808a20ee15b6ad584f01c765f4d5d18ed8390a",
+    "SOLUSDT-1m-2026-09-05.zip": "43ed70b729446781626606d20087de630cdf7d15a608f418a934695baddf023d",
+    "SOLUSDT-1m-2026-09-06.zip": "f02b0e246cf5716e8778e383f045906c583bf26ccbd6fadc408ec0b0db62c9c8",
+    "SOLUSDT-1m-2026-09-07.zip": "453e45038fe437092cba53d852b5836c48ed0ed5336d9870b5192520913593b0",
+    "SOLUSDT-1m-2026-09-08.zip": "76abed4f544cdd7dd3ef41284f495b63cc4864c3c4037c96e20dc3ff15c4d867",
+    "SOLUSDT-1m-2026-09-09.zip": "d176297516a9116bd597f8db0012e1a75b9cf963822887f27744e97046a8fdeb"
+  }
+}

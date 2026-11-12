@@ -1,0 +1,21 @@
+{
+  "run_id": "trailing_activation_grid_v1",
+  "activation_percentages": [
+    3.0,
+    3.5,
+    4.0
+  ],
+  "giveback_of_open_profit_percentages": [
+    10.0,
+    15.0,
+    20.0,
+    25.0,
+    30.0
+  ],
+  "variants_per_strategy": 16,
+  "automatic_strict_replacement_passes": [],
+  "selected_for_frozen_primary": "trail_a4_g10",
+  "selection_note": "Selected after review because mean return improved in both periods; confidence intervals still include zero.",
+  "trailing_enabled_in_frozen_primary": true,
+  "validation": "PASS"
+}

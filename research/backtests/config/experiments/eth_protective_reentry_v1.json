@@ -1,0 +1,31 @@
+{
+  "experiment_id": "eth_protective_reentry_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "scope": "dip_protective_stops_only",
+  "reentry_windows_hours": [24, 48],
+  "maximum_reentries_per_original_episode": 1,
+  "confirmation": "First completed bullish five-minute candle after the protective stop whose close is above both the original frozen Dip zone top and the preceding completed five-minute candle high.",
+  "market_filter": "Reject the re-entry when completed daily averages satisfy 7d < 15d < 30d.",
+  "blocked_entry_hours_utc": [6, 12],
+  "economic_winner_threshold_pct": 0.25,
+  "excluded_entry_months": ["2025-04", "2025-05"],
+  "unchanged": [
+    "all_original_dip_pullback_and_mode_c_candidates",
+    "original_dip_zone_top_is_frozen_at_the_touch_episode",
+    "dip_stop_arm_trail_break_even_floor_and_trend_exit",
+    "five_shared_100_usd_slots",
+    "fees_and_slippage",
+    "no_leverage_and_no_borrowing"
+  ],
+  "acceptance": {
+    "full_profit_change_gt": 0,
+    "ordinary_profit_change_gt": 0,
+    "walk_forward_change_gt": 0,
+    "minimum_walk_forward_windows_improved": 4,
+    "economic_win_rate_not_lower": true,
+    "average_loss_not_worse": true,
+    "drawdown_not_worse": true
+  },
+  "notes": "The 24-hour and 48-hour windows are frozen and tested separately. A potential re-entry is permitted only when its parent Dip was actually filled and exited through the unarmed protective stop in that replay. August-September 2026 is diagnostic only."
+}

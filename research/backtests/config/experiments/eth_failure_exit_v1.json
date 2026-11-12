@@ -1,0 +1,12 @@
+{
+  "experiment_id": "eth_failure_exit_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "sources": ["dip", "pullback", "breakout"],
+  "checkpoints_hours": [6, 12, 24],
+  "arm_pct": 1.315,
+  "maximum_favorable_excursion_pct": 0.5,
+  "decision_timeframe_minutes": 5,
+  "execution": "next_1m_open",
+  "notes": "Each source/checkpoint is tested alone. No settings are selected or combined in this run."
+}

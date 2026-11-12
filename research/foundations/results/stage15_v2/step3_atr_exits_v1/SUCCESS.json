@@ -1,0 +1,10 @@
+{
+  "step": "stage15_v2_step3",
+  "scope": "spot_long_atr_exits",
+  "comparisons": 540,
+  "provisional_passes": 0,
+  "robust_passes": 0,
+  "reference_audit_rows": 4828,
+  "protected_files_unchanged": 516,
+  "validation": "PASS"
+}

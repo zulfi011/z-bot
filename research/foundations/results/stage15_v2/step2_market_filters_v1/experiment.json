@@ -1,0 +1,54 @@
+{
+  "experiment": {
+    "name": "stage15_v2_step2_market_filters_v1",
+    "scope": "causal_market_filter_refinement_for_sol"
+  },
+  "source_candidates": "data/research/stage15/step5_exits_v1/SOLUSDT",
+  "universe": {
+    "asset": "SOLUSDT",
+    "configurations": 27,
+    "entry_policy": "bullish_candle_30m",
+    "approach": "from_below",
+    "strategy": "target_4_stop_4"
+  },
+  "filters": {
+    "variants": [
+      "all_market_conditions",
+      "rising_15d",
+      "sol_and_btc_rising_15d",
+      "avoid_strong_bearish",
+      "avoid_extreme_volatility",
+      "avoid_bearish_and_extreme",
+      "rising_15d_and_safe",
+      "all_filters"
+    ],
+    "rising_definition": "average_15d_at_signal_higher_than_24h_earlier",
+    "joint_trend_definition": "sol_and_btc_both_meet_rising_definition",
+    "strongly_bearish_definition": "average_7d_below_average_15d_below_average_30d",
+    "extreme_volatility_definition": "prior_24h_range_above_earlier_period_90th_percentile",
+    "volatility_threshold_scope": "unique_eligible_sol_origin_timestamps"
+  },
+  "execution": {
+    "target_pct": 4.0,
+    "stop_pct": 4.0,
+    "maximum_hold_minutes": 1440,
+    "one_position_per_configuration": true,
+    "round_trip_cost_pct": 0.2
+  },
+  "robustness": {
+    "periods": [
+      "earlier",
+      "later"
+    ],
+    "split_utc": "2025-09-01",
+    "minimum_entries_per_period": 100,
+    "minimum_nonoverlap_trades_per_period": 40,
+    "minimum_positive_quarters_pct": 60,
+    "expected_shortfall_floor_pct": -5.0,
+    "bootstrap_block_days": 7,
+    "bootstrap_repetitions": 2000,
+    "bootstrap_seed": 1506,
+    "require_positive_block_ci_both_periods": true,
+    "note": "later_period_is_historical_and_not_untouched_out_of_sample"
+  }
+}

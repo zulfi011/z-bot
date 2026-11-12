@@ -1,0 +1,43 @@
+{
+  "experiment_id": "eth_drop_rebound_min_net_floor_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "scope": "minimum_net_exit_floor_for_unfiltered_rolling_drop_addon",
+  "frozen_drop_rule": {
+    "lookback_minutes": 60,
+    "fall_pct": 5.0,
+    "protective_stop_pct": 2.0,
+    "activation_pct": 0.19,
+    "giveback_pct": 30.0
+  },
+  "minimum_net_exit_percentages": [0.10, 0.20, 0.30],
+  "floor_mechanics": {
+    "net_of": "7.5bps_fee_and_2bps_slippage_each_side",
+    "activation": "price_must_first_trade_at_the_required_raw_floor",
+    "attachment": "next_minute_after_floor_is_reached",
+    "before_floor_is_reached": "ignore_lower_trailing_exit_and_keep_2pct_protective_stop",
+    "after_attachment": "higher_of_mode_b_trail_and_minimum_net_floor",
+    "gap_handling": "fill_at_open_if_open_is_below_stop_level"
+  },
+  "acceptance": {
+    "minimum_combined_headline_win_rate_pct": 75.0,
+    "minimum_additional_trades": 20,
+    "full_profit_change_gt": 0.0,
+    "later_profit_change_gt": 0.0,
+    "walk_forward_profit_change_gt": 0.0,
+    "minimum_walk_forward_windows_improved": 4,
+    "average_loss_not_worse": true,
+    "drawdown_not_worse": true
+  },
+  "unchanged": [
+    "all_current_ETH_signals_and_exits",
+    "unfiltered_60m_5pct_drop_entries",
+    "0.19pct_mode_b_arm",
+    "30pct_giveback",
+    "five_shared_slots",
+    "500_usd_wallet",
+    "base_signals_have_same_minute_priority",
+    "no_leverage"
+  ],
+  "notes": "A positive net floor lies above the +0.19pct arm after costs, so it cannot attach until price actually reaches that floor. This prevents impossible fills."
+}

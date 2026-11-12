@@ -1,0 +1,11 @@
+{
+  "step": "stage2_step8_trade_records",
+  "status": "PASS",
+  "primary_trade_records": 152,
+  "control_trade_records": 209,
+  "total_trade_records": 361,
+  "duplicate_signal_ids": 0,
+  "cash_flow_reconciliation": "PASS",
+  "step7_trade_count_reconciliation": "PASS",
+  "step7_final_pnl_reconciliation": "PASS"
+}

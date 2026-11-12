@@ -1,0 +1,36 @@
+experiment:
+  name: stage15_step3_market_conditions_v1
+  scope: market_conditions_only_all_81_configurations
+source_entries: data/research/stage15/step2_entry_conditions_v1
+entry_policies:
+  - first_touch_0m
+  - bullish_candle_30m
+context_timestamp: first_touch_candle_close
+conditions:
+  regime: [bullish, neutral, bearish, missing]
+  approach: [from_above, from_below, unknown]
+  average_slope_24h: [rising, falling, flat, missing]
+  prior_return_24h: [positive, nonpositive, missing]
+  prior_range_24h:
+    bands: [low, medium, high, missing]
+    thresholds: earlier_period_asset_terciles_unique_origin_timestamps
+  touch_close_side: [above_average, at_or_below_average, missing]
+  combinations:
+    - regime_x_approach
+evaluation:
+  split_utc: '2025-09-01'
+  periods: [all, earlier, later]
+  minimum_entries_per_period: 100
+  require_positive_mean_and_median_both_periods: true
+  require_mfe_mae_above_one_both_periods: true
+  compare_with_complement: true
+  require_mean_above_complement_both_periods: true
+  bootstrap_block_days: 7
+  bootstrap_repetitions: 1000
+  bootstrap_seed: 1503
+  note: later_period_is_not_untouched_out_of_sample
+scope_limits:
+  costs: not_modeled
+  positions: not_modeled
+  condition_interactions_beyond_regime_approach: not_searched
+  filter_adoption: none_in_this_step

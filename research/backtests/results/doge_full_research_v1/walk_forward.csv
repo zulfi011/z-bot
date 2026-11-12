@@ -1,0 +1,7 @@
+test,picked,train_profit,test_profit,test_trades,candidate_test_profit,median_all_test_profit
+2025-04-01→2025-07-01,"1m, 9-day avg, ±0.4%, stop −3.5%, trail +1.29%/24%, only above 30-day avg, all hours",52.14,-25.45,35,6.87,-20.21
+2025-07-01→2025-10-01,"3m, 13-day avg, ±0.2%, stop −1.5%, trail +1.257%/14%, break-even stop after +0.75%, above 30-day avg (≤ +10%), all hours",13.55,-7.67,10,2.82,-13.71
+2025-10-01→2026-01-01,"1m, 12-day avg, ±0.1%, stop −3.5%, trail +1.315%/30%, no trend filter, skip 06–12 UTC",22.07,-11.58,12,-0.12,0.0
+2026-01-01→2026-04-01,"1m, 6-day avg, ±0.1%, stop −4%, trail +1.315%/30%, no trend filter, all hours",24.27,-18.57,29,-0.09,-12.02
+2026-04-01→2026-07-01,"5m, 9-day avg, ±0.5%, stop −4%, trail +1.257%/14%, above 30-day avg (≤ +10%), all hours",15.15,8.12,23,6.86,-3.34
+2026-07-01→2026-08-01,"1m, 3-day avg, ±0.2%, stop −3.5%, trail +1.245%/10%, break-even stop after +0.75%, only above 30-day avg, skip 06–12 UTC",33.3,0.0,0,0.0,0.0

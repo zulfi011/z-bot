@@ -1,0 +1,16 @@
+{
+  "experiment_id": "eth_blocked_hours_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "choices": {
+    "all_hours": null,
+    "block_00_06": [0, 6],
+    "block_06_12": [6, 12],
+    "block_12_18": [12, 18],
+    "block_18_24": [18, 24]
+  },
+  "deployed_choice": "block_06_12",
+  "walk_forward_selection": "For each test window, select the highest-profit choice using only the preceding six-month training window.",
+  "attribution": "Assign every filled trade to its UTC entry hour and retain its complete modeled outcome, except causal evaluation-window endpoint liquidation.",
+  "notes": "Five choices frozen before results. The deployed 06-12 block is the control. Aug-Sep 2026 remains post-selection data."
+}

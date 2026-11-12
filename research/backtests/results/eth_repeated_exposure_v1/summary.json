@@ -1,0 +1,37 @@
+{
+  "baseline": {
+    "profit": 430.1634322398789,
+    "trades": 459,
+    "win_rate_pct": 85.40305010893246,
+    "average_loss": -4.550529934749674,
+    "max_drawdown_pct": -9.66215811329656,
+    "walk_forward_profit": 410.1432061146667,
+    "post_selection_profit": 15.518625852006494,
+    "worst_market_episode_pnl": -23.311070072445645,
+    "worst_setup_episode_pnl": -4.662214014489152,
+    "maximum_fills_one_market_episode": 6
+  },
+  "best_walk_forward": {
+    "variant": "setup_max_1",
+    "profit": 431.80876629213077,
+    "profit_change": 1.645334052251883,
+    "trades": 456,
+    "trade_change": -3,
+    "win_rate_pct": 85.52631578947368,
+    "average_win": 1.879565023922569,
+    "average_loss": -4.563963530873805,
+    "profit_factor": 2.4335252726657224,
+    "max_drawdown_pct": -9.66215811329656,
+    "walk_forward_profit": 411.7885401669186,
+    "walk_forward_change": 1.645334052251883,
+    "wf_windows_improved": 1,
+    "post_selection_profit": 14.622729352822645,
+    "post_selection_change": -0.8958964991838485,
+    "policy_blocks": 4,
+    "baseline_winners_blocked": 3,
+    "baseline_winner_profit_blocked": 5.253018540108599,
+    "worst_market_episode_pnl": -23.311070072445645,
+    "worst_setup_episode_pnl": -4.662214014489152,
+    "maximum_fills_one_market_episode": 6
+  }
+}

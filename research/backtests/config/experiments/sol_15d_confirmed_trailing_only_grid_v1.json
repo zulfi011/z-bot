@@ -1,0 +1,46 @@
+{
+  "experiment_id": "sol_15d_confirmed_trailing_only_grid_v1",
+  "status": "historical_grid_not_deployed",
+  "entry": {
+    "signal_timeframe": "3m",
+    "average": "15d SMA from completed UTC daily closes",
+    "touch_zone_pct": 0.2,
+    "approach": "from_below",
+    "confirmation": "first bullish 3m candle within 30 minutes",
+    "fill": "raw 1m open at confirmation close boundary",
+    "market_filter": "reject 7d < 15d < 30d"
+  },
+  "exit": {
+    "only_permitted_exit": "trailing_stop",
+    "hard_stop": null,
+    "maximum_hold": null,
+    "activation_pct_from_entry_fill_grid": [
+      0.0,
+      1.0,
+      1.5,
+      2.0,
+      2.5,
+      3.0,
+      3.5,
+      4.0
+    ],
+    "giveback_pct_of_peak_open_profit_grid": [
+      10.0,
+      15.0,
+      20.0
+    ],
+    "zero_activation_meaning": "activate on first post-entry high at or above entry fill",
+    "activation_candle_can_exit": false,
+    "trail_uses_prior_completed_1m_peak": true
+  },
+  "portfolio": {
+    "initial_equity_usd": 100,
+    "maximum_positions": 1,
+    "allocation_pct": 100,
+    "signals_while_open": "ignore"
+  },
+  "costs": {
+    "fee_bps_per_side": 10,
+    "slippage_bps_per_side": 2
+  }
+}

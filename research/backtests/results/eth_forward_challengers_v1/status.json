@@ -1,0 +1,13 @@
+{
+  "freeze_timestamp": "2026-10-02T00:00:00Z",
+  "evaluation_start": "2026-10-01T00:00:00+00:00",
+  "data_end_exclusive": "2026-10-01T00:00:00+00:00",
+  "complete_utc_months": 0,
+  "required_complete_utc_months": 3,
+  "baseline_trades": 0,
+  "required_baseline_trades": 50,
+  "earliest_decision": "2027-01-01T00:00:00Z",
+  "eligible_for_decision": false,
+  "accepted_variants": [],
+  "state": "waiting_for_forward_candles"
+}

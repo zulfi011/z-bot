@@ -1,0 +1,28 @@
+{
+  "experiment_id": "eth_continuous_compounding_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "scope": "position_size_only",
+  "rule": "Before every new entry, value the account using realized P&L plus each open ETH position marked at the completed entry-minute close. Spend exactly one fifth of that equity, subject to available cash and the existing five-slot, no-leverage constraint. Existing positions are never resized.",
+  "portfolio": {
+    "initial_capital_usd": 500.0,
+    "slots": 5,
+    "minimum_order_usd": 5.0
+  },
+  "costs": {
+    "fee_bps_per_side": 7.5,
+    "slippage_bps_per_side": 2.0
+  },
+  "evaluation": {
+    "mark_frequency_minutes": 60
+  },
+  "constraints": [
+    "ETH_only",
+    "five_shared_slots",
+    "no_leverage",
+    "no_borrowing",
+    "available_cash_is_a_hard_limit",
+    "new_positions_only"
+  ],
+  "notes": "This is continuous symmetric compounding: losses lower subsequent order sizes and gains raise them. It is a sizing replay, not a change to the current live strategy."
+}

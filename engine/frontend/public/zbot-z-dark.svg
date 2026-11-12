@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="222 206 574 618" width="574" height="618" role="img" aria-label="Z">
+  <defs>
+    <linearGradient id="steel" gradientUnits="userSpaceOnUse" x1="235" y1="0" x2="788" y2="0"><stop offset="0" stop-color="#BAC0C0"/><stop offset="1" stop-color="#EEF2F3"/></linearGradient>
+    <linearGradient id="mid" gradientUnits="userSpaceOnUse" x1="235" y1="0" x2="788" y2="0"><stop offset="0" stop-color="#AEB6B9"/><stop offset="1" stop-color="#DCE1E4"/></linearGradient>
+    <linearGradient id="steelDark" gradientUnits="userSpaceOnUse" x1="235" y1="0" x2="788" y2="0"><stop offset="0" stop-color="#1E2A3A"/><stop offset="1" stop-color="#0B1424"/></linearGradient>
+    <linearGradient id="midDark" gradientUnits="userSpaceOnUse" x1="235" y1="0" x2="788" y2="0"><stop offset="0" stop-color="#5B6878"/><stop offset="1" stop-color="#3A4757"/></linearGradient>
+    <radialGradient id="bg" gradientUnits="userSpaceOnUse" cx="512" cy="560" r="620"><stop offset="0" stop-color="#0C1622"/><stop offset="1" stop-color="#040B16"/></radialGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="12"/></filter>
+    <filter id="glowSoft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="7"/></filter>
+    <clipPath id="round"><rect width="1024" height="1024" rx="224"/></clipPath>
+  </defs>
+  <rect x="235" y="508" width="553" height="8" fill="url(#mid)"/>
+  <path d="M235 213 L708.6 213 L674.5 250 L255 250 L255 305 L623.7 305 L605.2 325 L235 325 Z" fill="url(#steel)"/>
+  <path d="M784 283 L298.5 809 L788 809 L788 706 L411.6 706 L784 302.5 Z M383.9 736 L334 790 L769 790 L769 736 Z" fill="url(#steel)" fill-rule="evenodd"/>
+  <path d="M708.6 213 L726.6 213 L235 745.6 L235 726.1 Z" fill="#0BF6FA"/>
+  <path d="M229.6 817 L255.6 800.2 L769.7 243.2 L784.4 216 L758.4 232.8 L244.2 789.8 Z" fill="#0BF6FA"/>
+</svg>

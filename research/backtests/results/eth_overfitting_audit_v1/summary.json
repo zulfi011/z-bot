@@ -1,0 +1,24 @@
+{
+  "registry_entries": 26,
+  "raw_trial_evaluations": 1238087,
+  "registry_sha256": "37a010bda268ac96dd4b0bf71b2424d9517cd56187cc32e0fe9df2b4272e03e1",
+  "cscv_pbo": 0.0,
+  "cscv_splits": 20,
+  "data_start": "2024-09-01T00:00:00+00:00",
+  "data_end": "2026-09-10T23:59:00+00:00",
+  "has_prolonged_bear_market_history": false,
+  "retired_holdout": {
+    "old_name": "unseen",
+    "new_name": "post_selection_2026_08_09",
+    "start": "2026-08-01T00:00:00Z",
+    "end": "2026-09-11T00:00:00Z",
+    "allowed_use": "diagnostic_only"
+  },
+  "complete_new_forward_months": 0,
+  "required_new_forward_months": 3,
+  "earliest_possible_forward_decision": "2027-01-01T00:00:00Z",
+  "monthly_block_bootstrap_lower_95": 145.46629683076446,
+  "episode_block_bootstrap_lower_95": 153.0210454452327,
+  "minimum_dsr_probability": 5.350672092821126e-21,
+  "maximum_dsr_probability": 0.005001532178767022
+}

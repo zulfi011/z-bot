@@ -1,0 +1,33 @@
+# Secrets and local settings — never commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+deploy_key*
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Node / frontend build
+node_modules/
+engine/frontend/dist/
+engine/frontend/*.tsbuildinfo
+
+# Market data and large research output (downloaded or regenerated, not stored)
+research/**/data/
+# ...but not the code package that downloads and loads it
+!research/foundations/src/data/
+*.parquet
+*.zip
+*.log
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

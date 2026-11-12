@@ -1,0 +1,21 @@
+{
+  "step": "stage2_step11_strategy_comparison",
+  "status": "PASS",
+  "cost_scenarios": 5,
+  "comparison_rows": 30,
+  "strategies": [
+    "primary",
+    "control"
+  ],
+  "scopes": [
+    "full_history",
+    "earlier_reset",
+    "later_reset"
+  ],
+  "outcomes_rebuilt_from_raw_per_scenario": 909,
+  "baseline_matches_step9": true,
+  "maximum_positions": 2,
+  "leverage_used": false,
+  "raw_source_sha256": "895566d79dcad524dc71fe9ef1a90c1cf5adda251e15e360c042dac16eb53aaa",
+  "entry_source_sha256": "8156eb8858b03905ff44fd61def26e95f7f3ae7e11739145663420476d1ee340"
+}

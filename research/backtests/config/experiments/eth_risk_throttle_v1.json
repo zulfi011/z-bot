@@ -1,0 +1,28 @@
+{
+  "experiment_id": "eth_risk_throttle_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "realized_daily_loss_usd": 25.0,
+  "mtm_daily_loss_usd": 15.0,
+  "total_open_loss_usd": 10.0,
+  "market_episode_loss_usd": 7.5,
+  "maximum_unarmed_lots": [3, 2],
+  "strongly_bearish_maximum_lots": [3, 2],
+  "strongly_bearish_definition": "completed daily averages satisfy 7d < 15d < 30d",
+  "market_episode": {
+    "maximum_gap_minutes": 360,
+    "maximum_anchor_distance_pct": 1.0
+  },
+  "variants": [
+    "realized_daily_25",
+    "mtm_daily_15",
+    "total_open_loss_10",
+    "market_episode_loss_7_5",
+    "maximum_unarmed_3",
+    "maximum_unarmed_2",
+    "bearish_maximum_lots_3",
+    "bearish_maximum_lots_2",
+    "conservative_bundle"
+  ],
+  "notes": "Every throttle is tested separately. The conservative bundle was frozen before results and uses realized 25, MTM 15, open 10, episode 7.5, unarmed 3 and bearish lots 3. Rules block new entries only and never force-close positions."
+}

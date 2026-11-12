@@ -1,0 +1,50 @@
+{
+  "decision": "reject",
+  "base": {
+    "profit": 430.1634322398789,
+    "trades": 459,
+    "headline_win_rate_pct": 85.40305010893246,
+    "economic_win_rate_pct": 71.0239651416122,
+    "average_win": 1.875124841500273,
+    "average_loss": -4.550529934749674,
+    "profit_factor": 2.410901549266866,
+    "max_drawdown_pct": -9.66215811329656,
+    "profit_to_drawdown": 8.839857382246866,
+    "addon_trades": 0,
+    "addon_profit": 0.0,
+    "addon_win_rate_pct": 0.0,
+    "addon_average_win": 0.0,
+    "addon_average_loss": 0.0
+  },
+  "signal_funnel": {
+    "drop_signals": 102,
+    "ema_rising": 19,
+    "non_bearish_daily_stack": 42,
+    "above_30d_average": 12,
+    "all_uptrend_checks": 9
+  },
+  "filtered": {
+    "variant": "uptrend_filtered_addon",
+    "profit": 432.10353038360074,
+    "trades": 465,
+    "headline_win_rate_pct": 85.3763440860215,
+    "economic_win_rate_pct": 70.75268817204301,
+    "average_win": 1.8564728957548307,
+    "average_loss": -4.484061900456867,
+    "profit_factor": 2.4171222037466387,
+    "max_drawdown_pct": -9.66215811329656,
+    "profit_to_drawdown": 8.879726393912412,
+    "addon_trades": 6,
+    "addon_profit": 1.9400981437218263,
+    "addon_win_rate_pct": 83.33333333333333,
+    "addon_average_win": 0.39416034931213345,
+    "addon_average_loss": -0.030703602838840993,
+    "profit_change": 1.9400981437218547,
+    "additional_trades": 6,
+    "later_profit_change": 0.0,
+    "walk_forward_profit_change": 1.9400981437218405,
+    "walk_forward_windows_improved": 2,
+    "post_selection_profit_change": 1.5659916103577132,
+    "accepted": false
+  }
+}

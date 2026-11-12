@@ -1,0 +1,37 @@
+{
+  "experiment_id": "sol_15d_touch_immediate_trail_v1",
+  "status": "historical_experiment_not_deployed",
+  "market": {
+    "symbol": "SOLUSDT",
+    "direction": "long_only_spot",
+    "signal_timeframe": "3m",
+    "execution_timeframe": "1m"
+  },
+  "entry": {
+    "average": "15d_sma_from_completed_utc_daily_closes",
+    "touch_zone_pct": 0.2,
+    "approach": "from_below",
+    "confirmation": "first_bullish_3m_candle_within_30_minutes",
+    "market_filter": "reject_when_7d_below_15d_below_30d",
+    "fill": "raw_1m_open_at_confirmation_close_boundary"
+  },
+  "exit": {
+    "protective_stop_pct": 4.0,
+    "maximum_hold_minutes": 1440,
+    "trailing_activation": "first_post_entry_high_strictly_above_entry_fill",
+    "trailing_giveback_of_open_profit_pct": 15.0,
+    "trail_formula": "entry_fill + 0.85 * (prior_peak - entry_fill)",
+    "intraminute_policy": "hard_stop_first; activation_candle_cannot_also_trigger_trail; later_candles_use_prior_peak"
+  },
+  "portfolio": {
+    "initial_equity_usd": 100.0,
+    "maximum_open_positions": 1,
+    "equity_fraction_per_entry": 1.0,
+    "signals_while_open": "ignore",
+    "leverage": false
+  },
+  "costs": {
+    "fee_bps_per_side": 10.0,
+    "slippage_bps_per_side": 2.0
+  }
+}

@@ -1,0 +1,129 @@
+specification:
+  id: sol_15d_touch_v1
+  status: frozen_for_stage3_paper_trading
+  frozen_at_utc: '2026-09-07'
+  source_stage: stage1_5_v2
+  trading_mode: long_only_spot
+
+data:
+  signal_timezone: UTC
+  execution_timeframe: 1m
+  daily_session: UTC
+  average_calculation:
+    type: simple_moving_average
+    source: completed_daily_closes_only
+    periods_days: [7, 15, 30]
+    minimum_observations_equal_period: true
+
+strategies:
+  primary:
+    asset: SOLUSDT
+    signal_timeframe: 3m
+    average: 15d
+    touch_zone_pct: 0.5
+    approach: from_below
+    confirmation:
+      type: bullish_candle
+      condition: close_gt_open
+      maximum_wait_minutes: 30
+      entry: next_signal_boundary_open
+    market_filter:
+      type: avoid_strong_bearish
+      reject_when: average_7d_lt_average_15d_lt_average_30d
+      evaluate_at: first_touch_candle
+
+  control:
+    asset: SOLUSDT
+    signal_timeframe: 5m
+    average: 15d
+    touch_zone_pct: 0.5
+    approach: from_below
+    confirmation:
+      type: bullish_candle
+      condition: close_gt_open
+      maximum_wait_minutes: 30
+      entry: next_signal_boundary_open
+    market_filter:
+      type: all_market_conditions
+
+touch_episode:
+  touch_condition: high_gte_average_times_0_995_and_low_lte_average_times_1_005
+  deduplication: first_candle_of_each_maximal_consecutive_touch_run
+  prior_candle_from_below: prior_high_lt_prior_average_times_0_995
+  confirmation_search:
+    include_first_touch_candle: true
+    include_30_minute_boundary: true
+    include_first_non_touch_candle: true
+    cancel_after_first_non_touch_candle: true
+    reject_if_not_confirmed_within_limit: true
+  execute_at: raw_1m_open_at_confirmation_candle_close_boundary
+
+exit:
+  primary:
+    mode: trailing_after_activation
+    fixed_profit_target:
+      enabled: false
+    protective_stop_pct_from_entry_fill: 4.0
+    trailing_stop:
+      enabled: true
+      activation_pct_from_entry_fill: 4.0
+      giveback_of_open_profit_pct: 10.0
+      activation_candle_can_trigger_trail: false
+      trail_uses_peak_known_before_current_1m_candle: true
+      formula: entry_fill_plus_90_pct_of_prior_peak_open_profit
+  control:
+    mode: fixed_profit_target
+    profit_target_pct_from_entry_fill: 4.0
+    protective_stop_pct_from_entry_fill: 4.0
+    trailing_stop:
+      enabled: false
+  trailing_grid_tested:
+    activation_pct: [3.0, 3.5, 4.0]
+    giveback_of_open_profit_pct: [10.0, 15.0, 20.0, 25.0, 30.0]
+  maximum_hold_minutes: 1440
+  time_exit: close_of_1440th_raw_1m_candle_including_entry_minute
+  exit_monitoring_starts: entry_minute
+  same_1m_candle_activation_and_stop: stop_wins
+  stop_gap_fill: min_stop_price_or_candle_open
+  trail_gap_fill: min_trail_price_or_candle_open
+
+execution:
+  maximum_open_positions: 2
+  position_sizing:
+    method: current_equity_fraction
+    fraction_per_entry: 0.25
+    initial_equity_usd: 100.0
+    allocation_capped_at_available_cash: true
+  signals_while_position_open: open_new_lot_when_slot_available
+  signals_when_two_positions_open: ignore
+  each_lot_managed_independently: true
+  signal_selection: earliest_entry_timestamp_then_episode_id
+  exits_processed_before_entries_at_same_boundary: true
+  new_position_allowed_at_or_after_lot_exit_boundary: true
+  leverage: false
+  short_selling: false
+  fee_bps_per_side: 10.0
+  slippage_bps_per_side: 2.0
+  entry_slippage: buy_open_times_1_plus_slippage
+  exit_slippage: raw_exit_times_1_minus_slippage
+  fees_apply_on: [entry, exit]
+
+research_status:
+  classification: paper_trading_candidate
+  strict_robust_pass: false
+  failure_reason: confidence_interval_lower_bound_not_positive_in_both_historical_periods
+  stage2_purpose: chronological_portfolio_backtest_before_forward_paper_validation
+  trailing_analysis: results/trailing_activation_grid_v1/REPORT.md
+  trailing_selection:
+    selected_variant: trail_a4_g10
+    selection_basis: positive_mean_improvement_in_both_periods_accepted_despite_uncertain_difference
+  portfolio_selection:
+    maximum_open_positions: 2
+    equity_fraction_per_entry: 0.25
+    selection_source: results/step6b_concurrent_positions_v1/REPORT.md
+    selection_note: accepts_higher_drawdown_to_capture_more_valid_entries
+  stage2_decision:
+    status: complete
+    paper_trading: go_with_guardrails
+    real_money: not_ready
+    report: results/stage2_final_report_v1/REPORT.md

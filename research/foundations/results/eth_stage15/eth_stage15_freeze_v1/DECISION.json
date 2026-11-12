@@ -1,0 +1,15 @@
+{
+  "sample_pass": true,
+  "realistic_mean_positive_both_periods": true,
+  "adjacent_timeframes_positive_both_periods": true,
+  "positive_adjacent_timeframes": 1,
+  "adjacent_timeframes_tested": 2,
+  "positive_quarters_pct": 71.42857142857143,
+  "quarter_consistency_pass": true,
+  "tail_and_drawdown_pass": true,
+  "realistic_median_positive_both_periods": false,
+  "positive_block_ci_both_periods": false,
+  "paper_freeze_pass": true,
+  "strict_historical_validation_pass": false,
+  "decision": "FROZEN_FOR_PAPER_VALIDATION_ONLY"
+}

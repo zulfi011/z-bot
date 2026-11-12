@@ -1,0 +1,32 @@
+experiment:
+  name: stage15_step4_downside_protection_v1
+  scope: fixed_stop_downside_protection_all_81_configurations
+source_candidates: data/research/stage15/step3_market_conditions_v1
+entry_policies:
+  - first_touch_0m
+  - bullish_candle_30m
+stop_levels_pct: [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0]
+execution:
+  entry: inherited_next_raw_1m_open
+  monitoring: entry_minute_through_24h_inclusive
+  trigger: raw_1m_low_at_or_below_stop
+  fill: worse_of_stop_price_or_trigger_candle_open
+  fees_slippage_latency: not_modeled
+evaluation:
+  hold_baseline: close_of_minute_1440
+  split_utc: '2025-09-01'
+  periods: [all, earlier, later]
+  segments: [all_entries, bullish_regime]
+  minimum_entries_per_period: 100
+  require_mean_improvement_both_periods: true
+  require_tail_improvement_both_periods: true
+  bootstrap_block_days: 7
+  bootstrap_repetitions: 1000
+  bootstrap_seed: 1504
+  note: later_period_is_not_untouched_out_of_sample
+scope_limits:
+  profit_exit: not_modeled
+  trailing_exit: deferred_to_step5
+  costs: not_modeled
+  positions_and_overlaps: not_modeled
+  final_stop_adoption: none_in_this_step

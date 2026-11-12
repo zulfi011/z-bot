@@ -1,0 +1,43 @@
+{
+  "control": {
+    "initial_capital": 500.0,
+    "ending_equity": 930.1634322398788,
+    "net_profit": 430.1634322398789,
+    "return_pct": 86.03268644797578,
+    "trades": 459,
+    "wins": 392,
+    "losses": 67,
+    "win_rate_pct": 85.40305010893246,
+    "average_win": 1.875124841500273,
+    "average_loss": -4.550529934749674,
+    "profit_factor": 2.410901549266866,
+    "maximum_drawdown_pct": -9.66215811329656,
+    "maximum_drawdown_usd": -48.6618068187139,
+    "blocked_candidates": 147,
+    "endpoint_closed_trades": 1,
+    "candidate_count": 606,
+    "ending_wallet": 930.1634322398788,
+    "economic_win_rate_pct": 71.0239651416122,
+    "expectancy_per_trade": 0.9371752336380804
+  },
+  "best_fixed_full": {
+    "variant": "block_06_12",
+    "profit": 430.1634322398789,
+    "profit_change": 0.0,
+    "trades": 459,
+    "trade_change": 0,
+    "win_rate_pct": 85.40305010893246,
+    "average_win": 1.875124841500273,
+    "average_loss": -4.550529934749674,
+    "profit_factor": 2.410901549266866,
+    "max_drawdown_pct": -9.66215811329656,
+    "walk_forward_profit": 410.1432061146667,
+    "walk_forward_change": 0.0,
+    "wf_windows_improved": 0,
+    "economic_win_rate_pct": 71.0239651416122,
+    "expectancy_per_trade": 0.9371752336380804
+  },
+  "walk_forward_selection_profit": 409.5989983600959,
+  "walk_forward_control_profit": 410.1432061146667,
+  "walk_forward_selection_change": -0.544207754570806
+}

@@ -1,0 +1,14 @@
+{
+  "step": "stage2_step3_entries",
+  "status": "PASS",
+  "candles_processed": 1006560,
+  "candidate_rows_matched_to_stage1_5": 994,
+  "fills_matched_to_stage1_5": 910,
+  "entry_slippage_bps": 2.0,
+  "elapsed_seconds": 43.345,
+  "source_sha256": {
+    "data/raw/SOLUSDT/SOLUSDT_1m.parquet": "895566d79dcad524dc71fe9ef1a90c1cf5adda251e15e360c042dac16eb53aaa",
+    "data/processed/SOLUSDT/SOLUSDT_3m_with_averages.parquet": "ff4ccb7c70046d41b95deb2041e0becdc7a10573a0be5e38777a1a05dc56f5d3",
+    "data/processed/SOLUSDT/SOLUSDT_5m_with_averages.parquet": "8c7138ef8970c55c4c0c2d94802bec5904c81a84037340ea63e38a4eff209207"
+  }
+}

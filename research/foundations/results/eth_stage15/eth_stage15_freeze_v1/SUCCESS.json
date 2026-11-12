@@ -1,0 +1,10 @@
+{
+  "experiment": "eth_stage15_freeze_v1",
+  "source_rows": 100036,
+  "frozen_event_rows": 117,
+  "exit_rules_compared": 38,
+  "sensitivity_configurations": 9,
+  "bootstrap_repetitions_per_period_and_scenario": 10000,
+  "decision": "FROZEN_FOR_PAPER_VALIDATION_ONLY",
+  "validation": "PASS"
+}

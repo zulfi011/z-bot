@@ -1,0 +1,14 @@
+{
+  "step": "stage2_step2_chronological_engine",
+  "status": "PASS",
+  "source": "stage1_research/data/raw/SOLUSDT/SOLUSDT_1m.parquet",
+  "source_sha256": "895566d79dcad524dc71fe9ef1a90c1cf5adda251e15e360c042dac16eb53aaa",
+  "candles_processed": 1006560,
+  "open_callbacks": 1006560,
+  "close_callbacks": 1006560,
+  "first_open_utc": "2024-09-01 00:00:00+00:00",
+  "last_close_utc": "2026-08-01 00:00:00+00:00",
+  "lookahead_probes_blocked": 2,
+  "sampled_history_boundary_checks": 21,
+  "elapsed_seconds": 20.448
+}

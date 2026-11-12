@@ -1,0 +1,42 @@
+{
+  "experiment_id": "sol_15d_immediate_touch_trailing_only_grid_v1",
+  "status": "superseded_incorrect_interpretation_not_deployed",
+  "superseded_by": "sol_15d_confirmed_trailing_only_grid_v1",
+  "entry": {
+    "touch_zone_pct": 0.2,
+    "approach": "from_below",
+    "timing": "raw_1m open after first completed touching 3m candle",
+    "bullish_confirmation": false,
+    "market_filter": "reject 7d < 15d < 30d"
+  },
+  "exit": {
+    "only_permitted_exit": "trailing_stop_after_activation",
+    "hard_stop": null,
+    "maximum_hold": null,
+    "activation_pct_grid": [
+      1.0,
+      1.5,
+      2.0,
+      2.5,
+      3.0,
+      3.5,
+      4.0
+    ],
+    "open_profit_giveback_pct_grid": [
+      10.0,
+      15.0,
+      20.0
+    ],
+    "activation_candle_can_exit": false,
+    "trail_uses_prior_completed_1m_peak": true
+  },
+  "portfolio": {
+    "initial_equity_usd": 100,
+    "maximum_positions": 1,
+    "allocation_pct": 100
+  },
+  "costs": {
+    "fee_bps_per_side": 10,
+    "slippage_bps_per_side": 2
+  }
+}

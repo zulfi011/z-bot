@@ -1,0 +1,14 @@
+{
+  "step": 3,
+  "scope": "market_conditions_only",
+  "configurations": 81,
+  "entry_policies": [
+    "first_touch_0m",
+    "bullish_candle_30m"
+  ],
+  "episode_policy_rows": 300626,
+  "condition_summary_rows": 10498,
+  "stable_hypotheses": 151,
+  "protected_files_unchanged": 347,
+  "validation": "PASS"
+}

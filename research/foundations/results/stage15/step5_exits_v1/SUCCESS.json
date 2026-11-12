@@ -1,0 +1,16 @@
+{
+  "step": 5,
+  "scope": "exit_and_holding_time",
+  "configurations": 81,
+  "entry_policies": [
+    "first_touch_0m",
+    "bullish_candle_30m"
+  ],
+  "exit_strategies": 38,
+  "candidate_rows": 300626,
+  "summary_rows": 36936,
+  "stable_combinations": 99,
+  "positive_block_ci_both": 0,
+  "protected_files_unchanged": 411,
+  "validation": "PASS"
+}

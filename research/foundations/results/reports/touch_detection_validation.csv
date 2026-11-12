@@ -1,0 +1,10 @@
+symbol,timeframe,row_count_match,all_touch_columns_present,touch_columns_boolean,timestamps_utc,timestamps_sorted,duplicate_timestamps,no_missing_touch_values,exact_touch_rule,no_touch_without_average,zone_nesting,overall_pass
+BTCUSDT,1m,True,True,True,True,True,True,True,True,True,True,True
+BTCUSDT,3m,True,True,True,True,True,True,True,True,True,True,True
+BTCUSDT,5m,True,True,True,True,True,True,True,True,True,True,True
+ETHUSDT,1m,True,True,True,True,True,True,True,True,True,True,True
+ETHUSDT,3m,True,True,True,True,True,True,True,True,True,True,True
+ETHUSDT,5m,True,True,True,True,True,True,True,True,True,True,True
+SOLUSDT,1m,True,True,True,True,True,True,True,True,True,True,True
+SOLUSDT,3m,True,True,True,True,True,True,True,True,True,True,True
+SOLUSDT,5m,True,True,True,True,True,True,True,True,True,True,True

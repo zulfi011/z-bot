@@ -1,0 +1,5 @@
+selection_role,asset,timeframe,average_type,touch_zone,policy,condition_variant,strategy,nonoverlap_trades_earlier,nonoverlap_trades_later,nonoverlap_net_0_2_mean_pct_earlier,nonoverlap_net_0_2_mean_pct_later,positive_quarters_pct,net_0_2_ci95_low_earlier,net_0_2_ci95_high_earlier,net_0_2_ci95_low_later,net_0_2_ci95_high_later,provisional_selection,robust_selection
+primary_provisional,SOLUSDT,5m,15d,0.5,bullish_candle_30m,from_below,target_4_stop_4,62,55,0.208658,0.240061,77.777778,-0.605307,1.040651,-0.688325,1.177631,True,False
+entry_sensitivity,SOLUSDT,5m,15d,0.5,first_touch_0m,from_below,target_4_stop_4,62,56,0.211870,0.168790,66.666667,-0.602006,1.043295,-0.711893,1.058209,True,False
+secondary_sol_family,SOLUSDT,3m,15d,1.5,first_touch_0m,bullish_regime,target_1_5_no_stop,55,43,0.098387,0.146634,71.428571,-0.532759,0.540893,-0.860088,0.697421,True,False
+secondary_eth_family,ETHUSDT,3m,15d,1.0,bullish_candle_30m,bullish_regime,time_480_no_stop,69,48,0.109034,0.069745,71.428571,-0.555790,0.662116,-0.315234,0.361833,True,False

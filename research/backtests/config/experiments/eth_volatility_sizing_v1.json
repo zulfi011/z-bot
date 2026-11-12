@@ -1,0 +1,39 @@
+{
+  "experiment_id": "eth_volatility_sizing_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "scope": "all_eth_entry_families_position_size_only",
+  "volatility": {
+    "current_window_minutes": 1440,
+    "reference_days": 90,
+    "high_percentile": 0.80,
+    "extreme_percentile": 0.90,
+    "definition": "Square-root of summed squared one-minute log returns. Current volatility ends before the entry minute; percentile thresholds use only the previous 90 completed UTC days."
+  },
+  "variants": [
+    {"name": "high20_size70", "normal_size_usd": 100.0, "high_size_usd": 70.0, "extreme_size_usd": 70.0},
+    {"name": "extreme10_size50", "normal_size_usd": 100.0, "high_size_usd": 100.0, "extreme_size_usd": 50.0},
+    {"name": "tiered_70_50", "normal_size_usd": 100.0, "high_size_usd": 70.0, "extreme_size_usd": 50.0}
+  ],
+  "excluded_entry_months": ["2025-04", "2025-05"],
+  "economic_winner_threshold_pct": 0.25,
+  "acceptance": {
+    "minimum_full_profit_retention_pct": 90.0,
+    "minimum_walk_forward_profit_retention_pct": 90.0,
+    "minimum_ordinary_profit_retention_pct": 90.0,
+    "profit_to_drawdown_improvement_gt": 0.0,
+    "minimum_risk_adjusted_walk_forward_windows_improved": 4,
+    "average_loss_not_worse": true,
+    "drawdown_not_worse": true
+  },
+  "unchanged": [
+    "all_dip_pullback_and_mode_c_signals",
+    "all_entry_timestamps_and_exit_rules",
+    "five_shared_slots",
+    "500_usd_wallet",
+    "fees_and_slippage",
+    "06_12_utc_block",
+    "no_leverage_and_no_borrowing"
+  ],
+  "notes": "The three schedules are frozen and tested separately. This is a risk-sizing experiment, so acceptance requires retaining at least 90% of profit while improving drawdown efficiency. August-September 2026 is diagnostic only."
+}

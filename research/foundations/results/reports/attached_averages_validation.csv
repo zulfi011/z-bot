@@ -1,0 +1,10 @@
+symbol,timeframe,source_rows,attached_rows,row_count_match,required_average_columns,utc,sorted,duplicate_timestamps,average_7d_matches_expected,average_15d_matches_expected,average_30d_matches_expected,no_future_average_source,overall_pass
+BTCUSDT,1m,1006560,1006560,True,True,True,True,0,True,True,True,True,True
+BTCUSDT,3m,335520,335520,True,True,True,True,0,True,True,True,True,True
+BTCUSDT,5m,201312,201312,True,True,True,True,0,True,True,True,True,True
+ETHUSDT,1m,1006560,1006560,True,True,True,True,0,True,True,True,True,True
+ETHUSDT,3m,335520,335520,True,True,True,True,0,True,True,True,True,True
+ETHUSDT,5m,201312,201312,True,True,True,True,0,True,True,True,True,True
+SOLUSDT,1m,1006560,1006560,True,True,True,True,0,True,True,True,True,True
+SOLUSDT,3m,335520,335520,True,True,True,True,0,True,True,True,True,True
+SOLUSDT,5m,201312,201312,True,True,True,True,0,True,True,True,True,True

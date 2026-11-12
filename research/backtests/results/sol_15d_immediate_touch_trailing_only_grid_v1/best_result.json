@@ -1,0 +1,43 @@
+{
+  "rank": 1.0,
+  "activation_pct": 2.0,
+  "giveback_pct_of_open_profit": 10.0,
+  "completed_trades": 20.0,
+  "ignored_signals_while_position_open": 422.0,
+  "open_position_at_data_end": 1.0,
+  "wins_after_costs": 20.0,
+  "losses_after_costs": 0.0,
+  "win_rate_after_costs_pct": 100.0,
+  "mean_duration_minutes": 21628.9,
+  "median_duration_minutes": 613.0,
+  "longest_completed_trade_minutes": 324089.0,
+  "realized_equity_usd": 140.27358330394335,
+  "ending_marked_equity_usd": 53.84180252266963,
+  "marked_total_return_pct": -46.15819747733036,
+  "fees_paid_usd": 4.9095582046748225,
+  "slippage_on_completed_trades_usd": 0.9538867908398171,
+  "maximum_mark_to_market_drawdown_pct": -68.28031651498479,
+  "lowest_marked_equity_usd": 44.605868235125094,
+  "entry_diagnostics": {
+    "touch_episodes": 1355,
+    "from_below_episodes": 651,
+    "bearish_or_missing_rejections": 208,
+    "immediate_entry_signals": 443
+  },
+  "data_start_utc": "2024-09-01 00:01:00+00:00",
+  "data_end_utc": "2026-08-01 00:00:00+00:00",
+  "open_position": {
+    "signal_id": "immediate-touch-0281",
+    "touch_timestamp": "2025-10-31 15:06:00+00:00",
+    "entry_timestamp": "2025-10-31 15:09:00+00:00",
+    "entry_index": 612909,
+    "raw_entry_open": 189.62,
+    "entry_fill": 189.657924,
+    "entry_equity_usd": 140.27358330394335,
+    "entry_fee_usd": 0.14013344985408926,
+    "last_price": 72.87,
+    "marked_value_usd": 53.84180252266963,
+    "unrealized_return_pct": -61.61657722394831,
+    "status": "open_at_data_end_no_permitted_exit"
+  }
+}

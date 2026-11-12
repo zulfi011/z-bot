@@ -1,0 +1,10 @@
+{
+  "step": "stage2_step5_realistic_costs",
+  "status": "PASS",
+  "completed_trades_costed": 199,
+  "trades_matched_to_independent_reference": 199,
+  "fee_bps_per_side": 10.0,
+  "slippage_bps_per_side": 2.0,
+  "source_sha256": "e24d7b35a48d0e028823062e5c8f83a1e4d693a28a76f672f9e0f7cbb64b2400",
+  "reference_sha256": "059b29c074fb7a3942b0e44ccd2c406b3ee4b47c7cdd91da6df235b6560c8488"
+}

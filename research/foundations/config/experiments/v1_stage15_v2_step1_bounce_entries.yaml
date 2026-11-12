@@ -1,0 +1,33 @@
+experiment:
+  name: stage15_v2_step1_bounce_entries_v1
+  scope: confirmed_bounce_entry_refinement
+source_episodes: data/research/stage15/step1_consecutive_touch_first_v1
+entry:
+  required_approach: from_below
+  reclaim_definition: close_strictly_above_contemporaneous_completed_day_average
+  reclaim_limit_minutes: 30
+  breakout_definition: later_candle_high_strictly_above_reclaim_candle_high_and_close_above_average
+  confirmation_windows: [immediate, 15m, 30m]
+  immediate_definition: next_source_candle_only
+  invalidation: close_at_or_below_average_before_breakout
+  execution: next_raw_1m_open_after_breakout_candle_close
+exit:
+  target_pct: 4.0
+  stop_pct: 4.0
+  maximum_hold_minutes: 1440
+  same_minute_target_and_stop: stop_wins
+  round_trip_cost_pct: 0.2
+robustness:
+  split_utc: '2025-09-01'
+  common_tail_minutes: 1510
+  one_position_per_configuration: true
+  bootstrap_block_days: 7
+  bootstrap_repetitions: 2000
+  bootstrap_seed: 1521
+  minimum_eligible_episodes_per_period: 100
+  minimum_nonoverlap_trades_per_period: 40
+  minimum_positive_quarters_pct: 60
+  expected_shortfall_floor_pct: -5.0
+  require_positive_block_ci_both_periods: true
+  note: all_periods_are_historical_and_not_untouched_out_of_sample
+

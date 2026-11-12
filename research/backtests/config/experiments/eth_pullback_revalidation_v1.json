@@ -1,0 +1,12 @@
+{
+  "experiment_id": "eth_pullback_revalidation_v1",
+  "symbol": "ETHUSDT",
+  "baseline": "eth_canonical_v1",
+  "ema_hours": [16, 24, 32],
+  "dwell_minutes": [120, 180, 240],
+  "deployed_setting": {"ema_hours": 24, "dwell_minutes": 180},
+  "excluded_entry_months": ["2025-04", "2025-05"],
+  "account": "five shared $100 ETH slots; no pullback sleeve",
+  "window_end_rule": "Every open position is liquidated at the final completed minute of each half-open evaluation window.",
+  "notes": "The 3x3 neighbourhood and exclusion were frozen before results. 24h/180m is the control, not a newly selected trial. Aug-Sep 2026 remains post-selection data."
+}

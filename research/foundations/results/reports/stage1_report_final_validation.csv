@@ -1,0 +1,101 @@
+check,pass
+summary_file_exists,True
+pre_forward_backup_exists,True
+forward_statistics_exists,True
+average_summary_exists,True
+timeframe_summary_exists,True
+asset_summary_exists,True
+regime_summary_exists,True
+report_file_exists,True
+summary_has_81_rows,True
+pre_forward_has_81_rows,True
+forward_has_81_rows,True
+summary_no_duplicate_configs,True
+pre_forward_no_duplicate_configs,True
+forward_no_duplicate_configs,True
+summary_assets_correct,True
+summary_timeframes_correct,True
+summary_averages_correct,True
+summary_zones_correct,True
+27_configurations_per_asset,True
+pre_forward_metrics_preserved,True
+all_18_forward_columns_present,True
+forward_total_event_count_present,True
+no_missing_forward_values,True
+merged_forward_metrics_match_source,True
+stage1_event_count_equals_24h_valid,True
+forward_total_gte_24h_valid,True
+return_5m_valid_count_gte_return_15m_valid_count,True
+return_15m_valid_count_gte_return_30m_valid_count,True
+return_30m_valid_count_gte_return_1h_valid_count,True
+return_1h_valid_count_gte_return_4h_valid_count,True
+return_4h_valid_count_gte_return_24h_valid_count,True
+return_5m_valid_count_lte_total_events,True
+return_15m_valid_count_lte_total_events,True
+return_30m_valid_count_lte_total_events,True
+return_1h_valid_count_lte_total_events,True
+return_4h_valid_count_lte_total_events,True
+return_24h_valid_count_lte_total_events,True
+primary_setup_exists_exactly_once,True
+primary_forward_total_gte_complete,True
+primary_reach_probability_valid,True
+primary_mae_nonpositive,True
+primary_mfe_nonnegative,True
+15d_best_average_by_existing_rank,True
+three_timeframes_present,True
+SOL_best_opportunity_asset_by_existing_rank,True
+BTC_has_smaller_downside_than_SOL,True
+primary_regime_has_three_rows,True
+primary_regime_labels_correct,True
+neutral_best_mfe_mae_ratio,True
+neutral_best_target_first_decisive,True
+neutral_best_post_activation_upside,True
+bearish_highest_reach,True
+bullish_lowest_mfe_mae_ratio,True
+report_section_present_# V1 Stage 1 Research Report,True
+report_section_present_## 1. Research Objective,True
+report_section_present_## 2. Experiment Scope,True
+report_section_present_## 3. Metrics Evaluated,True
+report_section_present_## 4. Event Count Definitions,True
+report_section_present_## 5. Forward Returns,True
+report_section_present_## 6. Average Comparison,True
+report_section_present_## 7. Timeframe Comparison,True
+report_section_present_## 8. Asset Comparison,True
+report_section_present_## 9. Touch-Zone Comparison,True
+report_section_present_## 10. Current Leading Research Configuration,True
+report_section_present_## 11. Market-Regime Findings,True
+report_section_present_## 12. +2.5% Activation and Trailing Research,True
+report_section_present_## 13. Interpretation of the Asset Ranking,True
+report_section_present_## 14. Important Limitations,True
+report_section_present_## 15. Stage 2 Research Candidates,True
+report_section_present_## 16. Final Stage 1 Conclusion,True
+report_mentions_forward_horizon_5m,True
+report_mentions_forward_horizon_15m,True
+report_mentions_forward_horizon_30m,True
+report_mentions_forward_horizon_1h,True
+report_mentions_forward_horizon_4h,True
+report_mentions_forward_horizon_24h,True
+report_mentions_forward_total_event_count,True
+report_mentions_24h_valid_definition,True
+report_contains_SOLUSDT is the strongest opportunity candidate,True
+report_contains_SOLUSDT is not universally the safest or best asset,True
+report_contains_15D remains the strongest supported primary average,True
+"report_contains_1m, 3m and 5m behave very similarly",True
+report_contains_does not justify claiming that 5m is statistically superior,True
+report_contains_±0.5% remains the leading touch-zone candidate,True
+report_contains_Neutral,True
+report_contains_Bearish,True
+report_contains_30% giveback,True
+report_avoids_SOLUSDT is the best asset,True
+report_avoids_5m is the best timeframe,True
+report_avoids_0.5% is the final touch zone,True
+report_avoids_finished trading strategy,True
+report_limitation_present_not independent trades,True
+report_limitation_present_nested,True
+report_limitation_present_overlapping,True
+report_limitation_present_correlated,True
+report_limitation_present_same-candle,True
+report_limitation_present_signal deduplication,True
+report_limitation_present_fees,True
+report_limitation_present_slippage,True
+report_limitation_present_out-of-sample,True

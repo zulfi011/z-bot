@@ -1,0 +1,11 @@
+{
+  "step": "stage2_step6_position_sizing",
+  "status": "PASS",
+  "initial_equity_usd": 100.0,
+  "sizing_variants": 9,
+  "strategy_scope_comparisons": 54,
+  "trade_path_rows_reconciled": 3582,
+  "planned_net_stop_loss_pct": 4.2109698301698195,
+  "leverage_used": false,
+  "source_sha256": "77f1c1d7651c60bf0a5a45d016c8c76a9f5b75559c59d55e1c7919a238f083c0"
+}

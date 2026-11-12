@@ -1,0 +1,12 @@
+{
+  "step": "stage15_v2_step2",
+  "scope": "causal_market_filters",
+  "configurations": 27,
+  "filter_variants": 8,
+  "evaluated_comparisons": 216,
+  "provisional_passes": 1,
+  "robust_passes": 0,
+  "reference_audit_rows": 561,
+  "protected_files_unchanged": 493,
+  "validation": "PASS"
+}

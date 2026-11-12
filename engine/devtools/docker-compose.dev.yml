@@ -1,0 +1,11 @@
+# For development only: also publish the database and the API on this computer (tests, database tools, API docs).
+# The dashboard does not need these; the plain `docker compose up` keeps them inside Docker so nothing clashes
+# with other software already using these ports.
+#   docker compose -f docker-compose.yml -f devtools/docker-compose.dev.yml up -d --build
+services:
+  db:
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+  api:
+    ports:
+      - "127.0.0.1:${API_PORT:-8000}:8000"
