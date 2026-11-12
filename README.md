@@ -73,7 +73,7 @@ Every coin's exact settings: [Strategies](docs/guide/STRATEGIES.md).
 | Folder | What is in it |
 |---|---|
 | `engine/` | The bot: worker, API, dashboard, Docker setup, strategy files |
-| `research/` | Data processing, backtests and every experiment's report |
+| [`research/`](research/README.md) | Data processing, backtests and every experiment's report ([index](research/INDEX.md)) |
 | `docs/` | The public live-results page and this guide |
 
 ## Disclaimer
