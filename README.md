@@ -2,6 +2,10 @@
 
 # Z-Bot
 
+[![CI](https://github.com/zulfi011/z-bot/actions/workflows/ci.yml/badge.svg)](https://github.com/zulfi011/z-bot/actions/workflows/ci.yml)
+[![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue)](LICENSE)
+[![Live results](https://img.shields.io/badge/live%20results-updated%20daily-0bf6fa)](https://zulfi011.github.io/z-bot/)
+
 Open-source crypto trading bot for Binance spot. More than 100 strategy ideas were tested; the few that held up on
 data they were never tuned on trade SOL, ETH, BTC, AAVE and TRX.
 

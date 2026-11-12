@@ -1,8 +1,9 @@
 FROM node:22-alpine AS build
 
 WORKDIR /app
-COPY package.json ./
-RUN npm install
+# The lockfile pins every package, so each build gets exactly the versions that were tested.
+COPY package.json package-lock.json ./
+RUN npm ci
 COPY . .
 RUN npm run build
 

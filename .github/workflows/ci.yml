@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  engine:
+    name: Engine tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: zbot
+          POSTGRES_USER: zbot
+          POSTGRES_PASSWORD: zbot_local
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U zbot -d zbot" --health-interval 5s --health-timeout 5s --health-retries 10
+    defaults:
+      run:
+        working-directory: engine/backend
+    env:
+      # The database tests build throwaway databases on this server through the real migrations.
+      INTEGRATION_DATABASE_URL: postgresql+psycopg://zbot:zbot_local@localhost:5432/zbot
+      STRATEGY_CONFIG_PATH: ${{ github.workspace }}/engine/sol_strategy.json
+      ETH_STRATEGY_CONFIG_PATH: ${{ github.workspace }}/engine/eth_strategy.json
+      BTC_STRATEGY_CONFIG_PATH: ${{ github.workspace }}/engine/btc_strategy.json
+      AAVE_STRATEGY_CONFIG_PATH: ${{ github.workspace }}/engine/aave_strategy.json
+      TRX_STRATEGY_CONFIG_PATH: ${{ github.workspace }}/engine/trx_strategy.json
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: engine/backend/requirements*.txt
+      - run: pip install -r requirements-dev.txt pyflakes
+      - name: Lint (unused imports, undefined names)
+        run: python -m pyflakes app
+      - name: Tests, including the database tests
+        run: python -m pytest -q -rs
+
+  dashboard:
+    name: Dashboard build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: engine/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: engine/frontend/package-lock.json
+      - run: npm ci
+      - name: Type check and build
+        run: npm run build
+
+  research:
+    name: Research tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: research/requirements-test.txt
+      - run: pip install -r research/requirements-test.txt
+      # Without the price data (research/download_data.py) the tests that rebuild real history skip themselves.
+      - name: Stage 1
+        working-directory: research/stage1
+        run: python -m pytest -q -rs
+      - name: Stage 2
+        working-directory: research/stage2
+        run: python -m pytest -q -rs
+
+  docker:
+    name: Docker images build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the images docker compose starts
+        working-directory: engine
+        run: docker compose build
