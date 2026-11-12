@@ -19,7 +19,7 @@ import shlex
 import subprocess
 import sys
 from collections import OrderedDict
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 
 SQL = r"""
