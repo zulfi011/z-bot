@@ -193,7 +193,7 @@ def run(config_path: Path = EXPERIMENT_CONFIG, output_dir: Path | None = None) -
          "median": np.median(episode_bootstrap), "upper_95": np.percentile(episode_bootstrap, 97.5)},
     ])
 
-    raw_path = STAGE2_ROOT.parent / "stage1" / "data" / "raw" / "ETHUSDT" / "ETHUSDT_1m.parquet"
+    raw_path = STAGE2_ROOT.parent / "foundations" / "data" / "raw" / "ETHUSDT" / "ETHUSDT_1m.parquet"
     raw_times = pd.read_parquet(raw_path, columns=["open_time"]).open_time
     data_start, data_end = raw_times.min(), raw_times.max()
     holdout_files = list((STAGE2_ROOT / "data" / "holdout_downloads").glob("ETHUSDT-1m-*.zip"))

@@ -16,7 +16,7 @@ sys.path.insert(0, str(ROOT))
 from src.backtesting.engine import ChronologicalBacktester, FutureDataAccessError  # noqa: E402
 
 
-SOURCE = ROOT.parent / "stage1/data/raw/SOLUSDT/SOLUSDT_1m.parquet"
+SOURCE = ROOT.parent / "foundations/data/raw/SOLUSDT/SOLUSDT_1m.parquet"
 OUTPUT = ROOT / "results/step2_chronological_engine_v1"
 
 

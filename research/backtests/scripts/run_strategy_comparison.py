@@ -24,7 +24,7 @@ RUN_ID = "step11_strategy_comparison_v1"
 DATA = ROOT / "data" / RUN_ID
 RESULTS = ROOT / "results" / RUN_ID
 CONFIG = ROOT / "config/experiments/stage2_step11_comparison_v1.yaml"
-RAW = ROOT.parent / "stage1/data/raw/SOLUSDT/SOLUSDT_1m.parquet"
+RAW = ROOT.parent / "foundations/data/raw/SOLUSDT/SOLUSDT_1m.parquet"
 FILLS = ROOT / "data/step3_entries_v1/entry_fills.parquet"
 STEP9 = ROOT / "results/step9_performance_v1/performance_metrics.json"
 

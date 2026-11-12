@@ -44,7 +44,7 @@ cd engine/frontend && npm ci && npm run build
 ```bash
 # Research (tests that need price data skip without it; see research/README.md)
 pip install -r research/requirements-test.txt
-(cd research/stage1 && python -m pytest) && (cd research/stage2 && python -m pytest)
+(cd research/foundations && python -m pytest) && (cd research/backtests && python -m pytest)
 ```
 
 ## Project rules
@@ -52,7 +52,7 @@ pip install -r research/requirements-test.txt
 ### 1. Results are honest, or they are not published
 
 - **Never claim or imply returns.** No "earn X%", no "profitable bot".
-- **Every number comes from a report.** It must come from a research report in `research/stage2/results/` or from
+- **Every number comes from a report.** It must come from a research report in `research/backtests/results/` or from
   the live ledger, and it is quoted with its caveats: walk-forward or not, unseen period, sample size.
 - **Public numbers are percentages,** never the dollar size of anyone's account.
 - **A rule that changes trading must pass the honest walk-forward test**, not just look good on history:
@@ -147,8 +147,8 @@ A coin's strategy is one file, `engine/<coin>_strategy.json`. It holds:
 The bot reads it at start; changing it changes how that coin trades.
 
 1. **Research it first.**
-   - Add a script under `research/stage2/scripts/` that tests the change.
-   - Write its report to `research/stage2/results/<idea>_v1/REPORT.md`: the full-history result, the honest
+   - Add a script under `research/backtests/scripts/` that tests the change.
+   - Write its report to `research/backtests/results/<idea>_v1/REPORT.md`: the full-history result, the honest
      walk-forward result (rule 1), the other coins re-run unchanged, and the bigger-lots comparison if it needs more
      money.
    - State the verdict plainly, including "rejected".

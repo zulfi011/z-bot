@@ -3,11 +3,11 @@
 - History: Binance monthly 1m archives Sep 2024 – Jul 2026 → data/raw/<SYM>/<SYM>_1m.parquet
   (same columns and dtypes as downloader.py).
 - Unseen weeks: the Aug 2026 monthly archive and Sep 1–10 2026 daily archives, kept as zips in
-  research/stage2/data/holdout_downloads/ (where stage3_replay.load_holdout_zips reads them).
+  research/backtests/data/holdout_downloads/ (where stage3_replay.load_holdout_zips reads them).
 
 Every archive is checked against Binance's published SHA-256 before it is used.
 
-Usage (from research/stage1/):  python -m src.data.download_new_symbol LINKUSDT
+Usage (from research/foundations/):  python -m src.data.download_new_symbol LINKUSDT
 """
 
 from __future__ import annotations
@@ -27,7 +27,7 @@ BASE = "https://data.binance.vision/data/spot"
 HISTORY_MONTHS = pd.period_range("2024-09", "2026-07", freq="M")
 HOLDOUT_MONTHS = ["2026-08"]
 HOLDOUT_DAYS = [f"2026-09-{day:02d}" for day in range(1, 11)]
-HOLDOUT_DIR = Path(__file__).resolve().parents[3] / "stage2" / "data" / "holdout_downloads"
+HOLDOUT_DIR = Path(__file__).resolve().parents[3] / "backtests" / "data" / "holdout_downloads"
 NUMERIC = ["open", "high", "low", "close", "volume", "quote_volume", "number_of_trades",
            "taker_buy_base_volume", "taker_buy_quote_volume"]
 

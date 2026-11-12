@@ -15,8 +15,8 @@ EXPERIMENT_ID = "sol_15d_immediate_touch_trailing_only_grid_v1"
 RESULT_DIR = ROOT / "results" / EXPERIMENT_ID
 DATA_DIR = ROOT / "data" / EXPERIMENT_ID
 CONFIG_PATH = ROOT / "config/experiments" / f"{EXPERIMENT_ID}.json"
-RAW_PATH = PROJECT / "stage1/data/raw/SOLUSDT/SOLUSDT_1m.parquet"
-SIGNAL_PATH = PROJECT / "stage1/data/processed/SOLUSDT/SOLUSDT_3m_with_averages.parquet"
+RAW_PATH = PROJECT / "foundations/data/raw/SOLUSDT/SOLUSDT_1m.parquet"
+SIGNAL_PATH = PROJECT / "foundations/data/processed/SOLUSDT/SOLUSDT_3m_with_averages.parquet"
 
 ACTIVATIONS = [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0]
 GIVEBACKS = [10.0, 15.0, 20.0]

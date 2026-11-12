@@ -15,7 +15,7 @@ EXPERIMENT_ID = "sol_full_ma_signal_exit_grid_v1"
 RESULT_DIR = ROOT / "results" / EXPERIMENT_ID
 DATA_DIR = ROOT / "data" / EXPERIMENT_ID
 CONFIG_PATH = ROOT / "config/experiments" / f"{EXPERIMENT_ID}.json"
-RAW_PATH = PROJECT / "stage1/data/raw/SOLUSDT/SOLUSDT_1m.parquet"
+RAW_PATH = PROJECT / "foundations/data/raw/SOLUSDT/SOLUSDT_1m.parquet"
 
 SIGNAL_MINUTES = [1, 3, 5]
 AVERAGES = {
@@ -50,7 +50,7 @@ def signal_frame(raw: pd.DataFrame, minutes: int) -> pd.DataFrame:
             "open": "first", "high": "max", "low": "min", "close": "last",
         }).reset_index()
     regime_path = (
-        PROJECT / "stage1/data/processed/SOLUSDT"
+        PROJECT / "foundations/data/processed/SOLUSDT"
         / f"SOLUSDT_{minutes}m_with_averages.parquet"
     )
     regime = pd.read_parquet(

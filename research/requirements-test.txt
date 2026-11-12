@@ -1,4 +1,4 @@
-# What the research tests need (CI installs only this). For running experiments use stage2/requirements.txt.
+# What the research tests need (CI installs only this). For running experiments use backtests/requirements.txt.
 numpy==2.5.3
 pandas==3.0.5
 pyarrow==25.0.1

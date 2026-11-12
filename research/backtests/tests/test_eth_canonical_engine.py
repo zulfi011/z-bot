@@ -16,7 +16,7 @@ from experiments.eth_canonical_v1.engine import (
 
 
 # Some tests rebuild the real ETH history: they need `python research/download_data.py ETHUSDT` first.
-ETH_RAW = Path(__file__).resolve().parents[2] / "stage1" / "data" / "raw" / "ETHUSDT" / "ETHUSDT_1m.parquet"
+ETH_RAW = Path(__file__).resolve().parents[2] / "foundations" / "data" / "raw" / "ETHUSDT" / "ETHUSDT_1m.parquet"
 needs_eth_data = pytest.mark.skipif(not ETH_RAW.exists(),
                                     reason="needs the ETH price data: python research/download_data.py ETHUSDT")
 

@@ -79,7 +79,7 @@
     "maximum_drawdown_review_pct": 15.0
   },
   "provenance": {
-    "research": "research/stage2/results/btc_full_research_v1/REPORT.md",
+    "research": "research/backtests/results/btc_full_research_v1/REPORT.md",
     "backtest_bnb_fees": "Oct 2024 – Jul 2026 with 3 equal lots: 189 trades, +24.0% of the money with USDT fees, +27.1% with BNB fees, max drawdown about −8%; unseen Aug–Sep 2026 −4.5%",
     "caveats": "Fragile: only the 5-day average and ±0.2% zone work (neighbours lose); 82% of profit in the earlier period; later −1.7% of the money at stress costs; walk-forward −6.6%. Ranked last of SOL/ETH/BTC."
   }

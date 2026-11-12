@@ -22,7 +22,7 @@ from src.backtesting.exits import ExitSpec, Position, evaluate_exit  # noqa: E40
 
 RUN_ID = "step10_strict_validation_v1"
 RESULTS = ROOT / "results" / RUN_ID
-RAW = ROOT.parent / "stage1/data/raw/SOLUSDT/SOLUSDT_1m.parquet"
+RAW = ROOT.parent / "foundations/data/raw/SOLUSDT/SOLUSDT_1m.parquet"
 OUTCOMES = ROOT / "data/step6b_concurrent_positions_v1/all_signal_outcomes.parquet"
 STEP7 = ROOT / "data/step7_account_tracking_v1"
 STEP8 = ROOT / "data/step8_trade_records_v1"

@@ -20,7 +20,7 @@ from src.backtesting.position_sizing import SizingSpec  # noqa: E402
 from src.backtesting.trailing import MAX_HOLD_MINUTES, simulate_fixed, simulate_trailing  # noqa: E402
 
 
-STAGE1 = ROOT.parent / "stage1"
+STAGE1 = ROOT.parent / "foundations"
 RUN_ID = "step6b_concurrent_positions_v1"
 DATA = ROOT / "data" / RUN_ID
 RESULTS = ROOT / "results" / RUN_ID

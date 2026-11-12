@@ -22,7 +22,7 @@ engine/frontend/*.tsbuildinfo
 # Market data and large research output (downloaded or regenerated, not stored)
 research/**/data/
 # ...but not the code package that downloads and loads it
-!research/stage1/src/data/
+!research/foundations/src/data/
 *.parquet
 *.zip
 *.log

@@ -7,13 +7,15 @@ every experiment's report and its tables.
 | Path | What is in it |
 |---|---|
 | [`INDEX.md`](INDEX.md) | One line per experiment, grouped by coin, with its verdict |
-| `stage1/` | Price data: downloading, resampling, daily averages, and the first touch-and-bounce studies |
-| `stage2/src/backtesting/` | The shared backtest engine: entries, exits, fees, slippage, several lots |
-| `stage2/scripts/` | One script per experiment |
-| `stage2/results/<experiment>/` | Its `REPORT.md` and tables |
-| `stage2/experiments/` | Larger experiments with their own engine, e.g. the canonical ETH baseline |
+| `foundations/` | Price data: downloading, resampling, daily averages, and the first touch-and-bounce studies |
+| `backtests/src/backtesting/` | The shared backtest engine: entries, exits, fees, slippage, several lots |
+| `backtests/scripts/` | One script per experiment |
+| `backtests/results/<experiment>/` | Its `REPORT.md` and tables |
+| `backtests/experiments/` | Larger experiments with their own engine, e.g. the canonical ETH baseline |
 | `download_data.py` | Gets the price data the scripts need |
 | `build_index.py` | Rebuilds `INDEX.md` |
+
+Older reports call these two folders "stage 1" and "stage 2", the names they had while the research was done.
 
 ## The honest test
 
@@ -39,11 +41,11 @@ You need Python 3.11+ and about 1 GB of disk.
 
 ```bash
 python -m venv .venv && . .venv/bin/activate
-pip install -r research/stage2/requirements.txt
+pip install -r research/backtests/requirements.txt
 python research/download_data.py            # Binance's public 1-minute archives, checksum-verified (~1 min per coin)
 ```
 
-Then, from `research/stage2/`:
+Then, from `research/backtests/`:
 
 ```bash
 python -m pytest                            # the backtest engine's tests, incl. rebuilding the frozen ETH baseline
@@ -54,5 +56,5 @@ Each report names the script that made it. Without the price data the tests that
 reports and tables can still be read as they are.
 
 Some scripts replay history through the trading engine itself (`../engine/backend`), so research and the live bot
-share one implementation of every rule. `stage2/scripts/stage3_legacy/` is a frozen copy of the first engine, kept so
+share one implementation of every rule. `backtests/scripts/stage3_legacy/` is a frozen copy of the first engine, kept so
 the earliest results can still be reproduced exactly.

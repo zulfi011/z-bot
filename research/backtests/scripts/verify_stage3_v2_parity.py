@@ -60,7 +60,7 @@ STRATEGY_FILES = {"SOLUSDT": "sol_strategy.json", "ETHUSDT": "eth_strategy.json"
 
 
 def load_raw(symbol: str) -> pd.DataFrame:
-    raw = pd.read_parquet(PROJECT / f"stage1/data/raw/{symbol}/{symbol}_1m.parquet",
+    raw = pd.read_parquet(PROJECT / f"foundations/data/raw/{symbol}/{symbol}_1m.parquet",
                           columns=["open_time", "open", "high", "low", "close"])
     parts = []
     for path in sorted((ROOT / "data/holdout_downloads").glob(f"{symbol}-1m-*.zip")):

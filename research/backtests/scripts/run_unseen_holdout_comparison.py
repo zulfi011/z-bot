@@ -32,7 +32,7 @@ EXPERIMENT_ID = "unseen_holdout_fair_comparison_v1"
 RESULT_DIR = ROOT / "results" / EXPERIMENT_ID
 DATA_DIR = ROOT / "data" / EXPERIMENT_ID
 DOWNLOAD_DIR = ROOT / "data/holdout_downloads"
-HISTORY_PATH = PROJECT / "stage1/data/raw/SOLUSDT/SOLUSDT_1m.parquet"
+HISTORY_PATH = PROJECT / "foundations/data/raw/SOLUSDT/SOLUSDT_1m.parquet"
 HOLDOUT_START = pd.Timestamp("2026-08-01", tz="UTC")
 HOLDOUT_END = pd.Timestamp("2026-09-10", tz="UTC")
 FEE_RATE = 10.0 / 10_000

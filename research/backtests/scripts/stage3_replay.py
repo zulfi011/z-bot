@@ -38,7 +38,7 @@ from app.domain.paper_execution import (  # noqa: E402
 )
 from app.domain.signal_engine import FrozenSignalEngine, SignalCandle  # noqa: E402
 
-RAW_DIR = PROJECT / "stage1/data/raw"
+RAW_DIR = PROJECT / "foundations/data/raw"
 HOLDOUT_DIR = ROOT / "data/holdout_downloads"
 STRATEGY_FILES = {
     "SOLUSDT": ARCHIVED / "sol_frozen_strategy.json",

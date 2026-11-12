@@ -79,11 +79,11 @@ jobs:
           cache-dependency-path: research/requirements-test.txt
       - run: pip install -r research/requirements-test.txt
       # Without the price data (research/download_data.py) the tests that rebuild real history skip themselves.
-      - name: Stage 1
-        working-directory: research/stage1
+      - name: Foundations (data and first studies)
+        working-directory: research/foundations
         run: python -m pytest -q -rs
-      - name: Stage 2
-        working-directory: research/stage2
+      - name: Backtests
+        working-directory: research/backtests
         run: python -m pytest -q -rs
 
   docker:

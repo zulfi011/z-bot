@@ -2,7 +2,7 @@
 
 Every rule Z-Bot trades with had to survive the same test, and most ideas did not. This page explains the test and
 lists what was tried. Each experiment has its own report in
-[`research/stage2/results/<experiment>/REPORT.md`](../../research/stage2/results/) with the full numbers and caveats:
+[`research/backtests/results/<experiment>/REPORT.md`](../../research/backtests/results/) with the full numbers and caveats:
 see the [index of every experiment](../../research/INDEX.md), and the [research README](../../research/README.md) to
 reproduce one.
 
@@ -69,7 +69,7 @@ lots, extra lots for itself) is always compared with simply using **bigger lots 
 - **Single-coin "wins" are usually one episode.** A rule that looks great on the full history often owes it all to one
   stretch of a few weeks. The walk-forward test is what catches that.
 
-Source of these three points: [five_coin_data_filters_summary](../../research/stage2/results/five_coin_data_filters_summary/REPORT.md).
+Source of these three points: [five_coin_data_filters_summary](../../research/backtests/results/five_coin_data_filters_summary/REPORT.md).
 
 ## Caveats
 
