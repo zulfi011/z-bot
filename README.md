@@ -85,6 +85,12 @@ Every coin's exact settings: [Strategies](docs/guide/STRATEGIES.md).
 Not financial advice. Crypto trading can lose money. The live results are from one account and the backtests are
 history; neither predicts what happens next. Run it in shadow mode first, and only trade money you can afford to lose.
 
+## Contributing
+
+Bug reports and ideas are welcome in [Issues](https://github.com/zulfi011/z-bot/issues). Before a pull request, read
+[CONTRIBUTING.md](CONTRIBUTING.md): it has the setup, the tests and the project's rules (honest results only, no
+built-in money, safety first). Security problems go through private reporting, see [SECURITY.md](SECURITY.md).
+
 ## Author
 
 Built by **Zulfi** · [LinkedIn](https://www.linkedin.com/in/zulfi0) · [GitHub](https://github.com/zulfi011)

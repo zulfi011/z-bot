@@ -43,4 +43,4 @@ No leverage, no short selling, no futures, no withdrawals, no transfers. Spot bu
 ## Reporting a problem
 
 If you find a security problem, please open a private report through GitHub's "Report a vulnerability" on the
-repository rather than a public issue.
+repository rather than a public issue. What is in scope is in [SECURITY.md](../../SECURITY.md).
