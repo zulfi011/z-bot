@@ -7,7 +7,7 @@ pullback lot, never a core one.
 The rule needs a 24-hour line and a running count of minutes below it, so unlike the quiet-band breakout it is not recomputed from
 scratch every minute: the line and the count live in `engine_state` and advance one stored minute at a time. When
 that state is missing or too far behind the candles, it is warmed up again from stored candles - 20 spans of the
-line, the same warm-up the parity check (`stage2_backtesting/scripts/verify_pullback_parity.py`) proved exact.
+line, the same warm-up the parity check (`research/backtests/scripts/verify_pullback_parity.py`) proved exact.
 
 Reclaims found while warming up are only written if they happened after the rule was first switched on, so the
 first start does not flood the history with signals nothing could have bought.

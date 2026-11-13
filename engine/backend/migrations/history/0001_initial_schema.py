@@ -1,4 +1,4 @@
-"""Create the Stage 3 paper-trading schema.
+"""Create the first database schema (from when the bot only paper-traded).
 
 Revision ID: 0001
 Revises: None

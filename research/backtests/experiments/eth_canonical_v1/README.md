@@ -4,7 +4,7 @@ This local-only runner freezes the deployed ETH-v5 historical control before new
 hours, or sizing experiments are introduced. It does not import another coin's strategy and does not connect to
 Binance, Lightsail, or the live database.
 
-From `stage2_backtesting`:
+From `research/backtests` (then called `stage2_backtesting`):
 
 ```bash
 .env/bin/python -m experiments.eth_canonical_v1.run

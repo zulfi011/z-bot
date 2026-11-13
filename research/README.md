@@ -15,7 +15,17 @@ every experiment's report and its tables.
 | `download_data.py` | Gets the price data the scripts need |
 | `build_index.py` | Rebuilds `INDEX.md` |
 
-Older reports call these two folders "stage 1" and "stage 2", the names they had while the research was done.
+### Old names you will see in the reports
+
+The reports were written while the work was done, under working names. They mean:
+
+| Name in a report | What it is now |
+|---|---|
+| Stage 1, `stage1_research` | `foundations/`: the price data and the first touch-and-bounce studies |
+| Stage 1.5, `stage15` | Follow-up studies in `foundations/` (entry, exit, market and robustness checks) |
+| Stage 2, `stage2_backtesting` | `backtests/`: the backtest engine and one experiment per script |
+| Stage 3, `stage3_paper_trading` | The trading engine in [`../engine`](../engine), which first ran in paper mode (simulated orders) and now runs live |
+| "Stage 3 rules", "exact Stage 3 replay" | The rules exactly as the trading engine runs them, replayed on history |
 
 ## The honest test
 

@@ -16,7 +16,7 @@ How an add leaves is set per coin, because the coins differ:
                  parks the PARENT's stop price on Binance. SOL wants this - it exits quickly, and an add that
                  outlives its parent only bleeds.
 
-Same shape as the research (`stage2_backtesting/scripts/eth_pyramid_full.adds_for`), so live adds can be checked
+Same shape as the research (`research/backtests/scripts/eth_pyramid_full.adds_for`), so live adds can be checked
 against the backtest: the trigger is a CLOSE at or above the level and above the line, and the buy is the next
 minute's open.
 """

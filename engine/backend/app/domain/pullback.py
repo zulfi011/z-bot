@@ -8,7 +8,7 @@ buys the pauses of that climb instead:
   * the pullback: 1-minute closes BELOW an N-hour EMA of 1-minute closes, for at least `dwell_minutes` in a row
   * the signal: the first close back ABOVE the line ends the pullback; the buy lands on the next minute's open
 
-Deliberately the same shape as the research (`stage2_backtesting/scripts/eth_pullback.pullback_entries`), so the
+Deliberately the same shape as the research (`research/backtests/scripts/eth_pullback.pullback_entries`), so the
 live signals can be checked against the backtest one for one:
 
   * the EMA is pandas `ewm(span=N, adjust=False)` and includes the minute's own close (see `trend`)

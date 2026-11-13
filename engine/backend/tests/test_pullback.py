@@ -5,7 +5,7 @@ uptrend becomes a confirmed signal and buys a lot from the coin's one set of lot
 first come first served, and a reclaim outside an uptrend, inside the blocked hours or before the rule was
 switched on never buys. A short line
 (60 minutes, 10-minute dwell) keeps the candle counts small; the full-size rule is checked against the backtest by
-`stage2_backtesting/scripts/verify_pullback_parity.py`.
+`research/backtests/scripts/verify_pullback_parity.py`.
 """
 
 from __future__ import annotations
