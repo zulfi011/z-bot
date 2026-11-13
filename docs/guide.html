@@ -87,7 +87,7 @@ footer p { margin: 6px 0; }
       <a href="guide.html?p=how-it-works" data-page="how-it-works">How it works</a>
       <a href="guide.html?p=strategies" data-page="strategies">Strategies</a>
       <a href="guide.html?p=research" data-page="research">Research</a>
-      <a href="./#results">Live results</a>
+      <a href="./#results">Results</a>
       <a href="https://github.com/zulfi011/z-bot">GitHub</a>
     </div>
   </nav>
@@ -99,7 +99,7 @@ footer p { margin: 6px 0; }
 
   <footer>
     <p>Z-Bot is open-source software, built by Zulfi · <a href="https://github.com/zulfi011/z-bot">GitHub</a> ·
-      <a href="https://www.linkedin.com/in/zulfi0">LinkedIn</a> · <a href="./">Live results</a></p>
+      <a href="https://www.linkedin.com/in/zulfi0">LinkedIn</a> · <a href="./">Results</a></p>
     <p>Not financial advice. These are past results from one account and from backtests; they don't predict future
       returns, and crypto trading can lose money.</p>
   </footer>
@@ -123,7 +123,7 @@ const current = PAGES.find(([id]) => id === new URLSearchParams(location.search)
 const side = document.getElementById("side");
 side.innerHTML = PAGES.map(([id, name]) =>
   `<a href="guide.html?p=${id}" class="${id === current[0] ? "on" : ""}">${name}</a>`).join("")
-  + `<span class="sep"></span><a href="./#results">Live results</a>`
+  + `<span class="sep"></span><a href="./#results">Results</a>`
   + `<a href="https://github.com/zulfi011/z-bot#quickstart-5-minutes-no-account-needed">Quickstart on GitHub</a>`;
 const onChip = side.querySelector(".on");
 if (onChip && side.scrollWidth > side.clientWidth) side.scrollLeft = onChip.offsetLeft - 16;

@@ -74,5 +74,5 @@ Source of these three points: [five_coin_data_filters_summary](../../research/ba
 ## Caveats
 
 Backtests are history. The test periods are about two years, the walk-forward windows are short, and a strategy
-that passed can still stop working. The live results page shows how the surviving rules do with real money, losing
-months included. Not financial advice.
+that passed can still stop working. The results page shows how the surviving rules do on a simulated account at Binance
+prices, losing months included. Not financial advice.

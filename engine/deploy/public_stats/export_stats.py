@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
-"""Z-Bot public live stats: percentages only.
+"""Z-Bot public stats: percentages only.
 
 Reads the bot's database through the read-only `zbot_stats` role (create_readonly_role.sql) and writes one JSON
 file for the public stats page. It never writes to the database and never touches the running bot.
 
-Only live trades count: a lot is live when Binance returned an order id for its buy (shadow lots have none).
+The account's lots count from the day it first ran live: live lots (Binance returned an order id for the buy), and,
+once the account runs in shadow mode afterwards, its shadow lots opened after the last live minute. Older
+paper-trading lots from before that day never count. The page presents the record as one simulated account; order ids
+and any live/shadow split are not published.
 Dollar amounts never leave the database: each trade's effect on the account is computed inside the query as
 profit / wallet value when the lot was bought, and only that percentage is exported.
 
@@ -23,13 +26,15 @@ from datetime import datetime
 from pathlib import Path
 
 SQL = r"""
-WITH live_trades AS (
+WITH last_live AS (
+    SELECT max(timestamp) AS t FROM account_snapshots WHERE trading_mode = 'live'
+), live_trades AS (
     SELECT t.trade_id, t.symbol, t.entry_source, t.exit_reason, t.exit_mode, t.entry_time, t.exit_time,
-           t.duration_minutes, t.net_return_pct, t.net_pnl_usd,
-           p.entry_order_id, COALESCE(p.exit_order_id, p.stop_order_id) AS exit_order_id
-    FROM trades t
-    JOIN positions p ON p.position_id = t.position_id
-    WHERE p.entry_order_id IS NOT NULL
+           t.duration_minutes, t.net_return_pct, t.net_pnl_usd
+    FROM paper_trades t
+    JOIN paper_positions p ON p.position_id = t.position_id, last_live
+    -- Live lots, plus the shadow lots the account opened after its last live minute.
+    WHERE p.entry_order_id IS NOT NULL OR (last_live.t IS NOT NULL AND p.entry_time > last_live.t)
 ), weighted AS (
     SELECT lt.*,
            (SELECT s.wallet_value_usd FROM account_snapshots s
@@ -44,20 +49,19 @@ SELECT json_build_object(
             'symbol', symbol, 'entry', entry_source, 'exit', exit_reason, 'exit_style', exit_mode,
             'opened', entry_time, 'closed', exit_time, 'minutes', duration_minutes,
             'return_pct', round(net_return_pct::numeric, 3),
-            'account_pct', CASE WHEN wallet > 0 THEN round((net_pnl_usd / wallet * 100)::numeric, 4) END,
-            'entry_order', entry_order_id, 'exit_order', exit_order_id
+            'account_pct', CASE WHEN wallet > 0 THEN round((net_pnl_usd / wallet * 100)::numeric, 4) END
         ) ORDER BY exit_time) FROM weighted), '[]'::json),
     'open', COALESCE((
         SELECT json_agg(json_build_object(
             'symbol', p.symbol, 'entry', p.entry_source, 'opened', p.entry_time,
             'unrealized_pct', CASE WHEN p.entry_fill_price > 0
-                THEN round(((c.close / p.entry_fill_price - 1) * 100)::numeric, 3) END,
-            'entry_order', p.entry_order_id
+                THEN round(((c.close / p.entry_fill_price - 1) * 100)::numeric, 3) END
         ) ORDER BY p.entry_time)
-        FROM positions p
+        FROM paper_positions p
         LEFT JOIN LATERAL (SELECT close FROM candles_1m WHERE symbol = p.symbol
-                           ORDER BY open_time DESC LIMIT 1) c ON true
-        WHERE p.status = 'open' AND p.entry_order_id IS NOT NULL), '[]'::json),
+                           ORDER BY open_time DESC LIMIT 1) c ON true, last_live
+        WHERE p.status = 'open'
+          AND (p.entry_order_id IS NOT NULL OR (last_live.t IS NOT NULL AND p.entry_time > last_live.t))), '[]'::json),
     -- Buy-and-hold benchmark: each coin's first close after going live, then its last close of every day.
     'prices', COALESCE((
         WITH start AS (SELECT min(timestamp) AS t0 FROM account_snapshots WHERE trading_mode = 'live'),
@@ -79,9 +83,9 @@ SELECT json_build_object(
 
 # Every key that may appear in the published file. Anything else stops the export.
 ALLOWED_KEYS = {
-    "generated_at", "live_since", "days_live", "trades", "open", "summary", "curve", "monthly", "coins",
+    "generated_at", "since", "days", "trades", "open", "summary", "curve", "monthly", "coins",
     "symbol", "entry", "exit", "exit_style", "opened", "closed", "minutes", "return_pct", "account_pct",
-    "entry_order", "exit_order", "unrealized_pct", "t", "pct", "month", "wins", "losses", "win_rate_pct",
+    "unrealized_pct", "t", "pct", "month", "wins", "losses", "win_rate_pct",
     "avg_win_pct", "avg_loss_pct", "profit_factor", "total_return_pct", "max_drawdown_pct", "best_pct",
     "worst_pct", "avg_hold_hours", "open_lots", "avg_return_pct", "return_contribution_pct", "note", "hold",
 }
@@ -94,8 +98,8 @@ def compose_db_name(compose_dir: Path) -> str:
     if env.exists():
         for line in env.read_text().splitlines():
             if line.startswith("POSTGRES_DB="):
-                return line.split("=", 1)[1].strip().strip('"').strip("'") or "zbot"
-    return "zbot"
+                return line.split("=", 1)[1].strip().strip('"').strip("'") or "papertrading"
+    return "papertrading"
 
 
 def run_query(args) -> dict:
@@ -217,12 +221,12 @@ def build(raw: dict) -> dict:
     summary = {**summarize(trades), "max_drawdown_pct": r(worst_dd), "open_lots": len(raw["open"])}
     return {
         "generated_at": raw["generated_at"],
-        "live_since": live_since,
-        "days_live": (now - parse_time(live_since)).days if live_since else 0,
+        "since": live_since,
+        "days": (now - parse_time(live_since)).days if live_since else 0,
         "summary": summary, "curve": curve, "monthly": months, "coins": coins,
         "open": raw["open"], "trades": trades,
         "hold": buy_and_hold(raw.get("prices") or []),
-        "note": "Live Binance spot trades only, after fees. Percentages only. Not financial advice.",
+        "note": "Simulated account on Binance spot prices, after fees. Percentages only. Not financial advice.",
     }
 
 
@@ -239,7 +243,7 @@ def check_keys(value, path="$"):
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--compose-dir", default="/opt/z-bot/engine")
+    parser.add_argument("--compose-dir", default="/opt/z-bot")
     parser.add_argument("--psql", help="psql command to use instead of docker compose (for testing)")
     parser.add_argument("--out", required=True)
     args = parser.parse_args()

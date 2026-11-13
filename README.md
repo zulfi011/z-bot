@@ -4,14 +4,14 @@
 
 [![CI](https://github.com/zulfi011/z-bot/actions/workflows/ci.yml/badge.svg)](https://github.com/zulfi011/z-bot/actions/workflows/ci.yml)
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue)](LICENSE)
-[![Live results](https://img.shields.io/badge/live%20results-updated%20daily-0bf6fa)](https://zulfi011.github.io/z-bot/)
+[![Results](https://img.shields.io/badge/results-updated%20daily-0bf6fa)](https://zulfi011.github.io/z-bot/)
 
 Open-source crypto trading bot for Binance spot. More than 130 backtest experiments, every one published with its
 report ([index](research/INDEX.md)). Most ideas failed; the few that held up on data they were never tuned on trade
 SOL, ETH, BTC, AAVE and TRX.
 
-**Live results:** <https://zulfi011.github.io/z-bot/>. Every trade on a real account, after fees, in percentages,
-updated daily, red months included.
+**Results:** <https://zulfi011.github.io/z-bot/>. Every trade of a simulated account at Binance spot prices, after
+fees, in percentages, updated daily, red months included.
 
 - **Tested strategies, not guesses.** Each coin's settings were chosen on two years of 1-minute data and then checked on
   periods the search never saw. The ideas that failed are published too.
@@ -79,11 +79,11 @@ Every coin's exact settings: [Strategies](docs/guide/STRATEGIES.md).
 |---|---|
 | `engine/` | The bot: worker, API, dashboard, Docker setup, strategy files |
 | [`research/`](research/README.md) | Data processing, backtests and every experiment's report ([index](research/INDEX.md)) |
-| `docs/` | The public live-results page and this guide |
+| `docs/` | The public results page and this guide |
 
 ## Disclaimer
 
-Not financial advice. Crypto trading can lose money. The live results are from one account and the backtests are
+Not financial advice. Crypto trading can lose money. The results are from one simulated account and the backtests are
 history; neither predicts what happens next. Run it in shadow mode first, and only trade money you can afford to lose.
 
 ## Contributing

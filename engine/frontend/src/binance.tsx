@@ -7,8 +7,8 @@ const CHART_ICON = <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="
 /** Top-bar button to the public page with Z-Bot's own live track record. A label, not a bare icon, so it reads at once. */
 export function LiveResultsLink() {
   return <a className="live-results" href={`${LIVE_RESULTS}#results`} target="_blank" rel="noreferrer"
-    title="Every trade on a real Binance account, after fees, updated daily" aria-label="Live results (opens in a new tab)">
-    {CHART_ICON}<span className="long">Live results</span><span className="short">Results</span><span className="arrow" aria-hidden="true">↗</span>
+    title="Every trade of a simulated account at Binance prices, after fees, updated daily" aria-label="Results (opens in a new tab)">
+    {CHART_ICON}<span className="long">Results</span><span className="short">Results</span><span className="arrow" aria-hidden="true">↗</span>
   </a>;
 }
 

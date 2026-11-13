@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Z-Bot · Open-source crypto trading bot</title>
-<meta name="description" content="Live results of Z-Bot, an open-source crypto trading bot. Real Binance spot trades, after fees, in percentages. Updated daily.">
+<meta name="description" content="Results of Z-Bot, an open-source crypto trading bot: a simulated account on Binance spot prices, after fees, in percentages. Updated daily.">
 <meta property="og:title" content="Z-Bot · Open-source crypto trading bot">
-<meta property="og:description" content="Open-source crypto trading bot. Real Binance spot trades, after fees, updated daily.">
+<meta property="og:description" content="Open-source crypto trading bot. Simulated account on Binance spot prices, after fees, updated daily.">
 <meta property="og:image" content="social-preview.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -116,15 +116,15 @@ tr.blank td { color: transparent; }
       <a href="guide.html?p=how-it-works">How it works</a>
       <a href="guide.html?p=strategies">Strategies</a>
       <a href="guide.html?p=research">Research</a>
-      <a href="#results">Live results</a>
+      <a href="#results">Results</a>
       <a href="https://github.com/zulfi011/z-bot">GitHub</a>
     </div>
   </nav>
 
   <section class="hero">
     <h1>Open-source crypto trading bot</h1>
-    <p class="lead">130+ backtest experiments, every one published. The few rules that survived trade on a real
-      Binance account, with every result published daily, red months included.</p>
+    <p class="lead">130+ backtest experiments, every one published. The few rules that survived run on a
+      simulated account at Binance prices, with every result published daily, red months included.</p>
     <div class="cta">
       <a class="btn primary" href="https://github.com/zulfi011/z-bot">Star on GitHub</a>
       <a class="btn" href="guide.html?p=how-it-works">How it works</a>
@@ -142,8 +142,8 @@ tr.blank td { color: transparent; }
 
   <header id="results">
     <div>
-      <h2 class="section-title">Live results</h2>
-      <div class="tag">Real trades, after fees, in percentages</div>
+      <h2 class="section-title">Results</h2>
+      <div class="tag">Simulated account, after fees, in percentages</div>
     </div>
     <div class="updated" id="updated">Loading…</div>
   </header>
@@ -151,7 +151,7 @@ tr.blank td { color: transparent; }
   <div id="error" class="error" hidden></div>
 
   <section>
-    <h2>Since going live</h2>
+    <h2>Since the start</h2>
     <div class="tiles" id="tiles"></div>
   </section>
 
@@ -162,7 +162,7 @@ tr.blank td { color: transparent; }
       <span class="key hold"></span>Holding SOL, ETH, BTC, AAVE and TRX in equal parts, same days</p>
     <p class="chart-note" id="market-note" hidden><b>Compared with the market.</b> Over the same days, simply holding
       the five coins would be at <b id="hold-now"></b>; the bot's account is at <b id="return-now"></b>. The bot buys spot
-      only and every lot has its stop-loss on Binance. Past results don't predict future ones.</p>
+      only and every lot has a stop-loss. Past results don't predict future ones.</p>
   </section>
 
   <section class="two">
@@ -189,7 +189,7 @@ tr.blank td { color: transparent; }
   <footer>
     <p>Z-Bot is open-source software, built by Zulfi · <a href="https://github.com/zulfi011/z-bot">GitHub</a> ·
       <a href="https://www.linkedin.com/in/zulfi0">LinkedIn</a> · <a href="guide.html">Guide</a></p>
-    <p>Live trades only, after fees, updated daily. Raw data: <a href="stats.json">stats.json</a></p>
+    <p>Simulated account on Binance spot prices, after fees, updated daily. Raw data: <a href="stats.json">stats.json</a></p>
     <p>Not financial advice. These are past results from one account; they don't predict future returns, and
       crypto trading can lose money.</p>
   </footer>
@@ -222,7 +222,7 @@ function tiles(s, data) {
     document.getElementById("chart-legend").hidden = false;
   }
   const items = [
-    ["Account return", pct(s.total_return_pct), cls(s.total_return_pct), `${data.days_live} days live`],
+    ["Account return", pct(s.total_return_pct), cls(s.total_return_pct), `${data.days ?? data.days_live} days`],
     ["Win rate", s.win_rate_pct == null ? "—" : `${s.win_rate_pct.toFixed(1)}%`, "", `${s.wins} won · ${s.losses} lost`],
     ["Trades", s.trades, "", `${s.open_lots} open now`],
     ["Worst drop", pct(s.max_drawdown_pct), cls(s.max_drawdown_pct), "peak to low, closed trades"],
@@ -279,9 +279,9 @@ function table(id, head, rows, empty) {
 }
 
 function render(data) {
-  const s = data.summary;
+  const s = data.summary, since = data.since ?? data.live_since;
   document.getElementById("updated").innerHTML =
-    `Live since <b>${data.live_since ? date(data.live_since) : "—"}</b><br>Updated ${dateTime(data.generated_at)}`;
+    `Running since <b>${since ? date(since) : "—"}</b><br>Updated ${dateTime(data.generated_at)}`;
   tiles(s, data);
   chart(data.curve, data.hold?.curve || []);
   // Always at least five month rows; the box scrolls once there are more.
@@ -298,14 +298,13 @@ function render(data) {
   table("coins", ["Coin", "Trades", "Win rate", "Avg trade", "Return"], coinRows.map(c =>
     `<tr><td>${coin(c.symbol)}</td><td>${c.trades}</td><td>${c.win_rate_pct == null ? "—" : c.win_rate_pct.toFixed(0) + "%"}</td>` +
     `<td class="${cls(c.avg_return_pct)}">${pct(c.avg_return_pct)}</td><td class="${cls(c.return_contribution_pct)}">${pct(c.return_contribution_pct)}</td></tr>`), "No trades yet");
-  table("open", ["Coin", "Bought", "<Way in", "Now", "Binance order"], data.open.map(o =>
+  table("open", ["Coin", "Bought", "<Way in", "Now"], data.open.map(o =>
     `<tr><td>${coin(o.symbol)}</td><td>${dateTime(o.opened)}</td><td class="l">${label(ENTRIES, o.entry)}</td>` +
-    `<td class="${cls(o.unrealized_pct)}">${pct(o.unrealized_pct)}</td><td class="ids">${esc(o.entry_order)}</td></tr>`), "No open lots right now");
+    `<td class="${cls(o.unrealized_pct)}">${pct(o.unrealized_pct)}</td></tr>`), "No open lots right now");
   const trades = [...data.trades].reverse();
   const row = t => `<tr><td>${dateTime(t.closed)}</td><td class="l">${coin(t.symbol)}</td><td class="l">${label(ENTRIES, t.entry)}</td>` +
-    `<td class="l">${label(EXITS, t.exit)}</td><td>${hold(t.minutes)}</td><td class="${cls(t.return_pct)}">${pct(t.return_pct)}</td>` +
-    `<td class="ids">${esc(t.entry_order)} → ${esc(t.exit_order) || "—"}</td></tr>`;
-  const head = ["Closed", "<Coin", "<Way in", "<Way out", "Held", "Return", "Binance orders"];
+    `<td class="l">${label(EXITS, t.exit)}</td><td>${hold(t.minutes)}</td><td class="${cls(t.return_pct)}">${pct(t.return_pct)}</td></tr>`;
+  const head = ["Closed", "<Coin", "<Way in", "<Way out", "Held", "Return"];
   // All trades, newest first; the box shows 20 and scrolls for the rest.
   table("trades", head, trades.map(row), "No closed trades yet");
   window.addEventListener("resize", () => chart(data.curve, data.hold?.curve || []));

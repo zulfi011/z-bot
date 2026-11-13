@@ -42,6 +42,6 @@ restart: the bot picks up where it left off.
 
 ## Publishing your own results (optional)
 
-`engine/deploy/public_stats/` publishes a daily, percentages-only summary of your live trades to a GitHub Pages site,
+`engine/deploy/public_stats/` publishes a daily, percentages-only summary of your account's trades to a GitHub Pages site,
 through a read-only database login and a deploy key that can write to one repository only. See its
 [README](../../engine/deploy/public_stats/README.md).

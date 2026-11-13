@@ -172,7 +172,7 @@ export default function App() {
           <p><b>Z-Bot</b> is open-source software, built by Zulfi
             {" "}· <a href="https://github.com/zulfi011/z-bot" target="_blank" rel="noreferrer">GitHub</a>
             {" "}· <a href="https://www.linkedin.com/in/zulfi0" target="_blank" rel="noreferrer">LinkedIn</a>
-            {" "}· <a href="https://zulfi011.github.io/z-bot/" target="_blank" rel="noreferrer">Live results</a></p>
+            {" "}· <a href="https://zulfi011.github.io/z-bot/" target="_blank" rel="noreferrer">Results</a></p>
           <p>Not financial advice. Crypto trading can lose money, and past results don't promise future ones. All times are UTC.</p>
         </footer>
       </main>
