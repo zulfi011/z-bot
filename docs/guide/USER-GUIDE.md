@@ -65,3 +65,11 @@ Each coin starts with the setup it was tested with:
 4. Trading stays in **Shadow** until you press **Go live**.
 
 The key is kept only on that machine, never in the database, and is never shown again. See [Safety](SAFETY.md).
+
+### Optional: pay fees with BNB
+
+Binance charges 0.1% of each buy and sell. If you switch on **Use BNB to pay for fees** in your Binance account and
+keep a few dollars of BNB there, Binance takes the fee in BNB at a discount (0.075% instead of 0.1%). Z-Bot supports
+this: it records each fee in the coin Binance charged it in, and counts the BNB as part of your account's value. Top
+the BNB up now and then, or Binance falls back to the normal fee. Shadow mode always uses the normal 0.1% fee, so it
+never needs BNB.
