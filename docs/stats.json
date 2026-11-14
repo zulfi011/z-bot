@@ -1,7 +1,7 @@
 {
- "generated_at": "2026-11-13T00:30:09.615084+00:00",
+ "generated_at": "2026-11-14T00:30:06.920807+00:00",
  "live_since": "2026-09-12T19:39:00+00:00",
- "days_live": 61,
+ "days_live": 62,
  "summary": {
   "trades": 33,
   "wins": 22,
@@ -576,7 +576,7 @@
   }
  ],
  "hold": {
-  "total_return_pct": -12.65,
+  "total_return_pct": -15.29,
   "curve": [
    {
     "t": "2026-09-12T19:39:00+00:00",
@@ -831,10 +831,14 @@
     "pct": -12.548
    },
    {
-    "t": "2026-11-13T00:29:00+00:00",
-    "pct": -12.646
+    "t": "2026-11-13T23:59:00+00:00",
+    "pct": -15.353
+   },
+   {
+    "t": "2026-11-14T00:29:00+00:00",
+    "pct": -15.287
    }
   ]
  },
- "note": "Live Binance spot trades only, after fees. Percentages only. Not financial advice."
+ "note": "Simulated account on Binance spot prices, after fees. Percentages only. Not financial advice."
 }
