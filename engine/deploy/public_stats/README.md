@@ -1,10 +1,10 @@
-# Public live stats
+# Public stats
 
-Once a day the server publishes the bot's live results to the public page at
+Once a day the server publishes the bot's results to the public page at
 `https://zulfi011.github.io/z-bot/`. **Percentages only**: no dollar amounts, balances, quantities or pot size ever
 leave the server.
 
-## How it stays away from live trading
+## How it stays out of the bot's way
 
 - **Nothing in the bot changes.** No code, container, restart or rebuild. These files sit in the repo and are only
   run by a cron job.
@@ -19,7 +19,8 @@ leave the server.
   money, stops the export.
 - **Narrow GitHub access:** the job pushes with a deploy key that can write to the `z-bot` repo only.
 
-Only live trades are counted. A lot is live when Binance returned an order id for its buy; shadow lots have none.
+The account's trades are counted from the day it first traded live, and the shadow trades it makes after its last live
+minute; older shadow lots from before that day are left out. Order ids are never published.
 
 ## One-time setup
 
