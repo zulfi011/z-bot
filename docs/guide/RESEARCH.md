@@ -34,11 +34,14 @@ lots, extra lots for itself) is always compared with simply using **bigger lots 
 | Each coin's own average length, zone, stop and trail | SOL, BTC, AAVE, TRX re-checked | Every deployed setting was best or within noise |
 | Quiet-band breakout | SOL, ETH, AAVE, TRX | Catches moves that never return to the average |
 | Pullback in an uptrend | ETH only | Passed on ETH with a small edge; failed on the other four coins |
-| Trend ride with a break-even floor | SOL, ETH | Lets a big move run; the floor won in 6 of 6 walk-forward windows on ETH |
+| Trend ride with a break-even floor | ETH (also live on SOL) | Lets a big move run; the floor won in 6 of 6 walk-forward windows on ETH. On SOL its own test came out slightly worse (better in 1 window, worse in 2), so it is under review there |
 | A later profit-taking start on AAVE | AAVE | The first AAVE change to pass the honest test |
 | One shared pot of lots | all coins | Shared lots beat reserving money per coin or per idea |
 
 ## What did not survive
+
+Every one of these, coin by coin, with its honest result and how many test windows it won, is on the
+[idea graveyard](https://zulfi011.github.io/z-bot/graveyard.html) page.
 
 | Idea | Tried on | Why it was dropped |
 |---|---|---|
