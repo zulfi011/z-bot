@@ -42,6 +42,7 @@ export const useControls = () => useContext(ControlsContext);
 
 export const EXPLAIN = {
   money: "All money stays in your Binance spot wallet. This app only decides when to buy and sell. Add or withdraw funds in Binance itself.",
+  moneyShadow: "Shadow mode trades pretend money from the shadow wallet; nothing is sent to Binance. In live mode the money stays in your Binance spot wallet and this app only decides when to buy and sell.",
   growth: "Growth plan: 3 equal lots for small amounts, more lots as the money grows up to 5, then bigger lots. The suggestion above is the plan for your money. The pot follows it for your starting amount until you set the pot yourself; after that only you change it.",
   buyNow: "Buys one full lot at the market price right now, without waiting for a strategy signal, and parks the same stop on Binance. Use sparingly — it is outside the strategy.",
   entryModule: "Switches an extra way in off, lets it share the coin's lots, or gives it lots of its own. Its own lots are extra money from your pot that only this way in may spend — the core (the dip and the quiet-band breakout) can never take them, and it can never take the core's.",
@@ -427,12 +428,13 @@ export function ControlsProvider({ data, refresh, children }: { data: Dashboard 
     const coin = data?.coins[sheet.coin.symbol] ?? sheet.coin;
     const name = coin.label;
     const next = coin.lots.next_lot_usd;
+    const live = data?.trading.mode === "live";
     title = `Buy one ${name} lot now`;
     body = <ConfirmSheet text={EXPLAIN.buyNow}
       note={next != null
-        ? <>Buys <b>{usd(next)}</b> of {name} at about {price(coin.market.price)}, using your Binance USDT
+        ? <>Buys <b>{usd(next)}</b> of {name} at about {price(coin.market.price)}, using {live ? "your Binance USDT" : "the shadow wallet"}{" "}
           ({usd(coin.lots.free_usdt)} free).{data?.trading.mode !== "live" && <> Trading is in <b>{data?.trading.mode}</b> mode, so it is only recorded.</>}</>
-        : <>No lot is available right now ({coin.lots.slot_free ? `Binance has ${usd(coin.lots.free_usdt)} free USDT` : "all lots are open"}).</>}
+        : <>No lot is available right now ({coin.lots.slot_free ? `${live ? "Binance" : "The shadow wallet"} has ${usd(coin.lots.free_usdt)} free USDT` : "all lots are open"}).</>}
       confirmLabel={`Buy ${name} ${next != null ? usd(next) : ""}`}
       run={async () => { await control(`/api/v1/lots/${coin.symbol}/buy-now`); return `${name} buy queued — it fills within a minute.`; }}
       onDone={done} onCancel={close} />;

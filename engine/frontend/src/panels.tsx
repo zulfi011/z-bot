@@ -75,7 +75,7 @@ export function MoneyCard({ data }: { data: Dashboard }) {
             onChange={enable => open({ kind: "trading", coin: view(coin.symbol)!, enable })} /></Tip>}
       </div>
     </div>)}</div></ScrollList>
-    <p className="card-note">{EXPLAIN.money}</p>
+    <p className="card-note">{data.trading.mode === "live" ? EXPLAIN.money : EXPLAIN.moneyShadow}</p>
   </Card>;
 }
 
