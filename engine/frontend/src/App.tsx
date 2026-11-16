@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { COIN_ORDER, coinLabel, getJson, type Dashboard, type Interval } from "./api";
+import { COIN_ORDER, coinLabel, getJson, TimeoutError, type Dashboard, type Interval } from "./api";
 import { ControlsProvider, useControls, DeviceLockButton } from "./controls";
 import { AttachBinanceButton, LiveResultsLink } from "./binance";
 import { ago } from "./format";
 import { MainPage } from "./MainPage";
 import { CoinPage } from "./CoinPage";
 import { AlertBanner } from "./panels";
-import { CoinToken } from "./ui";
+import { CoinToken, Tip } from "./ui";
+
+const WAITING = "Downloading price data. On first start the bot fetches a month of prices for every coin, which takes about 5 minutes; it turns Live once prices are up to date. Later, Waiting means prices are a few minutes behind and catching up.";
 
 /** "main" or a coin symbol such as "SOLUSDT". */
 type Page = string;
@@ -106,19 +108,33 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const load = useCallback(async () => {
+  const inFlight = useRef<AbortController | null>(null);
+  const load = useCallback(async (scheduled = false) => {
+    // A timed refresh never starts while the last one is still loading: on a busy server (the first price download)
+    // the requests would pile up until every database connection is taken. Changing page or interval, the refresh
+    // button and controls replace the one in flight instead.
+    if (scheduled && inFlight.current) return;
+    inFlight.current?.abort();
+    const request = new AbortController();
+    inFlight.current = request;
     setLoading(true);
     // Only the coin page on screen needs its price chart; the main page asks for none.
     const chart = page === "main" ? "" : `&chart=${page}`;
-    try { setData(await getJson<Dashboard>(`/api/v1/dashboard?interval=${interval}${chart}`)); setError(null); }
-    catch (reason) { setError(reason instanceof Error ? reason.message : "Dashboard unavailable"); }
-    finally { setLoading(false); }
+    try { setData(await getJson<Dashboard>(`/api/v1/dashboard?interval=${interval}${chart}`, request.signal)); setError(null); }
+    catch (reason) {
+      if (request.signal.aborted) return;                       // replaced by a newer request
+      // A slow answer keeps what is on screen and tries again at the next refresh; only a failure means offline.
+      if (!(reason instanceof TimeoutError)) setError(reason instanceof Error ? reason.message : "Dashboard unavailable");
+    }
+    finally {
+      if (inFlight.current === request) { inFlight.current = null; setLoading(false); }
+    }
   }, [interval, page]);
 
   useEffect(() => {
     load();
-    const timer = window.setInterval(() => document.visibilityState === "visible" && load(), 15_000);
-    const onVisible = () => document.visibilityState === "visible" && load();
+    const timer = window.setInterval(() => document.visibilityState === "visible" && load(true), 15_000);
+    const onVisible = () => document.visibilityState === "visible" && load(true);
     document.addEventListener("visibilitychange", onVisible);
     return () => { window.clearInterval(timer); document.removeEventListener("visibilitychange", onVisible); };
   }, [load]);
@@ -148,10 +164,12 @@ export default function App() {
           <strong className="wordmark" aria-label="Z-Bot"><img className="logo-z on-dark" src="/zbot-z-dark.svg" alt="" /><img className="logo-z on-light" src="/zbot-z-light.svg" alt="" />-Bot</strong>
           <small>{coins.length} coins</small></div></div>
         <div className="top-actions">
-          <span className={`live ${live ? "on" : "off"}`} title={data ? `Updated ${ago(data.generated_at)}` : "Connecting"}>
-            <i /><span className="live-text">{live ? "Live" : error ? "Offline" : "Waiting"}</span></span>
+          <Tip text={live ? `Prices are up to date. Updated ${ago(data!.generated_at)}.`
+            : error ? "The dashboard cannot reach the bot. Check that it is running." : WAITING}>
+          <span className={`live ${live ? "on" : "off"}`} tabIndex={0}>
+            <i /><span className="live-text">{live ? "Live" : error ? "Offline" : "Waiting"}</span></span></Tip>
           <DeviceLockButton />
-          <button className="icon-button refresh-button" aria-label="Refresh" onClick={load} disabled={loading}><span className={loading ? "spin" : ""}>↻</span></button>
+          <button className="icon-button refresh-button" aria-label="Refresh" onClick={() => load()} disabled={loading}><span className={loading ? "spin" : ""}>↻</span></button>
           <button className="icon-button theme-toggle" aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>{theme === "dark" ? "☀" : "☾"}</button>
           <LiveResultsLink />

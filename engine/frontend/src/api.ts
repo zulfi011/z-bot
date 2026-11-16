@@ -280,10 +280,26 @@ export async function getJsonUnlocked<T>(path: string): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-export async function getJson<T>(path: string): Promise<T> {
-  const response = await fetch(path, { cache: "no-store" });
-  if (!response.ok) throw new Error(`${path} returned ${response.status}`);
-  return response.json() as Promise<T>;
+/** Reads give up after this long, so a busy server never leaves the page hanging or piling up requests. */
+export const REQUEST_TIMEOUT_MS = 20_000;
+export class TimeoutError extends Error {}
+
+export async function getJson<T>(path: string, signal?: AbortSignal): Promise<T> {
+  const controller = new AbortController();
+  const timer = window.setTimeout(() => controller.abort("timeout"), REQUEST_TIMEOUT_MS);
+  const cancel = () => controller.abort("cancelled");
+  signal?.addEventListener("abort", cancel);
+  try {
+    const response = await fetch(path, { cache: "no-store", signal: controller.signal });
+    if (!response.ok) throw new Error(`${path} returned ${response.status}`);
+    return await response.json() as T;
+  } catch (reason) {
+    if (controller.signal.reason === "timeout") throw new TimeoutError("The bot is busy; trying again shortly.");
+    throw reason;
+  } finally {
+    window.clearTimeout(timer);
+    signal?.removeEventListener("abort", cancel);
+  }
 }
 
 export async function control(path: string, method = "POST", body?: unknown): Promise<Record<string, unknown>> {
