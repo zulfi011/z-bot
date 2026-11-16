@@ -82,3 +82,14 @@ def test_the_key_can_be_guessed_only_a_few_times(server):
         assert server.post("/api/v1/session", json={"key": "nope"}).status_code == 403
     blocked = server.post("/api/v1/session", json={"key": KEY})
     assert blocked.status_code == 429                                   # even the right key waits out the lockout
+
+
+def test_a_fake_forwarded_address_does_not_skip_the_lockout(server):
+    real = {"X-Real-IP": "203.0.113.7"}                                 # set by nginx; the browser cannot change it
+    for attempt in range(session.FAILURE_LIMIT):
+        fake = {**real, "X-Forwarded-For": f"10.0.0.{attempt}"}
+        assert server.post("/api/v1/session", json={"key": "nope"}, headers=fake).status_code == 403
+    fake = {**real, "X-Forwarded-For": "10.0.0.99"}
+    assert server.post("/api/v1/session", json={"key": KEY}, headers=fake).status_code == 429
+    other = {"X-Real-IP": "198.51.100.1"}                               # a different device is not blocked
+    assert server.post("/api/v1/session", json={"key": KEY}, headers=other).status_code == 200

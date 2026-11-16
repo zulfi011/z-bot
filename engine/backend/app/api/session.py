@@ -19,8 +19,15 @@ class UnlockRequest(BaseModel):
 
 
 def _client_address(request: Request) -> str:
-    forwarded = request.headers.get("x-forwarded-for", "")
-    return forwarded.split(",")[0].strip() or (request.client.host if request.client else "unknown")
+    """Who is trying keys, for the wrong-key lockout.
+
+    The dashboard's nginx sets X-Real-IP to the address that actually connected, replacing anything the browser sent.
+    X-Forwarded-For is not used: its first entry is whatever the client wrote, so a new fake address on every try
+    would skip the lockout. Behind a second proxy (such as Tailscale Serve) every device shares that proxy's address,
+    which only makes the lockout stricter.
+    """
+    real = request.headers.get("x-real-ip", "").strip()
+    return real or (request.client.host if request.client else "unknown")
 
 
 def _secure_cookie(request: Request) -> bool:
