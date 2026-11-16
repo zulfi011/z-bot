@@ -127,3 +127,23 @@ def test_the_pot_endpoint_answers_a_real_request(monkeypatch):
     reply = server.put("/api/v1/pot", json={"lot_size_usd": "100", "lots": 4}, headers={"X-Control-Key": "test-key"})
     assert reply.status_code == 202, reply.text
     assert reply.json()["lots"] == 4
+
+
+def test_a_second_buy_now_tap_is_refused_when_the_database_already_has_one(controls, monkeypatch):
+    """Two taps at once both pass the 'already waiting?' check; the unique index stops the second (migration 0026)."""
+    from decimal import Decimal
+    from sqlalchemy.exc import IntegrityError
+    connection = controls.begin.return_value.__enter__.return_value
+    connection.execute.return_value.scalar_one.return_value = 0          # the check saw nothing waiting yet
+    monkeypatch.setattr(control_api, "read_trading_enabled", lambda connection, symbol: True)
+    monkeypatch.setattr(control_api, "read_pot", lambda connection: SimpleNamespace(lots=3, lot_size_usd=Decimal("100")))
+    monkeypatch.setattr(control_api, "open_lot_total", lambda connection: 0)
+    monkeypatch.setattr(control_api, "read_settings", lambda connection: {"trading_mode": "shadow"})
+    monkeypatch.setattr(control_api, "shadow_account", lambda connection, settings: None)
+
+    def taken(*args, **kwargs):
+        raise IntegrityError("INSERT INTO control_requests", {}, Exception("duplicate key"))
+    monkeypatch.setattr(control_api, "_insert_request", taken)
+    with pytest.raises(HTTPException) as error:
+        control_api.buy_now("SOLUSDT", "test-key")
+    assert error.value.status_code == 409 and "already waiting" in error.value.detail

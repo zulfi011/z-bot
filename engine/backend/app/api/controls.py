@@ -10,6 +10,7 @@ from typing import Literal
 from fastapi import APIRouter, Cookie, Header, HTTPException
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import text
+from sqlalchemy.exc import IntegrityError
 
 from app.api.common import MAX_AMOUNT, _authorize, _coin_symbol, _insert_request, free_usdt, supports
 from app.core import control_session, credentials
@@ -95,7 +96,11 @@ def buy_now(symbol: str, key: str | None = Header(default=None, alias="X-Control
             usdt, where = (shadow["free"], "The shadow wallet") if shadow else (pot.lot_size_usd, "")
         if affordable_lot(pot.lot_size_usd, usdt) is None:
             raise HTTPException(status_code=409, detail=f"{where} has ${usdt:.2f} free USDT, nothing left to buy with.")
-        return _insert_request(connection, "manual_buy", symbol=symbol)
+        try:
+            return _insert_request(connection, "manual_buy", symbol=symbol)
+        except IntegrityError:
+            # Another tap queued this coin's buy a moment ago; the database allows only one waiting (migration 0026).
+            raise HTTPException(status_code=409, detail=f"A {label} buy-now request is already waiting") from None
 
 
 @router.put("/pot", status_code=202)
