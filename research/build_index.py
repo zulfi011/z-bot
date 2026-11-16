@@ -12,6 +12,10 @@ from pathlib import Path
 RESEARCH = Path(__file__).resolve().parent
 RESULTS = RESEARCH / "backtests" / "results"
 GROUPS = [("sol", "SOL"), ("eth", "ETH"), ("btc", "BTC"), ("aave", "AAVE"), ("trx", "TRX")]
+# Reports whose first result line is not a finding (for example a bare starting amount).
+OVERRIDES = {
+    "sol_15d_touch_immediate_trail_v1": "Lost 61% over 387 trades: 3.9% won after fees vs 69.5% before, the tight trail left too little to cover costs",
+}
 VERDICT = re.compile(r"^#+\s*(verdict|decision|result|results|conclusion|bottom line)\b[:\s]*(.*)$", re.I)
 
 
@@ -48,6 +52,8 @@ def describe(folder: Path) -> tuple[str, str]:
         return folder.name.replace("_", " "), "data and tables only, no written report"
     lines = report.read_text(errors="replace").splitlines()
     title = plain(next((clean(line.lstrip("# ")) for line in lines if line.startswith("# ")), folder.name))
+    if folder.name in OVERRIDES:
+        return title, OVERRIDES[folder.name]
     for index, line in enumerate(lines):
         match = VERDICT.match(line)
         if not match:

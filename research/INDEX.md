@@ -14,7 +14,7 @@ use working names such as "Stage 2" (the backtests) or "Stage 3" (the trading en
 | [sol_15d_confirmed_a2_g10_stop_grid_v1](backtests/results/sol_15d_confirmed_a2_g10_stop_grid_v1/REPORT.md) | SOL +2%/10% Trail — Protective Stop Grid |  |
 | [sol_15d_confirmed_trailing_only_grid_v1](backtests/results/sol_15d_confirmed_trailing_only_grid_v1/REPORT.md) | SOL Confirmed Touch with Trailing-Only Exits |  |
 | [sol_15d_immediate_touch_trailing_only_grid_v1](backtests/results/sol_15d_immediate_touch_trailing_only_grid_v1/REPORT.md) | SOL Immediate Touch, Trailing-Only Exit Grid |  |
-| [sol_15d_touch_immediate_trail_v1](backtests/results/sol_15d_touch_immediate_trail_v1/REPORT.md) | SOL 15-day Touch with Immediate 15% Profit Trail | Starting equity: $100.00 |
+| [sol_15d_touch_immediate_trail_v1](backtests/results/sol_15d_touch_immediate_trail_v1/REPORT.md) | SOL 15-day Touch with Immediate 15% Profit Trail | Lost 61% over 387 trades: 3.9% won after fees vs 69.5% before, the tight trail left too little to cover costs |
 | [sol_15d_touch_trailing_grid_0_2_v1](backtests/results/sol_15d_touch_trailing_grid_0_2_v1/REPORT.md) | SOL ±0.2% Touch — Trailing Grid |  |
 | [sol_bearish_filters_v1](backtests/results/sol_bearish_filters_v1/) | sol bearish filters v1 | data and tables only, no written report |
 | [sol_breadth_v1](backtests/results/sol_breadth_v1/REPORT.md) | SOL + market breadth across 40 large coins (25 Oct 2026) | rejected |
