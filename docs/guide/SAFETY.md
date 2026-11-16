@@ -33,8 +33,10 @@ Z-Bot handles real money only when you attach a Binance account and press **Go l
   the internet can open it.
 - On a server, reach it through an SSH tunnel or a private network such as Tailscale. **Do not open its port to the
   internet.**
-- On a server, also set a control key (`STRATEGY_EDIT_TOKEN` in `engine/.env`, the settings file you create from `engine/.env.example`). The dashboard then asks for it once per
-  device before any button that trades or changes money works.
+- On a server, also use a control key (`STRATEGY_EDIT_TOKEN` in `engine/.env`). The server setup script creates one
+  for you. The dashboard then asks for it once per device before any button that trades or changes money works. On
+  your own computer there is none and nothing to do. How it works, and how to change it:
+  [The control key](USER-GUIDE.md#the-control-key).
 
 ## What the bot does not do
 

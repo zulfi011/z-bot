@@ -26,7 +26,8 @@ where the bot runs, and the Attach Binance popup shows the server's public IP to
 3. Start it: `cd /opt/z-bot/engine && docker compose up -d --build`.
 4. Reach the dashboard **privately**: an SSH tunnel (`ssh -L 3000:127.0.0.1:3000 you@server`, then open the dashboard in
    your browser) or a private network such as Tailscale. Never open the dashboard's port to the internet.
-5. Unlock the dashboard once with the control key the script printed.
+5. Unlock the dashboard once with the control key the script printed (see
+   [The control key](USER-GUIDE.md#the-control-key) for what it is and how to change it).
 6. **Attach Binance account**, then press **Go live** when you are ready.
 
 Step-by-step, with screenshots-level detail for AWS Lightsail: [engine/deploy/vps/README.md](../../engine/deploy/vps/README.md).

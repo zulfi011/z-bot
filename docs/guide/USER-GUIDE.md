@@ -12,6 +12,7 @@ a phone too.
 | ↻ | Refresh now. The page also refreshes itself every 15 seconds. |
 | ☀ / ☾ | Light or dark theme. |
 | **Results ↗** | Opens the public results: every trade of a simulated account at Binance prices, after fees, updated daily. The guide is in the same site's menu, and cards on the coin pages link to the matching part of it. |
+| Padlock | Only on a server with a control key: shows whether this device can use the buttons. See [The control key](#the-control-key). |
 | **Attach Binance account** | Connects your own Binance account (see [Attaching Binance](#attaching-binance)). After that it shows a small "Binance" chip. |
 
 Scrolling down hides the top bar; the coin bar stays. Scrolling up brings it back.
@@ -54,6 +55,56 @@ Each coin starts with the setup it was tested with:
   its results are no longer the tested ones.
 - The **Pullback** (ETH) is on and **Add-ons** (SOL) are off. These two are optional and switch straight away.
 - Coins themselves start **off**: switch on the ones you want in the **Shared pot** card.
+
+## The control key
+
+**On your own computer you can skip this section.** There is no control key, no lock and nothing to type: every
+button works, because only your computer can open the dashboard.
+
+**On a server you need one.** A server is a computer other people could reach, so the dashboard needs a password
+before anyone can trade with your Binance account. That password is the control key.
+
+| | Own computer | Server |
+|---|---|---|
+| Control key | none | one long random key |
+| Lock icon in the top bar | not shown | shown |
+| Viewing the dashboard | works | works, no key needed |
+| Buttons that trade or change money | work | work once this device is unlocked |
+
+### Where the key comes from
+
+- **With the server setup script** (`engine/deploy/vps/setup.sh`, see [Deploy](DEPLOY.md)): the script creates the
+  key for you, saves it in the server's settings file `engine/.env` as `STRATEGY_EDIT_TOKEN=...`, and prints it once
+  at the end as "Your dashboard control key". Save it in your password manager.
+- **Setting up a server another way:** add it yourself. In `engine/.env` write a long random value, for example the
+  output of `openssl rand -hex 16`, after `STRATEGY_EDIT_TOKEN=`, then run `docker compose up -d` in the `engine`
+  folder.
+
+Attaching a Binance account does **not** create a control key. They are separate: the Binance key lets the bot trade,
+the control key decides who may press the buttons.
+
+### Using it
+
+1. Press the padlock in the top bar, or any button that needs it (such as **Buy now** or **Go live**).
+2. Type the control key and press **Unlock this device**.
+3. That device stays unlocked for 30 days. The key itself is not saved in the browser.
+4. To lock a device again (for example a shared computer), press the open padlock and choose **Lock this device**.
+
+After 5 wrong keys in 15 minutes the dashboard makes you wait before trying again.
+
+### Lost it, or want a new one
+
+On the server:
+
+1. Print the current key: `grep STRATEGY_EDIT_TOKEN /opt/z-bot/engine/.env`
+2. Or set a new one: edit that line in `engine/.env`, then run `cd /opt/z-bot/engine && docker compose up -d`.
+   (`docker compose restart` does not read the new value; `up -d` does.)
+
+A new key locks **every** device at once; unlock each one again with the new key. This is also how to shut out a
+device you no longer trust.
+
+To remove the lock completely, leave `STRATEGY_EDIT_TOKEN=` empty and run `docker compose up -d`. Only do that if the
+dashboard cannot be reached by anyone but you.
 
 ## Attaching Binance
 
