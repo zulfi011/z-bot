@@ -52,7 +52,7 @@ def server(monkeypatch):
 
 def test_unlock_act_and_lock_through_the_api(server, monkeypatch):
     assert server.get("/api/v1/session").json()["unlocked"] is False
-    assert server.post("/api/v1/session", json={"key": "wrong"}).status_code == 403
+    assert server.post("/api/v1/session", json={"key": "wrong"}).status_code == 401
 
     unlocked = server.post("/api/v1/session", json={"key": KEY})
     assert unlocked.status_code == 200
@@ -73,13 +73,13 @@ def test_a_locked_device_is_refused_with_a_clear_message(monkeypatch):
     patch_api(monkeypatch, "get_settings", lambda: SimpleNamespace(strategy_edit_token=KEY))
     with pytest.raises(HTTPException) as error:
         common._authorize(None, None)
-    assert error.value.status_code == 403 and "locked" in error.value.detail
+    assert error.value.status_code == 401 and "locked" in error.value.detail
     common._authorize(KEY, None)                                        # scripts may still send the key header
 
 
 def test_the_key_can_be_guessed_only_a_few_times(server):
     for _ in range(session.FAILURE_LIMIT):
-        assert server.post("/api/v1/session", json={"key": "nope"}).status_code == 403
+        assert server.post("/api/v1/session", json={"key": "nope"}).status_code == 401
     blocked = server.post("/api/v1/session", json={"key": KEY})
     assert blocked.status_code == 429                                   # even the right key waits out the lockout
 
@@ -88,7 +88,7 @@ def test_a_fake_forwarded_address_does_not_skip_the_lockout(server):
     real = {"X-Real-IP": "203.0.113.7"}                                 # set by nginx; the browser cannot change it
     for attempt in range(session.FAILURE_LIMIT):
         fake = {**real, "X-Forwarded-For": f"10.0.0.{attempt}"}
-        assert server.post("/api/v1/session", json={"key": "nope"}, headers=fake).status_code == 403
+        assert server.post("/api/v1/session", json={"key": "nope"}, headers=fake).status_code == 401
     fake = {**real, "X-Forwarded-For": "10.0.0.99"}
     assert server.post("/api/v1/session", json={"key": KEY}, headers=fake).status_code == 429
     other = {"X-Real-IP": "198.51.100.1"}                               # a different device is not blocked

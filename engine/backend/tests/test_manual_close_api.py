@@ -25,7 +25,7 @@ def test_controls_reject_a_wrong_key_before_touching_the_database(controls):
                  lambda: control_api.set_trading("BTCUSDT", control_api.TradingSwitchRequest(enabled=False, close_positions=True), "wrong")):
         with pytest.raises(HTTPException) as error:
             call()
-        assert error.value.status_code == 403
+        assert error.value.status_code == 401
     controls.begin.assert_not_called()
 
 

@@ -275,7 +275,7 @@ export async function lockDevice(): Promise<void> {
 /** Read a page that needs an unlocked device (real account data). */
 export async function getJsonUnlocked<T>(path: string): Promise<T> {
   const response = await fetch(path, { cache: "no-store", credentials: "same-origin" });
-  if (response.status === 403) throw new LockedError("This device is locked.");
+  if (response.status === 401) throw new LockedError("This device is locked.");
   if (!response.ok) throw new Error(`${path} returned ${response.status}`);
   return response.json() as Promise<T>;
 }
@@ -309,7 +309,7 @@ export async function control(path: string, method = "POST", body?: unknown): Pr
     body: body === undefined ? undefined : JSON.stringify(body),
   });
   const result = await response.json().catch(() => ({}));
-  if (response.status === 403) throw new LockedError("This device is locked.");
+  if (response.status === 401) throw new LockedError("This device is locked.");
   if (!response.ok) {
     const detail = (result as { detail?: unknown }).detail;
     throw new Error(typeof detail === "string" ? detail : Array.isArray(detail) ? "Check what you entered and try again" : `Request failed (${response.status})`);

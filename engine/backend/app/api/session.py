@@ -57,7 +57,7 @@ def unlock(body: UnlockRequest, request: Request, response: Response) -> dict:
         raise HTTPException(status_code=429, detail=f"Too many wrong keys. Try again in {max(1, wait // 60)} minute(s).")
     if not control_session.key_matches(body.key.strip(), configured):
         control_session.record_failure(address)
-        raise HTTPException(status_code=403, detail="That is not the control key.")
+        raise HTTPException(status_code=401, detail="That is not the control key.")
     control_session.clear_failures(address)
     token, expires = control_session.issue(configured)
     response.set_cookie(control_session.COOKIE, token, max_age=control_session.LIFETIME_SECONDS, httponly=True,

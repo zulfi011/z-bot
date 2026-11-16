@@ -59,7 +59,7 @@ def _authorize(key: str | None, session: str | None = None) -> None:
     session = session if isinstance(session, str) else None
     if control_session.expiry(session, configured) or control_session.key_matches(key, configured):
         return
-    raise HTTPException(status_code=403, detail=LOCKED)
+    raise HTTPException(status_code=401, detail=LOCKED)
 
 
 def _coin_symbol(symbol: str) -> str:
