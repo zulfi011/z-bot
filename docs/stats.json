@@ -1,7 +1,7 @@
 {
- "generated_at": "2026-11-18T00:30:05.718008+00:00",
+ "generated_at": "2026-11-19T00:30:06.195785+00:00",
  "since": "2026-09-12T19:39:00+00:00",
- "days": 66,
+ "days": 67,
  "summary": {
   "trades": 33,
   "wins": 22,
@@ -15,7 +15,7 @@
   "worst_pct": -4.67,
   "avg_hold_hours": 22.3,
   "max_drawdown_pct": -6.95,
-  "open_lots": 1
+  "open_lots": 2
  },
  "curve": [
   {
@@ -198,7 +198,7 @@
    "win_rate_pct": null,
    "avg_return_pct": null,
    "return_contribution_pct": null,
-   "open_lots": 1
+   "open_lots": 2
   },
   {
    "symbol": "ETHUSDT",
@@ -222,7 +222,13 @@
    "symbol": "TRXUSDT",
    "entry": "breakout",
    "opened": "2026-11-17T15:04:05.915692+00:00",
-   "unrealized_pct": 0.0
+   "unrealized_pct": 0.812
+  },
+  {
+   "symbol": "TRXUSDT",
+   "entry": "breakout",
+   "opened": "2026-11-18T07:04:05.083859+00:00",
+   "unrealized_pct": 0.323
   }
  ],
  "trades": [
@@ -591,7 +597,7 @@
   }
  ],
  "hold": {
-  "total_return_pct": -17.87,
+  "total_return_pct": -19.35,
   "curve": [
    {
     "t": "2026-09-12T19:39:00+00:00",
@@ -866,8 +872,12 @@
     "pct": -17.747
    },
    {
-    "t": "2026-11-18T00:29:00+00:00",
-    "pct": -17.867
+    "t": "2026-11-18T23:59:00+00:00",
+    "pct": -19.347
+   },
+   {
+    "t": "2026-11-19T00:29:00+00:00",
+    "pct": -19.346
    }
   ]
  },
