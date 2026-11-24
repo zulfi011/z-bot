@@ -1,21 +1,21 @@
 {
- "generated_at": "2026-11-23T00:30:06.331917+00:00",
+ "generated_at": "2026-11-24T00:30:06.617607+00:00",
  "since": "2026-09-12T19:39:00+00:00",
- "days": 71,
+ "days": 72,
  "summary": {
-  "trades": 36,
-  "wins": 24,
+  "trades": 37,
+  "wins": 25,
   "losses": 12,
-  "win_rate_pct": 66.7,
-  "avg_win_pct": 0.83,
+  "win_rate_pct": 67.6,
+  "avg_win_pct": 0.84,
   "avg_loss_pct": -3.06,
-  "profit_factor": 0.55,
-  "total_return_pct": -5.3,
+  "profit_factor": 0.58,
+  "total_return_pct": -4.92,
   "best_pct": 1.68,
   "worst_pct": -4.67,
-  "avg_hold_hours": 23.5,
+  "avg_hold_hours": 23.0,
   "max_drawdown_pct": -6.95,
-  "open_lots": 0
+  "open_lots": 1
  },
  "curve": [
   {
@@ -165,6 +165,10 @@
   {
    "t": "2026-11-20T18:50:11.622866+00:00",
    "pct": -5.298
+  },
+  {
+   "t": "2026-11-23T17:31:05.886947+00:00",
+   "pct": -4.921
   }
  ],
  "monthly": [
@@ -182,12 +186,20 @@
   },
   {
    "month": "2026-11",
-   "trades": 4,
-   "win_rate_pct": 75.0,
-   "total_return_pct": 0.16
+   "trades": 5,
+   "win_rate_pct": 80.0,
+   "total_return_pct": 0.56
   }
  ],
  "coins": [
+  {
+   "symbol": "TRXUSDT",
+   "trades": 4,
+   "win_rate_pct": 75.0,
+   "avg_return_pct": 0.13,
+   "return_contribution_pct": 0.23,
+   "open_lots": 1
+  },
   {
    "symbol": "BTCUSDT",
    "trades": 2,
@@ -202,14 +214,6 @@
    "win_rate_pct": 66.7,
    "avg_return_pct": 0.15,
    "return_contribution_pct": 0.14,
-   "open_lots": 0
-  },
-  {
-   "symbol": "TRXUSDT",
-   "trades": 3,
-   "win_rate_pct": 66.7,
-   "avg_return_pct": -0.22,
-   "return_contribution_pct": -0.17,
    "open_lots": 0
   },
   {
@@ -229,7 +233,14 @@
    "open_lots": 0
   }
  ],
- "open": [],
+ "open": [
+  {
+   "symbol": "TRXUSDT",
+   "entry": "breakout",
+   "opened": "2026-11-23T14:04:06.785434+00:00",
+   "unrealized_pct": 0.485
+  }
+ ],
  "trades": [
   {
    "symbol": "SOLUSDT",
@@ -626,10 +637,21 @@
    "minutes": 2506,
    "return_pct": -3.056,
    "account_pct": -0.9723
+  },
+  {
+   "symbol": "TRXUSDT",
+   "entry": "breakout",
+   "exit": "trailing_stop",
+   "exit_style": "giveback",
+   "opened": "2026-11-23T12:04:06.18236+00:00",
+   "closed": "2026-11-23T17:31:05.886947+00:00",
+   "minutes": 326,
+   "return_pct": 1.167,
+   "account_pct": 0.3976
   }
  ],
  "hold": {
-  "total_return_pct": -23.01,
+  "total_return_pct": -22.4,
   "curve": [
    {
     "t": "2026-09-12T19:39:00+00:00",
@@ -924,8 +946,12 @@
     "pct": -22.849
    },
    {
-    "t": "2026-11-23T00:29:00+00:00",
-    "pct": -23.006
+    "t": "2026-11-23T23:59:00+00:00",
+    "pct": -22.569
+   },
+   {
+    "t": "2026-11-24T00:29:00+00:00",
+    "pct": -22.398
    }
   ]
  },
